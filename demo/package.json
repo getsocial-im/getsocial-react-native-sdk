@@ -1,0 +1,37 @@
+{
+  "name": "getsocial-react-native-demo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "ios": "react-native run-ios",
+    "android": "react-native run-android",
+    "test": "jest",
+    "flow": "flow",
+    "postinstall": "node node_modules/getsocial-react-native-sdk/scripts/download_ios_frameworks.js"
+  },
+  "dependencies": {
+    "getsocial-react-native-sdk": "file:../getsocial",
+    "react": "16.8.3",
+    "react-native": "0.59.0",
+    "react-native-gesture-handler": "^1.2.1",
+    "react-navigation": "^3.9.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.2.2",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "24.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.12.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-react": "^7.12.4",
+    "flow-bin": "^0.98.0",
+    "jest": "24.1.0",
+    "metro-react-native-babel-preset": "0.49.1",
+    "react-test-renderer": "16.6.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

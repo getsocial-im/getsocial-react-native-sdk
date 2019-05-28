@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="im.getsocial.rn">
+    <application>
+        <meta-data android:name="im.getsocial.sdk.WrapperVersion" android:value="0.0.1" />
+    </application>
+</manifest>

@@ -1,0 +1,13 @@
+# OSX
+.DS_Store
+
+docs/
+node_modules/
+xcuserdata
+android/gradle/
+
+local.properties
+android/build/
+.idea
+.gradle
+*.iml
