@@ -1,0 +1,32 @@
+# GetSocial React Native SDK
+
+This is the demo application for GetSocial React Native SDK. Learn more about the products we build at [getsocial.im](https://www.getsocial.im).
+
+## Running Demo
+
+1. Clone repository: `git clone git@github.com:getsocial-im/getsocial-react-native-sdk.git`
+1. `cd getsocial && npm install`
+1. `cd demo && npm install`
+1. Open `demo` project in Android Studio or in Xcode.
+1. Build and run.
+
+In case of any questions ping us at [support@getsocial.im](mailto:support@getsocial.im).
+
+## Fresh Integration of the GetSocial SDK
+
+Follow the Getting Started guide for React Native at: [docs.getsocial.im/guides/getting-started/react-native/](http://docs.getsocial.im/guides/getting-started/react-native/).
+
+GetSocial iOS SDK Reference can be found at:
+
+- React Native API: [docs.getsocial.im/reference/react-native/](http://docs.getsocial.im/reference/react-native/); 
+
+## Repo Structure
+
+This repository contains all you need to start working with GetSocial:
+
+- An example application that showcases all GetSocial features in `demo/` folder.
+
+## Licence
+
+Example app is distributed under [Apache 2](https://choosealicense.com/licenses/apache-2.0/) license. 
+GetSocial React Native SDK is distributed under [MIT](https://choosealicense.com/licenses/mit/) license.
