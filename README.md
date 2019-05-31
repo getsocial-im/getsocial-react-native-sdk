@@ -16,17 +16,21 @@ In case of any questions ping us at [support@getsocial.im](mailto:support@getsoc
 
 Follow the Getting Started guide for React Native at: [docs.getsocial.im/guides/getting-started/react-native/](http://docs.getsocial.im/guides/getting-started/react-native/).
 
-GetSocial iOS SDK Reference can be found at:
+Check [GetSocial React Native SDK Reference](http://docs.getsocial.im/reference/react-native/) for a full API reference.
 
-- React Native API: [docs.getsocial.im/reference/react-native/](http://docs.getsocial.im/reference/react-native/); 
 
 ## Repo Structure
 
-This repository contains all you need to start working with GetSocial:
+This repository contains all you need to explore GetSocial platform:
 
-- An example application that showcases all GetSocial features in `demo/` folder.
+- `demo/`: an example application that showcases all GetSocial features.
+- `getsocial/`: a source code for the GetSocial React Native SDK wrapper. For the SDK integration use npm as described in the [Getting Started](http://docs.getsocial.im/guides/getting-started/react-native/) guide.
+
+## Contributors
+
+GetSocial React Native SDK is build on top of the amazing work from our friends at Soundmix. The original repo is available [here](https://github.com/nmchr7/react-native-get-social).
 
 ## Licence
 
-Example app is distributed under [Apache 2](https://choosealicense.com/licenses/apache-2.0/) license. 
-GetSocial React Native SDK is distributed under [MIT](https://choosealicense.com/licenses/mit/) license.
+Demo app is distributed under [Apache 2](https://choosealicense.com/licenses/apache-2.0/) license. 
+GetSocial React Native SDK is distributed under the [commercial license](https://www.getsocial.im/legal/).

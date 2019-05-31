@@ -16,8 +16,7 @@
     "react-native",
     "getsocial"
   ],
-  "license": "MIT",
-  "licenseFilename": "LICENSE",
+  "license": "Commercial",
   "readmeFilename": "README.md",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
