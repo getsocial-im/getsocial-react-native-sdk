@@ -1,7 +1,7 @@
 {
   "name": "getsocial-react-native-sdk",
   "title": "GetSocial React Native SDK",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React Native wrapper for GetSocial iOS and Android SDK",
   "repository": {
     "type": "git",
@@ -15,6 +15,13 @@
   "keywords": [
     "react-native",
     "getsocial"
+  ],
+  "files": [
+    "GetSocial.js",
+    "GetSocialUI.js",
+    "GetSocialUser.js",
+    "GetSocialEventEmitter.js",
+    "models"
   ],
   "license": "Commercial",
   "readmeFilename": "README.md",

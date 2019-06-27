@@ -9,6 +9,14 @@ allprojects {
             url "$rootDir/../node_modules/react-native/android"
         }
     }
+    afterEvaluate {
+        if (getPlugins().hasPlugin('android') ||
+                getPlugins().hasPlugin('android-library')) {
+            configure(android.lintOptions) {
+                abortOnError false
+            }
+        }
+    }
 }
 
 buildscript {

@@ -10,10 +10,17 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.ReactMethod;
 
 import im.getsocial.sdk.Callback;
+import im.getsocial.sdk.CompletionCallback;
 import im.getsocial.sdk.GetSocial;
 import im.getsocial.sdk.GlobalErrorListener;
+import im.getsocial.sdk.invites.InviteCallback;
+import im.getsocial.sdk.invites.InviteChannel;
 import im.getsocial.sdk.invites.ReferredUser;
+import im.getsocial.sdk.socialgraph.SuggestedFriend;
 import im.getsocial.sdk.ui.GetSocialUi;
+import im.getsocial.sdk.usermanagement.AddAuthIdentityCallback;
+import im.getsocial.sdk.usermanagement.AuthIdentity;
+import im.getsocial.sdk.usermanagement.ConflictUser;
 import im.getsocial.sdk.usermanagement.OnUserChangedListener;
 import im.getsocial.sdk.ui.invites.InvitesViewBuilder;
 import im.getsocial.sdk.invites.FetchReferralDataCallback;
@@ -23,6 +30,9 @@ import im.getsocial.sdk.invites.InviteContent;
 import im.getsocial.sdk.ui.invites.InviteUiCallback;
 import im.getsocial.sdk.GetSocialException;
 import im.getsocial.sdk.media.MediaAttachment;
+import im.getsocial.sdk.usermanagement.PublicUser;
+import im.getsocial.sdk.usermanagement.UserReference;
+import im.getsocial.sdk.usermanagement.UsersQuery;
 import im.getsocial.utils.Converters;
 
 import javax.annotation.Nullable;
@@ -138,7 +148,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception);
+                promise.reject(exception, convertThrowable(exception));
             }
         });
     }
@@ -159,11 +169,146 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception);
+                promise.reject(exception, convertThrowable(exception));
             }
         });
     }
 
+    @ReactMethod
+    public void isInviteChannelAvailable(final String channelId, final Promise promise) {
+        promise.resolve(GetSocial.isInviteChannelAvailable(channelId));
+    }
+
+    @ReactMethod
+    public void getInviteChannels(final Promise promise) {
+        List<InviteChannel> inviteChannels = GetSocial.getInviteChannels();
+        promise.resolve(Converters.convertInviteChannels(inviteChannels));
+    }
+
+    @ReactMethod
+    public void createInviteLink(final ReadableMap linkParams, final Promise promise) {
+        GetSocial.createInviteLink(createLinkParams(linkParams), new Callback<String>() {
+            @Override
+            public void onSuccess(String inviteLink) {
+                promise.resolve(inviteLink);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void sendInvite(final String channelId, final ReadableMap inviteParameters, final ReadableMap linkParams, final Promise promise) {
+        InviteContent.Builder builder = InviteContent.createBuilder();
+
+        if (inviteParameters != null) {
+            // subject and text
+            String customInviteSubject = getStringOrNull(inviteParameters, KEY_INVITE_CONTENT_PARAMETER_CUSTOM_SUBJECT);
+            String customInviteText = getStringOrNull(inviteParameters, KEY_INVITE_CONTENT_PARAMETER_CUSTOM_TEXT);
+
+            builder.withSubject(customInviteSubject).withText(customInviteText);
+
+            ReadableMap mediaAttachmentMap = getMapOrNull(inviteParameters, KEY_MEDIA_ATTACHMENT);
+            if (mediaAttachmentMap != null) {
+                // media attachment
+                String imageUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_IMAGE_URL);
+                String videoUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_VIDEO_URL);
+
+                MediaAttachment mediaAttachment = null;
+                if (imageUrl != null) {
+                    mediaAttachment = MediaAttachment.imageUrl(imageUrl);
+                }
+                if (videoUrl != null) {
+                    mediaAttachment = MediaAttachment.videoUrl(videoUrl);
+                }
+                if (mediaAttachment != null) {
+                    builder.withMediaAttachment(mediaAttachment);
+                }
+            }
+        }
+
+        GetSocial.sendInvite(channelId, builder.build(), createLinkParams(linkParams), new InviteCallback() {
+            @Override
+            public void onComplete() {
+                fireInvitesEvent("onComplete", null);
+            }
+
+            @Override
+            public void onCancel() {
+                fireInvitesEvent("onCancel", null);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                fireInvitesEvent("onError", throwable.getMessage());
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getUserById(final String userId, final Promise promise) {
+        GetSocial.getUserById(userId, new Callback<PublicUser>() {
+            @Override
+            public void onSuccess(PublicUser publicUser) {
+                promise.resolve(Converters.convertPublicUser(publicUser));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getUserByAuthIdentity(final String providerId, final String providerUserId, final Promise promise) {
+        GetSocial.getUserByAuthIdentity(providerId, providerUserId, new Callback<PublicUser>() {
+            @Override
+            public void onSuccess(PublicUser publicUser) {
+                promise.resolve(Converters.convertPublicUser(publicUser));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getUsersByAuthIdentities(final String providerId, final List<String> providerUserIds, final Promise promise) {
+        GetSocial.getUsersByAuthIdentities(providerId, providerUserIds, new Callback<Map<String, PublicUser>>() {
+            @Override
+            public void onSuccess(Map<String, PublicUser> publicUsersMap) {
+                promise.resolve(Converters.convertPublicUsersMap(publicUsersMap));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void findUsers(final ReadableMap queryProperties, final Promise promise) {
+        UsersQuery query = UsersQuery.usersByDisplayName(queryProperties.getString("query"));
+        query.withLimit(queryProperties.getInt("limit"));
+        GetSocial.findUsers(query, new Callback<List<UserReference>>() {
+            @Override
+            public void onSuccess(List<UserReference> userReferences) {
+                promise.resolve(Converters.convertUserReferences(userReferences));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
     //endregion
 
     //region GetSocial.User
@@ -174,6 +319,11 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getUserId(final Promise promise) {
         promise.resolve(GetSocial.User.getId());
+    }
+
+    @ReactMethod
+    public void isAnonymous(final Promise promise) {
+        promise.resolve(GetSocial.User.isAnonymous());
     }
 
     /**
@@ -192,6 +342,246 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         promise.resolve(GetSocial.User.getAvatarUrl());
     }
 
+
+    @ReactMethod
+    public void setDisplayName(final String displayName, final Promise promise) {
+        GetSocial.User.setDisplayName(displayName, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void setAvatarUrl(final String avatarUrl, final Promise promise) {
+        GetSocial.User.setAvatarUrl(avatarUrl, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void setPublicProperty(final String propertyKey, final String propertyValue, final Promise promise) {
+        GetSocial.User.setPublicProperty(propertyKey, propertyValue, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void setPrivateProperty(final String propertyKey, final String propertyValue, final Promise promise) {
+        GetSocial.User.setPrivateProperty(propertyKey, propertyValue, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void hasPublicProperty(final String propertyKey, final Promise promise) {
+        promise.resolve(GetSocial.User.hasPublicProperty(propertyKey));
+    }
+
+    @ReactMethod
+    public void hasPrivateProperty(final String propertyKey, final Promise promise) {
+        promise.resolve(GetSocial.User.hasPrivateProperty(propertyKey));
+    }
+
+    @ReactMethod
+    public void getPublicProperty(final String propertyKey, final Promise promise) {
+        promise.resolve(GetSocial.User.getPublicProperty(propertyKey));
+    }
+
+    @ReactMethod
+    public void getPrivateProperty(final String propertyKey, final Promise promise) {
+        promise.resolve(GetSocial.User.getPrivateProperty(propertyKey));
+    }
+
+    @ReactMethod
+    public void allPublicProperties(final Promise promise) {
+        promise.resolve(GetSocial.User.getAllPublicProperties());
+    }
+
+    @ReactMethod
+    public void getPrivateProperty(final Promise promise) {
+        promise.resolve(GetSocial.User.getAllPrivateProperties());
+    }
+
+    @ReactMethod
+    public void removePublicProperty(final String propertyKey, final Promise promise) {
+        GetSocial.User.removePublicProperty(propertyKey, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void removePrivateProperty(final String propertyKey, final Promise promise) {
+        GetSocial.User.removePrivateProperty(propertyKey, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void addAuthIdentity(final ReadableMap authIdentityMap, final Promise promise) {
+        String providerId = getStringOrNull(authIdentityMap, "providerId");
+        String providerUserId = getStringOrNull(authIdentityMap, "providerUserId");
+        String accessToken = getStringOrNull(authIdentityMap, "accessToken");
+
+        AuthIdentity authIdentity = AuthIdentity.createCustomIdentity(providerId, providerUserId, accessToken);
+        GetSocial.User.addAuthIdentity(authIdentity, new AddAuthIdentityCallback() {
+            @Override
+            public void onComplete() {
+                promise.resolve(null);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+
+            @Override
+            public void onConflict(ConflictUser conflictUser) {
+                promise.resolve(Converters.convertConflictUser(conflictUser));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void removeAuthIdentity(final String providerId, final Promise promise) {
+        GetSocial.User.removeAuthIdentity(providerId, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void addFriend(final String userId, final Promise promise) {
+        GetSocial.User.addFriend(userId, new Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                promise.resolve(integer);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod void addFriendsByAuthIdentities(final String providerId, final List<String> userIds, final Promise promise) {
+        GetSocial.User.addFriendsByAuthIdentities(providerId, userIds, new Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                promise.resolve(integer);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void removeFriend(final String userId, final Promise promise) {
+        GetSocial.User.removeFriend(userId, new Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                promise.resolve(integer);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod void removeFriendsByAuthIdentities(final String providerId, final List<String> userIds, final Promise promise) {
+        GetSocial.User.removeFriendsByAuthIdentities(providerId, userIds, new Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                promise.resolve(integer);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void setFriends(final List<String> userIds, final Promise promise) {
+        GetSocial.User.setFriends(userIds, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void setFriendsByAuthIdentities(final String providerId, final List<String> userIds, final Promise promise) {
+        GetSocial.User.setFriendsByAuthIdentities(providerId, userIds, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void isFriend(final String userId, final Promise promise) {
+        GetSocial.User.isFriend(userId, new Callback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isFriend) {
+                promise.resolve(isFriend);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getFriendsCount(final Promise promise) {
+        GetSocial.User.getFriendsCount(new Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                promise.resolve(integer);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getFriends(final int offset, final int limit, final Promise promise) {
+        GetSocial.User.getFriends(offset, limit, new Callback<List<PublicUser>>() {
+            @Override
+            public void onSuccess(List<PublicUser> publicUsers) {
+                promise.resolve(Converters.convertPublicUsers(publicUsers));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getSuggestedFriends(final int offset, final int limit, final Promise promise) {
+        GetSocial.User.getSuggestedFriends(offset, limit, new Callback<List<SuggestedFriend>>() {
+            @Override
+            public void onSuccess(List<SuggestedFriend> suggestedFriends) {
+                promise.resolve(Converters.convertSuggestedFriends(suggestedFriends));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        });
+    }
+
+
+    @ReactMethod
+    public void switchUser(final ReadableMap authIdentityMap, final Promise promise) {
+        String providerId = getStringOrNull(authIdentityMap, "providerId");
+        String providerUserId = getStringOrNull(authIdentityMap, "providerUserId");
+        String accessToken = getStringOrNull(authIdentityMap, "accessToken");
+
+        AuthIdentity authIdentity = AuthIdentity.createCustomIdentity(providerId, providerUserId, accessToken);
+        GetSocial.User.switchUser(authIdentity, toCompletionCallback(promise));
+    }
+
+    @ReactMethod
+    public void getAuthIdentities(final Promise promise) {
+        promise.resolve(Converters.convertAuthIdentities(GetSocial.User.getAuthIdentities()));
+    }
+
+    @ReactMethod
+    public void resetUser(final Promise promise) {
+        GetSocial.User.reset(toCompletionCallback(promise));
+    }
+    
     //endregion
 
 
@@ -257,7 +647,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
             viewBuilder.setCustomInviteContent(builder.build());
 
             // link params
-            viewBuilder.setLinkParams(new LinkParams(linkParams.toHashMap()));
+            viewBuilder.setLinkParams(createLinkParams(linkParams));
         }
         viewBuilder.setInviteCallback(new InviteUiCallback() {
             @Override
@@ -305,6 +695,30 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
     //region Utils
 
+    private CompletionCallback toCompletionCallback(final Promise promise) {
+        return new CompletionCallback() {
+            @Override
+            public void onSuccess() {
+                promise.resolve(null);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                promise.reject(exception, convertThrowable(exception));
+            }
+        };
+    }
+
+    private void fireInvitesEvent(String status, @Nullable String errorMessage) {
+        WritableMap inviteEventData = new WritableNativeMap();
+        inviteEventData.putString("STATUS", status);
+        if (errorMessage != null) {
+            inviteEventData.putString("ERROR", errorMessage);
+        }
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("InvitesEvent", inviteEventData);
+    }
+
     private void fireInvitesUIEvent(String status, String channelId, @Nullable String errorMessage) {
         WritableMap inviteEventData = new WritableNativeMap();
         inviteEventData.putString("STATUS", status);
@@ -330,6 +744,19 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         return null;
     }
 
+    private LinkParams createLinkParams(final ReadableMap linkParamsSource) {
+        LinkParams linkParamsInternal = null;
+        if (linkParamsSource != null) {
+            linkParamsInternal = new LinkParams(linkParamsSource.toHashMap());
+        }
+        return linkParamsInternal;
+    }
+
+    private WritableMap convertThrowable(final Throwable throwable) {
+        WritableMap writableMap = new WritableNativeMap();
+        writableMap.putString("MESSAGE", throwable.getMessage());
+        return writableMap;
+    }
     //endregion
 
     private void setupGetSocial() {
@@ -338,8 +765,9 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         GetSocial.setGlobalErrorListener(new GlobalErrorListener() {
             @Override
             public void onError(GetSocialException exception) {
+                System.out.println("### ERROR HAPPENED: " + exception.getMessage());
                 reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit("onGlobalError", exception);
+                        .emit("onGlobalError", exception.getMessage());
             }
         });
 

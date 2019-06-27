@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 import {Platform, DeviceEventEmitter, NativeEventEmitter, View, Text} from 'react-native';
 import {FooterComponentStyle} from './FooterComponentStyle';
 import {GetSocial} from 'getsocial-react-native-sdk';
-import {pluginVersion} from 'getsocial-react-native-sdk/package.json';
+import {version} from 'getsocial-react-native-sdk/package.json';
 
 type Props = {}
 type State = {
@@ -20,7 +20,7 @@ export default class FooterComponent extends Component<Props, State> {
     super(props);
     this.state = {
       sdkVersion: 'N/A',
-      pluginVersion: pluginVersion,
+      pluginVersion: version,
     };
     GetSocial.whenInitialized(() => {
       GetSocial.getSdkVersion().then((version) => {
@@ -32,7 +32,7 @@ export default class FooterComponent extends Component<Props, State> {
   render() {
     return (
       <View style={FooterComponentStyle.footerComponent}>
-        <Text style={FooterComponentStyle.footerText}>GetSocial SDK: {this.state.sdkVersion}, React SDK: {this.state.pluginVersion}</Text>
+        <Text style={FooterComponentStyle.footerText}>GetSocial Native SDK: {this.state.sdkVersion}, React SDK: {this.state.pluginVersion}</Text>
       </View>
     );
   }

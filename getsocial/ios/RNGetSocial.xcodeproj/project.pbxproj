@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		B3E7B58A1CC2AC0600A0062D /* RNGetSocial.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNGetSocial.m */; };
+		BC11113622AAF55D001B894D /* GetSocialInviteChannel+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC11113322AAF55D001B894D /* GetSocialInviteChannel+Json.m */; };
+		BC11113722AAF55D001B894D /* GetSocialInviteContent+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC11113522AAF55D001B894D /* GetSocialInviteContent+Json.m */; };
+		BC11113A22AAF60D001B894D /* UIImage+GetSocial.m in Sources */ = {isa = PBXBuildFile; fileRef = BC11113822AAF60D001B894D /* UIImage+GetSocial.m */; };
 		BC2E50202269D7C300AB8286 /* GetSocialReferralData+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E501C2269D7C300AB8286 /* GetSocialReferralData+Json.m */; };
 		BC2E50212269D7C300AB8286 /* GetSocialReferredUser+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E501D2269D7C300AB8286 /* GetSocialReferredUser+Json.m */; };
 		BC2E50242269D7CB00AB8286 /* GetSocialPublicUser+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E50232269D7CA00AB8286 /* GetSocialPublicUser+Json.m */; };
@@ -16,6 +19,8 @@
 		BC2E50362269D86400AB8286 /* NSMutableDictionary+GetSocial.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E502E2269D86300AB8286 /* NSMutableDictionary+GetSocial.m */; };
 		BC2E50372269D86400AB8286 /* NSDictionary+GetSocial.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E502F2269D86300AB8286 /* NSDictionary+GetSocial.m */; };
 		BC2E50382269D86400AB8286 /* NSObject+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E50312269D86300AB8286 /* NSObject+Json.m */; };
+		BC6507F122A966EE007CC248 /* GetSocialSuggestedFriend+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6507F022A966EE007CC248 /* GetSocialSuggestedFriend+Json.m */; };
+		BC84890D22B9787F001C43ED /* GetSocialUserReference+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = BC84890C22B9787F001C43ED /* GetSocialUserReference+Json.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +39,12 @@
 		134814201AA4EA6300B7C361 /* libRNGetSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGetSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E7B5881CC2AC0600A0062D /* RNGetSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGetSocial.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNGetSocial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGetSocial.m; sourceTree = "<group>"; };
+		BC11113222AAF55D001B894D /* GetSocialInviteContent+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GetSocialInviteContent+Json.h"; sourceTree = "<group>"; };
+		BC11113322AAF55D001B894D /* GetSocialInviteChannel+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GetSocialInviteChannel+Json.m"; sourceTree = "<group>"; };
+		BC11113422AAF55D001B894D /* GetSocialInviteChannel+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GetSocialInviteChannel+Json.h"; sourceTree = "<group>"; };
+		BC11113522AAF55D001B894D /* GetSocialInviteContent+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GetSocialInviteContent+Json.m"; sourceTree = "<group>"; };
+		BC11113822AAF60D001B894D /* UIImage+GetSocial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+GetSocial.m"; path = "CocoaExtensions/UIImage+GetSocial.m"; sourceTree = "<group>"; };
+		BC11113922AAF60D001B894D /* UIImage+GetSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+GetSocial.h"; path = "CocoaExtensions/UIImage+GetSocial.h"; sourceTree = "<group>"; };
 		BC2E501C2269D7C300AB8286 /* GetSocialReferralData+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GetSocialReferralData+Json.m"; sourceTree = "<group>"; };
 		BC2E501D2269D7C300AB8286 /* GetSocialReferredUser+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GetSocialReferredUser+Json.m"; sourceTree = "<group>"; };
 		BC2E501E2269D7C300AB8286 /* GetSocialReferredUser+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GetSocialReferredUser+Json.h"; sourceTree = "<group>"; };
@@ -51,6 +62,10 @@
 		BC2E50302269D86300AB8286 /* NSObject+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+Json.h"; path = "CocoaExtensions/NSObject+Json.h"; sourceTree = "<group>"; };
 		BC2E50312269D86300AB8286 /* NSObject+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+Json.m"; path = "CocoaExtensions/NSObject+Json.m"; sourceTree = "<group>"; };
 		BC2E50322269D86400AB8286 /* NSError+GetSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+GetSocial.h"; path = "CocoaExtensions/NSError+GetSocial.h"; sourceTree = "<group>"; };
+		BC6507EF22A966EE007CC248 /* GetSocialSuggestedFriend+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GetSocialSuggestedFriend+Json.h"; path = "SocialGraph/GetSocialSuggestedFriend+Json.h"; sourceTree = "<group>"; };
+		BC6507F022A966EE007CC248 /* GetSocialSuggestedFriend+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GetSocialSuggestedFriend+Json.m"; path = "SocialGraph/GetSocialSuggestedFriend+Json.m"; sourceTree = "<group>"; };
+		BC84890B22B9787F001C43ED /* GetSocialUserReference+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GetSocialUserReference+Json.h"; sourceTree = "<group>"; };
+		BC84890C22B9787F001C43ED /* GetSocialUserReference+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GetSocialUserReference+Json.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +110,8 @@
 		BC2E501A2269D72D00AB8286 /* UserManagement */ = {
 			isa = PBXGroup;
 			children = (
+				BC84890B22B9787F001C43ED /* GetSocialUserReference+Json.h */,
+				BC84890C22B9787F001C43ED /* GetSocialUserReference+Json.m */,
 				BC2E50222269D7CA00AB8286 /* GetSocialPublicUser+Json.h */,
 				BC2E50232269D7CA00AB8286 /* GetSocialPublicUser+Json.m */,
 			);
@@ -104,6 +121,10 @@
 		BC2E501B2269D77800AB8286 /* SmartInvites */ = {
 			isa = PBXGroup;
 			children = (
+				BC11113422AAF55D001B894D /* GetSocialInviteChannel+Json.h */,
+				BC11113322AAF55D001B894D /* GetSocialInviteChannel+Json.m */,
+				BC11113222AAF55D001B894D /* GetSocialInviteContent+Json.h */,
+				BC11113522AAF55D001B894D /* GetSocialInviteContent+Json.m */,
 				BC2E501F2269D7C300AB8286 /* GetSocialReferralData+Json.h */,
 				BC2E501C2269D7C300AB8286 /* GetSocialReferralData+Json.m */,
 				BC2E501E2269D7C300AB8286 /* GetSocialReferredUser+Json.h */,
@@ -115,6 +136,8 @@
 		BC2E50262269D82300AB8286 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				BC11113922AAF60D001B894D /* UIImage+GetSocial.h */,
+				BC11113822AAF60D001B894D /* UIImage+GetSocial.m */,
 				BC2E502B2269D86300AB8286 /* NSArray+GetSocial.h */,
 				BC2E502D2269D86300AB8286 /* NSArray+GetSocial.m */,
 				BC2E502A2269D86300AB8286 /* NSDictionary+GetSocial.h */,
@@ -132,10 +155,20 @@
 		BC2E50272269D84A00AB8286 /* GetSocial */ = {
 			isa = PBXGroup;
 			children = (
+				BC6507EE22A966DF007CC248 /* SocialGraph */,
 				BC2E501B2269D77800AB8286 /* SmartInvites */,
 				BC2E501A2269D72D00AB8286 /* UserManagement */,
 			);
 			path = GetSocial;
+			sourceTree = "<group>";
+		};
+		BC6507EE22A966DF007CC248 /* SocialGraph */ = {
+			isa = PBXGroup;
+			children = (
+				BC6507EF22A966EE007CC248 /* GetSocialSuggestedFriend+Json.h */,
+				BC6507F022A966EE007CC248 /* GetSocialSuggestedFriend+Json.m */,
+			);
+			name = SocialGraph;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -198,11 +231,16 @@
 				BC2E50372269D86400AB8286 /* NSDictionary+GetSocial.m in Sources */,
 				BC2E50202269D7C300AB8286 /* GetSocialReferralData+Json.m in Sources */,
 				BC2E50212269D7C300AB8286 /* GetSocialReferredUser+Json.m in Sources */,
+				BC11113A22AAF60D001B894D /* UIImage+GetSocial.m in Sources */,
+				BC84890D22B9787F001C43ED /* GetSocialUserReference+Json.m in Sources */,
 				BC2E50352269D86400AB8286 /* NSArray+GetSocial.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNGetSocial.m in Sources */,
+				BC6507F122A966EE007CC248 /* GetSocialSuggestedFriend+Json.m in Sources */,
+				BC11113722AAF55D001B894D /* GetSocialInviteContent+Json.m in Sources */,
 				BC2E50342269D86400AB8286 /* NSError+GetSocial.m in Sources */,
 				BC2E50242269D7CB00AB8286 /* GetSocialPublicUser+Json.m in Sources */,
 				BC2E50382269D86400AB8286 /* NSObject+Json.m in Sources */,
+				BC11113622AAF55D001B894D /* GetSocialInviteChannel+Json.m in Sources */,
 				BC2E50362269D86400AB8286 /* NSMutableDictionary+GetSocial.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

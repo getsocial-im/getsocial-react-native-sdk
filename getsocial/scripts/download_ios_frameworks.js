@@ -2,6 +2,7 @@
 
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
+import {version} from './../package.json';
 
 const fs = require('fs');
 const path = require('path');
@@ -79,8 +80,8 @@ function updatePlist() {
     files.forEach((plist) => {
       // Update plist with new values
       console.info('Updating ' + plist);
-      exec('/usr/libexec/PlistBuddy -c "Add im.getsocial.sdk.WrapperVersion string 0.0.1" ' + plist);
-      // exec('/usr/libexec/PlistBuddy -c "Add im.getsocial.sdk.Runtime string REACTNATIVE" ' + plist);
+      exec('/usr/libexec/PlistBuddy -c "Add im.getsocial.sdk.WrapperVersion string ' + version + '" ' + plist);
+      exec('/usr/libexec/PlistBuddy -c "Add im.getsocial.sdk.Runtime string REACTNATIVE" ' + plist);
     });
     resolve();
   });

@@ -5,9 +5,13 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+import im.getsocial.sdk.invites.InviteChannel;
 import im.getsocial.sdk.invites.ReferralData;
 import im.getsocial.sdk.invites.ReferredUser;
+import im.getsocial.sdk.socialgraph.SuggestedFriend;
+import im.getsocial.sdk.usermanagement.ConflictUser;
 import im.getsocial.sdk.usermanagement.PublicUser;
+import im.getsocial.sdk.usermanagement.UserReference;
 
 import java.util.List;
 import java.util.Map;
@@ -44,13 +48,90 @@ public class Converters {
 		return writableArray;
 	}
 
-	public static WritableMap convertReferredUser(final ReferredUser referredUser) {
+	public static WritableArray convertPublicUsers(final List<PublicUser> publicUsers) {
+		WritableArray writableArray = new WritableNativeArray();
+		for (PublicUser publicUser : publicUsers) {
+			writableArray.pushMap(convertPublicUser(publicUser));
+		}
+		return writableArray;
+	}
+
+	public static WritableArray convertUserReferences(final List<UserReference> userReferences) {
+		WritableArray writableArray = new WritableNativeArray();
+		for (UserReference userReference : userReferences) {
+			writableArray.pushMap(convertUserReference(userReference));
+		}
+		return writableArray;
+	}
+
+
+	public static WritableMap convertPublicUsersMap(final Map<String, PublicUser> publicUsersMap) {
+		WritableMap writableMap = new WritableNativeMap();
+		for (Map.Entry<String, PublicUser> publicUserEntry : publicUsersMap.entrySet()) {
+			writableMap.putMap(publicUserEntry.getKey(), convertPublicUser(publicUserEntry.getValue()));
+		}
+		return writableMap;
+	}
+
+	public static WritableArray convertSuggestedFriends(final List<SuggestedFriend> suggestedFriends) {
+		WritableArray writableArray = new WritableNativeArray();
+		for (SuggestedFriend suggestedFriend : suggestedFriends) {
+			writableArray.pushMap(convertSuggestedFriend(suggestedFriend));
+		}
+		return writableArray;
+	}
+
+	public static WritableMap convertAuthIdentities(final Map<String, String> identities) {
+		WritableMap writableMap = new WritableNativeMap();
+		for(Map.Entry<String, String> entry : identities.entrySet()) {
+			writableMap.putString(entry.getKey(), entry.getValue());
+		}
+		return writableMap;
+	}
+
+	public static WritableArray convertInviteChannels(final List<InviteChannel> inviteChannels) {
+		WritableArray writableArray = new WritableNativeArray();
+		for (InviteChannel inviteChannel : inviteChannels) {
+			writableArray.pushMap(convertInviteChannel(inviteChannel));
+		}
+		return writableArray;
+	}
+
+	private static WritableMap convertInviteChannel(final InviteChannel inviteChannel) {
+		WritableMap writableMap = new WritableNativeMap();
+		writableMap.putString("ID", inviteChannel.getChannelId());
+		writableMap.putString("NAME", inviteChannel.getChannelName());
+		writableMap.putString("ICON_IMAGE_URL", inviteChannel.getIconImageUrl());
+		writableMap.putInt("DISPLAY_ORDER", inviteChannel.getDisplayOrder());
+		writableMap.putBoolean("IS_ENABLED", inviteChannel.isEnabled());
+		return writableMap;
+	}
+
+	private static WritableMap convertSuggestedFriend(final SuggestedFriend suggestedFriend) {
+		WritableMap writableMap = convertPublicUser(suggestedFriend);
+		writableMap.putDouble("MUTUAL_FRIENDS_COUNT", suggestedFriend.getMutualFriendsCount());
+		return writableMap;
+	}
+
+	private static WritableMap convertReferredUser(final ReferredUser referredUser) {
 		WritableMap writableMap = convertPublicUser(referredUser);
 		writableMap.putDouble("INSTALLATION_DATE", referredUser.getInstallationDate());
 		writableMap.putString("INSTALLATION_CHANNEL", referredUser.getInstallationChannel());
 		writableMap.putString("INSTALL_PLATFORM", referredUser.getInstallPlatform());
 		writableMap.putBoolean("IS_REINSTALL", referredUser.isReinstall());
 		writableMap.putBoolean("IS_INSTALL_SUSPICIOUS", referredUser.isInstallSuspicious());
+		return writableMap;
+	}
+
+	public static WritableMap convertUserReference(final UserReference userReference) {
+		WritableMap writableMap = new WritableNativeMap();
+		writableMap.putString("USER_ID", userReference.getId());
+		writableMap.putString("DISPLAY_NAME", userReference.getDisplayName());
+		if (userReference.getAvatarUrl() != null) {
+			writableMap.putString("AVATAR_URL", userReference.getAvatarUrl());
+		} else {
+			writableMap.putNull("AVATAR_URL");
+		}
 		return writableMap;
 	}
 
@@ -68,11 +149,14 @@ public class Converters {
 		return writableMap;
 	}
 
-	public static WritableMap convertMap(Map<String, String> sourceMap) {
+	public static WritableMap convertConflictUser(final ConflictUser conflictUser) {
+		return convertPublicUser(conflictUser);
+	}
+
+	private static WritableMap convertMap(Map<String, String> sourceMap) {
 		WritableMap writableMap = new WritableNativeMap();
-		for (String key : sourceMap.keySet()) {
-			String value = sourceMap.get(key);
-			writableMap.putString(key, value);
+		for (Map.Entry<String, String> entry : sourceMap.entrySet()) {
+			writableMap.putString(entry.getKey(), entry.getValue());
 		}
 		return writableMap;
 	}

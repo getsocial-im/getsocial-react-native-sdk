@@ -23,6 +23,16 @@ export default class MainMenu extends Component<Props, State> {
     constructor(props: any) {
       super(props);
 
+      const userManagementMenu = new MenuItem();
+      userManagementMenu.key = 'user-management';
+      userManagementMenu.title = 'User Management';
+      userManagementMenu.navigateTo = 'UMMenu';
+
+      const friendsMenu = new MenuItem();
+      friendsMenu.key = 'friends';
+      friendsMenu.title = 'Friends';
+      friendsMenu.navigateTo = 'FriendsMenu';
+
       const invitesMenu = new MenuItem();
       invitesMenu.key = 'invites';
       invitesMenu.title = 'Smart Invites';
@@ -38,11 +48,12 @@ export default class MainMenu extends Component<Props, State> {
       settingsMenu.title = 'Settings';
       settingsMenu.navigateTo = 'SettingsMenu';
 
-      const mainMenu = [invitesMenu, uiConfigMenu, settingsMenu];
+      const mainMenu = [userManagementMenu, friendsMenu, invitesMenu, uiConfigMenu, settingsMenu];
 
       this.state = {
         menu: mainMenu,
       };
+      global.userInfoComponentRef = React.createRef();
     }
 
     menuItemSelected(menuItem : MenuItem) {
@@ -55,7 +66,7 @@ export default class MainMenu extends Component<Props, State> {
       return (
         <View style={MenuStyle.container}>
           {/* user info starts */}
-          <UserInfoComponent/>
+          <UserInfoComponent ref={global.userInfoComponentRef}/>
           {/* user info ends */}
 
           {/* main menu starts */}

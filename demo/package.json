@@ -14,6 +14,7 @@
     "getsocial-react-native-sdk": "file:../getsocial",
     "react": "16.8.3",
     "react-native": "0.59.0",
+    "react-native-fbsdk": "^0.8.0",
     "react-native-gesture-handler": "^1.2.1",
     "react-navigation": "^3.9.1"
   },

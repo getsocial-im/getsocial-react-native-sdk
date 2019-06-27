@@ -6,6 +6,11 @@
 #import "NSDictionary+GetSocial.h"
 #import "GetSocialReferralData+Json.h"
 #import "GetSocialReferredUser+Json.h"
+#import "GetSocialPublicUser+Json.h"
+#import "GetSocialSuggestedFriend+Json.h"
+#import "GetSocialInviteChannel+Json.h"
+#import "GetSocialInviteChannel+Json.h"
+#import "GetSocialUserReference+Json.h"
 
 #pragma mark - Private RNGetSocial declarations
 
@@ -64,7 +69,7 @@ RCT_EXPORT_MODULE()
              };
 }
 
-#pragma mark - GetSocial
+#pragma mark - GetSocial methods
 
 #pragma mark - Method getSdkVersion
 RCT_REMAP_METHOD(getSdkVersion,
@@ -106,26 +111,6 @@ RCT_REMAP_METHOD(setLanguage,
     resolve([NSNumber numberWithBool:result]);
 }
 
-#pragma mark - Method getUserId
-RCT_REMAP_METHOD(getUserId,
-                 getUserIdWithResolver:(RCTPromiseResolveBlock)resolve
-                 reject:(RCTPromiseRejectBlock)reject) {
-    resolve([GetSocialUser userId]);
-}
-
-#pragma mark - Method getDisplayName
-RCT_REMAP_METHOD(getDisplayName,
-                 getDisplayNameWithResolver:(RCTPromiseResolveBlock)resolve
-                 reject:(RCTPromiseRejectBlock)reject) {
-    resolve([GetSocialUser displayName]);
-}
-
-#pragma mark - Method getAvatarUrl
-RCT_REMAP_METHOD(getAvatarUrl,
-                 getAvatarUrlWithResolver:(RCTPromiseResolveBlock)resolve
-                 reject:(RCTPromiseRejectBlock)reject){
-    resolve([GetSocialUser avatarUrl]);
-}
 
 #pragma mark - Method getReferralData
 RCT_REMAP_METHOD(getReferralData,
@@ -142,7 +127,7 @@ RCT_REMAP_METHOD(getReferralData,
         }
     }
                                failure:^(NSError *_Nonnull error) {
-                                   reject(@"GetSocial", @"Failed getting referral data", error);
+                                   reject(@"GetSocial", @"Failed getting referral data", [self convertError:error]);
                                }];
 }
 
@@ -165,13 +150,500 @@ RCT_REMAP_METHOD(getReferredUsers,
         }
         resolve(referredUsersArray);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get referred users", error);
+        reject(@"GetSocial", @"Failed to get referred users", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method isInviteChannelAvailable
+RCT_REMAP_METHOD(isInviteChannelAvailable,
+                 isInviteChannelAvailableWithChannelId:(NSString*)channelId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([NSNumber numberWithBool:[GetSocial isInviteChannelAvailable:channelId]]);
+}
+
+#pragma mark - Method getInviteChannels
+RCT_REMAP_METHOD(getInviteChannels,
+                 getInviteChannelsWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    NSArray<GetSocialInviteChannel*>* channels = [GetSocial inviteChannels];
+    NSMutableArray<NSDictionary*>* returnStruct = [NSMutableArray array];
+    for (GetSocialInviteChannel* inviteChannel in channels) {
+        [returnStruct addObject:[inviteChannel toJsonDictionary]];
+    }
+    resolve(returnStruct);
+}
+
+#pragma mark - Method createInviteLink
+RCT_REMAP_METHOD(createInviteLink,
+                 createInviteLinkWithLinkParams:(NSDictionary*)linkParams
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocial createInviteLinkWithParams:linkParams success:^(NSString * _Nonnull result) {
+        resolve(result);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to create invite link", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method sendInvite
+RCT_REMAP_METHOD(sendInvite,
+                 sendInviteWithChannelId:(NSString*)channelId
+                 inviteParameters:(NSDictionary*)inviteParameters
+                 linkParams:(NSDictionary*)linkParams
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+
+    // subject and text
+    NSString* customInviteSubject = [inviteParameters safeValueForKey:KEY_INVITE_CONTENT_PARAMETER_CUSTOM_SUBJECT];
+    NSString* customInviteText = [inviteParameters safeValueForKey:KEY_INVITE_CONTENT_PARAMETER_CUSTOM_TEXT];
+
+    GetSocialMutableInviteContent* mutableInviteContent = [GetSocialMutableInviteContent new];
+    mutableInviteContent.text = customInviteText;
+    mutableInviteContent.subject = customInviteSubject;
+
+    // media attachment
+    NSDictionary* mediaAttachmentDictionary = inviteParameters[KEY_MEDIA_ATTACHMENT];
+    NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
+    NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
+    GetSocialMediaAttachment* mediaAttachment;
+    if (imageUrl) {
+        mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
+    }
+    if (videoUrl) {
+        mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
+    }
+    if (mediaAttachment) {
+        mutableInviteContent.mediaAttachment = mediaAttachment;
+    }
+
+    [GetSocial sendInviteWithChannelId:channelId inviteContent:mutableInviteContent linkParams:linkParams success:^{
+        [self fireInvitesEventWithStatus:@"onComplete" errorMessage:nil];
+    } cancel:^{
+        [self fireInvitesEventWithStatus:@"onCancel" errorMessage:nil];
+    } failure:^(NSError * _Nonnull error) {
+        [self fireInvitesEventWithStatus:@"onError" errorMessage: error.description];
+    }];
+}
+
+#pragma mark - Method getUserById
+RCT_REMAP_METHOD(getUserById,
+                 getUserById:(NSString*)userId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocial userWithId:userId success:^(GetSocialPublicUser * _Nonnull publicUser) {
+        resolve([publicUser toJsonDictionary]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to get user by id", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getUserByAuthIdentity
+RCT_REMAP_METHOD(getUserByAuthIdentity,
+                  getUserByAuthIdentityWithProviderId:(NSString*)providerId
+                  providerUserId:(NSString*)providerUserId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocial userWithId:providerUserId forProvider:providerId success:^(GetSocialPublicUser * _Nonnull publicUser) {
+        resolve([publicUser toJsonDictionary]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to get user by auth identity", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getUsersByAuthIdentities
+RCT_REMAP_METHOD(getUsersByAuthIdentities,
+                 getUsersByAuthIdentitiesWithProviderId:(NSString*)providerId
+                 providerUserIds:(NSArray<NSString*>*)providerUserIds
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocial usersWithIds:providerUserIds forProvider:providerId success:^(NSDictionary<NSString *,GetSocialPublicUser *> * _Nonnull publicUsersDictionary) {
+        NSMutableDictionary* result = [NSMutableDictionary dictionary];
+        NSArray<NSString*>* keys = [publicUsersDictionary allKeys];
+        for (NSString* key in keys) {
+            result[key] = [publicUsersDictionary[key] toJsonDictionary];
+        }
+        resolve(result);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to get users by auth identities", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method findUsers
+RCT_REMAP_METHOD(findUsers,
+                 findUsersWithQuery:(NSDictionary*)queryParameters
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    GetSocialUsersQuery* query = [GetSocialUsersQuery usersByDisplayName:queryParameters[@"query"]];
+    [query setLimit:[queryParameters[@"limit"] intValue]];
+
+    [GetSocial findUsers:query success:^(NSArray<GetSocialUserReference *> * _Nonnull users) {
+        NSMutableArray* result = [NSMutableArray array];
+        for (GetSocialUserReference* userReference in users) {
+            [result addObject:[userReference toJsonDictionary]];
+        }
+        resolve(result);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to find users", [self convertError:error]);
+    }];
+}
+
+
+#pragma mark - GetSocialUser methods
+
+#pragma mark - Method isAnonymous
+RCT_REMAP_METHOD(isAnonymous,
+                 isAnonymousWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([NSNumber numberWithBool:[GetSocialUser isAnonymous]]);
+}
+
+#pragma mark - Method getUserId
+RCT_REMAP_METHOD(getUserId,
+                 getUserIdWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser userId]);
+}
+
+#pragma mark - Method getDisplayName
+RCT_REMAP_METHOD(getDisplayName,
+                 getDisplayNameWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser displayName]);
+}
+
+#pragma mark - Method setDisplayName
+RCT_REMAP_METHOD(setDisplayName,
+                 setDisplayName:(NSString*)displayName
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser setDisplayName:displayName success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to set user's display name", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getAvatarUrl
+RCT_REMAP_METHOD(getAvatarUrl,
+                 getAvatarUrlWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject){
+    resolve([GetSocialUser avatarUrl]);
+}
+
+#pragma mark - Method setAvatarUrl
+RCT_REMAP_METHOD(setAvatarUrl,
+                 setAvatarUrl:(NSString*)avatarUrl
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser setAvatarUrl:avatarUrl success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to set user's avatar url", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method setPublicProperty
+RCT_REMAP_METHOD(setPublicProperty,
+                  setPublicProperty:(NSString*)propertyKey
+                  propertyValue:(NSString*)propertyValue
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser setPublicPropertyValue:propertyValue forKey:propertyKey success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to set public property", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method setPrivateProperty
+RCT_REMAP_METHOD(setPrivateProperty,
+                 setPrivateProperty:(NSString*)propertyKey
+                 propertyValue:(NSString*)propertyValue
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser setPrivatePropertyValue:propertyValue forKey:propertyKey success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to set public property", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method hasPublicProperty
+RCT_REMAP_METHOD(hasPublicProperty,
+                 hasPublicProperty:(NSString*)propertyKey
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([NSNumber numberWithBool:[GetSocialUser hasPublicPropertyForKey:propertyKey]]);
+}
+
+#pragma mark - Method hasPrivateProperty
+RCT_REMAP_METHOD(hasPrivateProperty,
+                 hasPrivateProperty:(NSString*)propertyKey
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([NSNumber numberWithBool:[GetSocialUser hasPrivatePropertyForKey:propertyKey]]);
+}
+
+#pragma mark - Method getPublicProperty
+RCT_REMAP_METHOD(getPublicProperty,
+                 getPublicProperty:(NSString*)propertyKey
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser publicPropertyValueForKey:propertyKey]);
+}
+
+#pragma mark - Method getPrivateProperty
+RCT_REMAP_METHOD(getPrivateProperty,
+                 getPrivateProperty:(NSString*)propertyKey
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser privatePropertyValueForKey:propertyKey]);
+}
+
+#pragma mark - Method allPublicProperties
+RCT_REMAP_METHOD(allPublicProperties,
+                 allPublicPropertiesWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser allPublicProperties]);
+}
+
+#pragma mark - Method allPrivateProperties
+RCT_REMAP_METHOD(allPrivateProperties,
+                 allPrivatePropertiesWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser allPrivateProperties]);
+}
+
+#pragma mark - Method removePublicProperty
+RCT_REMAP_METHOD(removePublicProperty,
+                 removePublicProperty:(NSString*)propertyKey
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser removePublicPropertyForKey:propertyKey success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to remove public property", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method deletePrivateProperty
+RCT_REMAP_METHOD(removePrivateProperty,
+                 removePrivateProperty:(NSString*)propertyKey
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser removePrivatePropertyForKey:propertyKey success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to remove private property", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method addAuthIdentity
+RCT_REMAP_METHOD(addAuthIdentity,
+                 addAuthIdentityWithJSON:(NSDictionary*)authIdentityDict
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    NSString* providerId = authIdentityDict[@"providerId"];
+    NSString* providerUserId = authIdentityDict[@"providerUserId"];
+    if ([providerUserId isKindOfClass:[NSNull class]]) {
+        providerUserId = nil;
+    }
+    NSString* accessToken = authIdentityDict[@"accessToken"];
+    GetSocialAuthIdentity* authIdentity = [GetSocialAuthIdentity customIdentityForProvider: providerId userId: providerUserId accessToken: accessToken];
+    [GetSocialUser addAuthIdentity:authIdentity success:^{
+        resolve(nil);
+    } conflict:^(GetSocialConflictUser * _Nonnull conflictUser) {
+        resolve([conflictUser toJsonDictionary]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to add auth identity", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method removeAuthIdentity
+RCT_REMAP_METHOD(removeAuthIdentity,
+                 removeAuthIdentityWithProviderId:(NSString*)providerId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser removeAuthIdentityWithProviderId:providerId success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to remove auth identity", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method switchUser
+RCT_REMAP_METHOD(switchUser,
+                 switchUserWithJSON:(NSDictionary*)authIdentityDict
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    NSString* providerId = authIdentityDict[@"providerId"];
+    NSString* providerUserId = authIdentityDict[@"providerUserId"];
+    if ([providerUserId isKindOfClass:[NSNull class]]) {
+        providerUserId = nil;
+    }
+    NSString* accessToken = authIdentityDict[@"accessToken"];
+    GetSocialAuthIdentity* authIdentity = [GetSocialAuthIdentity customIdentityForProvider: providerId userId: providerUserId accessToken: accessToken];
+    [GetSocialUser switchUserToIdentity:authIdentity success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to switch user", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getAuthIdentities
+RCT_REMAP_METHOD(getAuthIdentities,
+                 getAuthIdentitiesWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([GetSocialUser authIdentities]);
+}
+
+#pragma mark - Method AddFriend
+RCT_REMAP_METHOD(addFriend,
+                 addFriendWithUserId:(NSString*)userId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser addFriend:userId success:^(int result) {
+        resolve([NSNumber numberWithInt:result]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to add friend", [self convertError:[self convertError:error]]);
+    }];
+}
+
+#pragma mark - Method AddFriendsByAuthIdentities
+RCT_REMAP_METHOD(addFriendsByAuthIdentities,
+                 addFriendsByAuthIdentitiesWithProviderId:(NSString*)providerId
+                 userIds:(NSArray<NSString*>*)userIds
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser addFriendsWithIds:userIds forProvider:providerId success:^(int result) {
+        resolve([NSNumber numberWithInt:result]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to add friends", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method removeFriend
+RCT_REMAP_METHOD(removeFriend,
+                 removeFriendWithUserId:(NSString*)userId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser removeFriend:userId success:^(int result) {
+        resolve([NSNumber numberWithInt:result]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to remove friend", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method removeFriendsByAuthIdentities
+RCT_REMAP_METHOD(removeFriendsByAuthIdentities,
+                 removeFriendsByAuthIdentitiesWithProviderId:(NSString*)providerId
+                 userIds:(NSArray<NSString*>*)userIds
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser removeFriendsWithIds:userIds forProvider:providerId success:^(int result) {
+        resolve([NSNumber numberWithInt:result]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to remove friends", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method setFriends
+RCT_REMAP_METHOD(setFriends,
+                 setFriendsWithUserIds:(NSArray<NSString*>*)userIds
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser setFriendsWithIds:userIds success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to set friends", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method setFriendsByAuthIdentities
+RCT_REMAP_METHOD(setFriendsByAuthIdentities,
+                 setFriendsByAuthIdentitiesWithProviderId:(NSString*)providerId
+                 userIds:(NSArray<NSString*>*)userIds
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser setFriendsWithIds:userIds forProvider:providerId success:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to set friends", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method isFriend
+RCT_REMAP_METHOD(isFriend,
+                 isFriendWithUserId:(NSString*)userId
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser isFriend:userId success:^(BOOL result) {
+        resolve([NSNumber numberWithBool:result]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to execute isFriend", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getFriendsCount
+RCT_REMAP_METHOD(getFriendsCount,
+                 getFriendsCountWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser friendsCountWithSuccess:^(int result) {
+        resolve([NSNumber numberWithInt:result]);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to get friends count", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getFriends
+RCT_REMAP_METHOD(getFriends,
+                  getFriendsWithOffset:(int)offset
+                  limit:(int)limit
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser friendsWithOffset:0 limit:1000 success:^(NSArray<GetSocialPublicUser *> * _Nonnull friends) {
+        NSMutableArray* friendsArray = [NSMutableArray array];
+        for (GetSocialPublicUser* friend in friends) {
+            [friendsArray addObject:[friend toJsonDictionary]];
+        }
+        resolve(friendsArray);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to get friends", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method getSuggestedFriends
+RCT_REMAP_METHOD(getSuggestedFriends,
+                 getSuggestedFriendsWithOffset:(int)offset
+                 limit:(int)limit
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser suggestedFriendsWithOffset:offset limit:limit success:^(NSArray<GetSocialSuggestedFriend *> * _Nonnull suggestedFriends) {
+        NSMutableArray* friendsArray = [NSMutableArray array];
+        for (GetSocialSuggestedFriend* friend in suggestedFriends) {
+            [friendsArray addObject:[friend toJsonDictionary]];
+        }
+        resolve(friendsArray);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to get friends", [self convertError:error]);
+    }];
+}
+
+#pragma mark - Method resetUser
+RCT_REMAP_METHOD(resetUser,
+                 resetUserWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser resetWithSuccess:^{
+        resolve(nil);
+    } failure:^(NSError * _Nonnull error) {
+        reject(@"GetSocial", @"Failed to reset user", [self convertError:error]);
     }];
 }
 
 #pragma mark - Supported events
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"whenInitialized", @"onUserChanged", @"onGlobalError", @"InvitesUIEvent"];
+    return @[@"whenInitialized", @"onUserChanged", @"onGlobalError", @"InvitesUIEvent", @"InvitesEvent"];
 }
 
 #pragma mark - Setup
@@ -201,7 +673,7 @@ RCT_REMAP_METHOD(getReferredUsers,
     }];
 }
 
-#pragma mark - GetSocial UI
+#pragma mark - GetSocial UI methods
 
 #pragma mark - Method closeView
 RCT_REMAP_METHOD(closeView,
@@ -243,17 +715,19 @@ RCT_REMAP_METHOD(showInvitesView,
 
     // media attachment
     NSDictionary* mediaAttachmentDictionary = inviteParameters[KEY_MEDIA_ATTACHMENT];
-    NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
-    NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
-    GetSocialMediaAttachment* mediaAttachment;
-    if (imageUrl) {
-        mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
-    }
-    if (videoUrl) {
-        mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
-    }
-    if (mediaAttachment) {
-        mutableInviteContent.mediaAttachment = mediaAttachment;
+    if (![mediaAttachmentDictionary isKindOfClass:[NSNull class]]) {
+        NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
+        NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
+        GetSocialMediaAttachment* mediaAttachment;
+        if (imageUrl) {
+            mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
+        }
+        if (videoUrl) {
+            mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
+        }
+        if (mediaAttachment) {
+            mutableInviteContent.mediaAttachment = mediaAttachment;
+        }
     }
 
     GetSocialUIInvitesView* invitesView = [GetSocialUI createInvitesView];
@@ -300,6 +774,21 @@ RCT_REMAP_METHOD(loadConfiguration,
 }
 
 #pragma mark - Helper methods
+
+- (NSError*)convertError:(NSError*)error {
+    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObject:error.localizedDescription forKey:@"MESSAGE"];
+    return [NSError errorWithDomain:@"GetSocial" code:error.code userInfo:userInfo];
+}
+
+- (void)fireInvitesEventWithStatus:(NSString*)status errorMessage:(NSString*)errorMessage
+{
+    NSMutableDictionary* eventData = [NSMutableDictionary dictionary];
+    eventData[@"STATUS"] = status;
+    if (errorMessage) {
+        eventData[@"ERROR"]  = errorMessage;
+    }
+    [self sendEventWithName:@"InvitesEvent" body:eventData];
+}
 
 - (void)fireInvitesUIEventWithStatus:(NSString*)status channelId:(NSString*)channelId errorMessage:(NSString*)errorMessage
 {

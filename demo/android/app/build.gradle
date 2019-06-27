@@ -69,10 +69,12 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-fbsdk')
     implementation project(':react-native-gesture-handler')
-    compile project(':getsocial-react-native-sdk')
+    implementation project(':getsocial-react-native-sdk')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation ("com.android.support:appcompat-v7:27.0.2") { force = true }
+
     implementation ("com.facebook.react:react-native:0.59.0") { force = true }
 
 

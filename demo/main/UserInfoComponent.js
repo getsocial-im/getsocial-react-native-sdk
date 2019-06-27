@@ -10,41 +10,67 @@ import {GetSocial, GetSocialUser} from 'getsocial-react-native-sdk';
 
 type Props = {}
 type State = {
-  userName : string,
-  sdkState : string
+  userDisplayName : string,
+  userAvatarUrl : ?string,
+  userIdentities : string,
 }
 export default class UserInfoComponent extends Component<Props, State> {
   updateUserInfo() {
     GetSocialUser.getDisplayName().then((displayName) => {
-      this.setState({userName: displayName});
+      this.setState({userDisplayName: displayName});
+    });
+    GetSocialUser.getAvatarUrl().then((avatarUrl) => {
+      if (avatarUrl != '') {
+        this.setState({userAvatarUrl: avatarUrl});
+      } else {
+        this.setState({userAvatarUrl: undefined});
+      }
+    });
+    GetSocialUser.isAnonymous().then((isAnonymous) => {
+      if (isAnonymous) {
+        this.setState({userIdentities: 'Anonymous'});
+      } else {
+        GetSocialUser.getAuthIdentities().then((authIdentities: Map<string, string>) => {
+          this.setState({userIdentities: JSON.stringify(authIdentities)});
+        });
+      }
     });
   }
   constructor(props: any) {
     super(props);
     this.state = {
-      userName: 'Anonymous',
-      sdkState: 'Offline',
+      userDisplayName: 'N/A',
+      userAvatarUrl: undefined,
+      userIdentities: 'Offline',
     };
+  }
+
+  componentWillMount() {
     // Listen for events to set the proper information
     GetSocialUser.onUserChanged(() => {
       this.updateUserInfo();
     });
 
     GetSocial.whenInitialized(() => {
-      this.setState({sdkState: 'Online'});
       this.updateUserInfo();
     });
   }
 
   render() {
+    let userImage;
+    if (this.state.userAvatarUrl == undefined) {
+      userImage = <Image source={require('./../img/avatar_default.png')} style={UserInfoComponentStyle.userAvatar}/>;
+    } else {
+      userImage = <Image source={{uri: this.state.userAvatarUrl}} style={UserInfoComponentStyle.userAvatar}/>;
+    }
     return (
       <View style={UserInfoComponentStyle.userInfoComponent}>
         <View style={{flex: 0, width: 40, height: 40, backgroundColor: 'skyblue'}}>
-          <Image source={require('./../img/avatar_default.png')} style={UserInfoComponentStyle.userAvatar}/>
+          {userImage}
         </View>
         <View style={UserInfoComponentStyle.userDetailsContainer}>
-          <Text style={UserInfoComponentStyle.username}>{this.state.userName}</Text>
-          <Text style={UserInfoComponentStyle.userinfo}>{this.state.sdkState}</Text>
+          <Text style={UserInfoComponentStyle.username}>{this.state.userDisplayName}</Text>
+          <Text style={UserInfoComponentStyle.userinfo}>{this.state.userIdentities}</Text>
         </View>
       </View>
     );
