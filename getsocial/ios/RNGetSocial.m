@@ -11,6 +11,10 @@
 #import "GetSocialInviteChannel+Json.h"
 #import "GetSocialInviteChannel+Json.h"
 #import "GetSocialUserReference+Json.h"
+#import "GetSocialAction+Json.h"
+#import "GetSocialActionButton+Json.h"
+#import "GetSocialNotification+Json.h"
+#import "GetSocialNotificationsSummary+Json.h"
 
 #pragma mark - Private RNGetSocial declarations
 
@@ -66,6 +70,33 @@ RCT_EXPORT_MODULE()
               @"KEY_LINK_PARAMETER_LANDING_PAGE_CUSTOM_DESCRIPTION": GetSocial_Custom_Description,
               @"KEY_LINK_PARAMETER_LANDING_PAGE_CUSTOM_IMAGE": GetSocial_Custom_Image,
               @"KEY_LINK_PARAMETER_LANDING_PAGE_CUSTOM_YOUTUBE_VIDEO": GetSocial_Custom_YouTubeVideo,
+              // action types
+              @"ACTION_TYPE_OPEN_PROFILE": GetSocialActionOpenProfile,
+              @"ACTION_TYPE_OPEN_INVITES": GetSocialActionOpenInvites,
+              @"ACTION_TYPE_OPEN_URL": GetSocialActionOpenUrl,
+              @"ACTION_TYPE_ADD_FRIEND": GetSocialActionAddFriend,
+              // action data keys
+              @"ACTION_DATA_KEY_OPEN_PROFILE_USER_ID": GetSocialActionDataKey_OpenProfile_UserId,
+              @"ACTION_DATA_KEY_OPEN_URL_URL": GetSocialActionDataKey_OpenUrl_Url,
+              @"ACTION_DATA_KEY_ADD_FRIEND_USER_ID": GetSocialActionDataKey_AddFriend_UserId,
+              // notification status
+              @"NOTIFICATION_STATUS_READ": GetSocialNotificationStatusRead,
+              @"NOTIFICATION_STATUS_UNREAD": GetSocialNotificationStatusUnread,
+              @"NOTIFICATION_STATUS_CONSUMED": GetSocialNotificationStatusConsumed,
+              @"NOTIFICATION_STATUS_IGNORED": GetSocialNotificationStatusIgnored,
+              // notification receivers
+              @"NOTIFICATION_RECEIVER_FRIENDS": GetSocial_NotificationPlaceholder_Receivers_Friends,
+              @"NOTIFICATION_RECEIVER_REFERRED_USERS": GetSocial_NotificationPlaceholder_Receivers_ReferredUsers,
+              @"NOTIFICATION_RECEIVER_REFERRER": GetSocial_NotificationPlaceholder_Receivers_Referrer,
+              // notification placeholders
+              @"NOTIFICATION_SENDER_DISPLAY_NAME": GetSocial_NotificationPlaceholder_CustomText_SenderDisplayName,
+              @"NOTIFICATION_RECEIVER_DISPLAY_NAME": GetSocial_NotificationPlaceholder_CustomText_ReceiverDisplayName,
+              // notification types
+              @"NOTIFICATION_TYPE_NEW_FRIENDSHIP": GetSocialNotificationTypeNewFriendship,
+              @"NOTIFICATION_TYPE_INVITE_ACCEPTED": GetSocialNotificationTypeInviteAccepted,
+              @"NOTIFICATION_TYPE_TARGETING": GetSocialNotificationTypeTargeting,
+              @"NOTIFICATION_TYPE_DIRECT": GetSocialNotificationTypeDirect,
+              @"NOTIFICATION_TYPE_SDK": GetSocialNotificationTypeSDK
              };
 }
 
@@ -127,7 +158,7 @@ RCT_REMAP_METHOD(getReferralData,
         }
     }
                                failure:^(NSError *_Nonnull error) {
-                                   reject(@"GetSocial", @"Failed getting referral data", [self convertError:error]);
+                                   [self invokeReject:reject withError:error];
                                }];
 }
 
@@ -150,7 +181,7 @@ RCT_REMAP_METHOD(getReferredUsers,
         }
         resolve(referredUsersArray);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get referred users", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -182,7 +213,7 @@ RCT_REMAP_METHOD(createInviteLink,
     [GetSocial createInviteLinkWithParams:linkParams success:^(NSString * _Nonnull result) {
         resolve(result);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to create invite link", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -203,16 +234,8 @@ RCT_REMAP_METHOD(sendInvite,
     mutableInviteContent.subject = customInviteSubject;
 
     // media attachment
-    NSDictionary* mediaAttachmentDictionary = inviteParameters[KEY_MEDIA_ATTACHMENT];
-    NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
-    NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
-    GetSocialMediaAttachment* mediaAttachment;
-    if (imageUrl) {
-        mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
-    }
-    if (videoUrl) {
-        mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
-    }
+
+    GetSocialMediaAttachment* mediaAttachment = [self createMediaAttachment:inviteParameters[KEY_MEDIA_ATTACHMENT]];
     if (mediaAttachment) {
         mutableInviteContent.mediaAttachment = mediaAttachment;
     }
@@ -234,7 +257,7 @@ RCT_REMAP_METHOD(getUserById,
     [GetSocial userWithId:userId success:^(GetSocialPublicUser * _Nonnull publicUser) {
         resolve([publicUser toJsonDictionary]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get user by id", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -247,7 +270,7 @@ RCT_REMAP_METHOD(getUserByAuthIdentity,
     [GetSocial userWithId:providerUserId forProvider:providerId success:^(GetSocialPublicUser * _Nonnull publicUser) {
         resolve([publicUser toJsonDictionary]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get user by auth identity", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -265,7 +288,7 @@ RCT_REMAP_METHOD(getUsersByAuthIdentities,
         }
         resolve(result);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get users by auth identities", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -284,10 +307,41 @@ RCT_REMAP_METHOD(findUsers,
         }
         resolve(result);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to find users", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
+#pragma mark - Method registerForPushNotifications
+RCT_REMAP_METHOD(registerForPushNotifications,
+                 registerForPushNotificationsWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocial registerForPushNotifications];
+}
+
+
+#pragma mark - Event tracking
+
+
+#pragma mark - Method trackCustomEvent
+RCT_REMAP_METHOD(trackCustomEvent,
+                  trackCustomEventWithEventName:(NSString*)eventName
+                  eventProperties:(NSDictionary*)eventProperties
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    resolve([NSNumber numberWithBool:[GetSocial trackCustomEventWithName:eventName eventProperties:eventProperties]]);
+}
+
+#pragma mark - Action handling
+
+#pragma mark - Method processAction
+RCT_REMAP_METHOD(processAction,
+                 processAction:(NSDictionary*)actionParameters) {
+    NSString* actionType = actionParameters[@"TYPE"];
+    NSDictionary* actionData = actionParameters[@"DATA"];
+    GetSocialActionBuilder * actionBuilder = [[GetSocialActionBuilder alloc] initWithType:actionType];
+    [actionBuilder addActionData:actionData];
+    [GetSocial processAction:[actionBuilder build]];
+}
 
 #pragma mark - GetSocialUser methods
 
@@ -320,7 +374,7 @@ RCT_REMAP_METHOD(setDisplayName,
     [GetSocialUser setDisplayName:displayName success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to set user's display name", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -339,7 +393,7 @@ RCT_REMAP_METHOD(setAvatarUrl,
     [GetSocialUser setAvatarUrl:avatarUrl success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to set user's avatar url", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -352,7 +406,7 @@ RCT_REMAP_METHOD(setPublicProperty,
     [GetSocialUser setPublicPropertyValue:propertyValue forKey:propertyKey success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to set public property", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -365,7 +419,7 @@ RCT_REMAP_METHOD(setPrivateProperty,
     [GetSocialUser setPrivatePropertyValue:propertyValue forKey:propertyKey success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to set public property", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -423,7 +477,7 @@ RCT_REMAP_METHOD(removePublicProperty,
     [GetSocialUser removePublicPropertyForKey:propertyKey success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to remove public property", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -435,7 +489,7 @@ RCT_REMAP_METHOD(removePrivateProperty,
     [GetSocialUser removePrivatePropertyForKey:propertyKey success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to remove private property", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -456,7 +510,7 @@ RCT_REMAP_METHOD(addAuthIdentity,
     } conflict:^(GetSocialConflictUser * _Nonnull conflictUser) {
         resolve([conflictUser toJsonDictionary]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to add auth identity", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -468,7 +522,7 @@ RCT_REMAP_METHOD(removeAuthIdentity,
     [GetSocialUser removeAuthIdentityWithProviderId:providerId success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to remove auth identity", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -487,7 +541,7 @@ RCT_REMAP_METHOD(switchUser,
     [GetSocialUser switchUserToIdentity:authIdentity success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to switch user", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -506,7 +560,7 @@ RCT_REMAP_METHOD(addFriend,
     [GetSocialUser addFriend:userId success:^(int result) {
         resolve([NSNumber numberWithInt:result]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to add friend", [self convertError:[self convertError:error]]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -519,7 +573,7 @@ RCT_REMAP_METHOD(addFriendsByAuthIdentities,
     [GetSocialUser addFriendsWithIds:userIds forProvider:providerId success:^(int result) {
         resolve([NSNumber numberWithInt:result]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to add friends", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -531,7 +585,7 @@ RCT_REMAP_METHOD(removeFriend,
     [GetSocialUser removeFriend:userId success:^(int result) {
         resolve([NSNumber numberWithInt:result]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to remove friend", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -544,7 +598,7 @@ RCT_REMAP_METHOD(removeFriendsByAuthIdentities,
     [GetSocialUser removeFriendsWithIds:userIds forProvider:providerId success:^(int result) {
         resolve([NSNumber numberWithInt:result]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to remove friends", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -556,7 +610,7 @@ RCT_REMAP_METHOD(setFriends,
     [GetSocialUser setFriendsWithIds:userIds success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to set friends", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -569,7 +623,7 @@ RCT_REMAP_METHOD(setFriendsByAuthIdentities,
     [GetSocialUser setFriendsWithIds:userIds forProvider:providerId success:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to set friends", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -581,7 +635,7 @@ RCT_REMAP_METHOD(isFriend,
     [GetSocialUser isFriend:userId success:^(BOOL result) {
         resolve([NSNumber numberWithBool:result]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to execute isFriend", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -592,7 +646,7 @@ RCT_REMAP_METHOD(getFriendsCount,
     [GetSocialUser friendsCountWithSuccess:^(int result) {
         resolve([NSNumber numberWithInt:result]);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get friends count", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -609,7 +663,7 @@ RCT_REMAP_METHOD(getFriends,
         }
         resolve(friendsArray);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get friends", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -626,7 +680,192 @@ RCT_REMAP_METHOD(getSuggestedFriends,
         }
         resolve(friendsArray);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to get friends", [self convertError:error]);
+        [self invokeReject:reject withError:error];
+    }];
+}
+
+#pragma mark - Push notifications
+
+#pragma mark - Method enableNotifications
+RCT_REMAP_METHOD(enablePushNotifications,
+                 enablePushNotificationsWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [self changePushNotificationsStatusToEnabled:YES resolver:resolve reject:reject];
+}
+
+#pragma mark - Method disableNotifications
+RCT_REMAP_METHOD(disablePushNotifications,
+                 disablePushNotificationsWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [self changePushNotificationsStatusToEnabled:NO resolver:resolve reject:reject];
+}
+
+- (void)changePushNotificationsStatusToEnabled:(BOOL)isEnabled
+               resolver:(RCTPromiseResolveBlock)resolve
+            reject:(RCTPromiseRejectBlock)reject {
+    [GetSocialUser setPushNotificationsEnabled:isEnabled success:^{
+        resolve([NSNumber numberWithBool:YES]);
+    } failure:^(NSError * _Nonnull error) {
+        [self invokeReject:reject withError:error];
+    }];
+}
+
+#pragma mark - Method isNotificationsEnabled
+RCT_REMAP_METHOD(isPushNotificationsEnabled,
+                 isPushNotificationsEnabledWithResolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+    [GetSocialUser isPushNotificationsEnabledWithSuccess:^(BOOL result) {
+        resolve([NSNumber numberWithBool:result]);
+    } failure:^(NSError * _Nonnull error) {
+        [self invokeReject:reject withError:error];
+    }];
+}
+
+
+#pragma mark - Method getNotifications
+RCT_REMAP_METHOD(getNotifications,
+                 getNotificationsWithQuery:(NSDictionary*)queryDictionary
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+
+    GetSocialNotificationsQuery* query = nil;
+    NSArray* filterStatus = queryDictionary[@"STATUS"];
+    if (filterStatus.count > 0) {
+        query = [GetSocialNotificationsQuery withStatuses:filterStatus];
+    } else {
+        query = [GetSocialNotificationsQuery withAllStatuses];
+    }
+    int limit = [queryDictionary[@"LIMIT"] intValue];
+    [query setLimit:limit];
+
+    NSArray* filterTypes = queryDictionary[@"TYPES"];
+    if (filterTypes.count > 0) {
+        [query setTypes:filterTypes];
+    }
+
+    NSArray* filterActions = queryDictionary[@"ACTIONS"];
+    if (filterActions.count > 0) {
+        [query setActions:filterActions];
+    }
+
+    NSDictionary* filter = queryDictionary[@"FILTER"];
+    GetSocialNotificationsFilter notificationsFilter = [filter[@"FILTER"] intValue];
+    if (notificationsFilter != NotificationsNoFilter) {
+        NSString* notificationId = filter[@"NOTIFICATION_ID"];
+        [query setFilter:notificationsFilter notificationId:notificationId];
+    }
+
+    [GetSocialUser notificationsWithQuery:query success:^(NSArray<GetSocialNotification *> * _Nonnull notifications) {
+        NSMutableArray* retValue = [NSMutableArray array];
+        [notifications enumerateObjectsUsingBlock:^(GetSocialNotification * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [retValue addObject:[obj toJsonDictionary]];
+        }];
+        resolve(retValue);
+    } failure:^(NSError * _Nonnull error) {
+        [self invokeReject:reject withError:error];
+    }];
+}
+
+#pragma mark - Method getNotificationsCount
+RCT_REMAP_METHOD(getNotificationsCount,
+                 getNotificationsCountWithQuery:(NSDictionary*)queryDictionary
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+
+    GetSocialNotificationsCountQuery* query = nil;
+    NSArray* filterStatus = queryDictionary[@"STATUS"];
+    if (filterStatus.count > 0) {
+        query = [GetSocialNotificationsCountQuery withStatuses:filterStatus];
+    } else {
+        query = [GetSocialNotificationsCountQuery withAllStatuses];
+    }
+
+    NSArray* filterTypes = queryDictionary[@"TYPES"];
+    if (filterTypes.count > 0) {
+        [query setTypes:filterTypes];
+    }
+
+    NSArray* filterActions = queryDictionary[@"ACTIONS"];
+    if (filterActions.count > 0) {
+        [query setActions:filterActions];
+    }
+
+    [GetSocialUser notificationsCountWithQuery:query success:^(int result) {
+        resolve([NSNumber numberWithInt:result]);
+    } failure:^(NSError * _Nonnull error) {
+        [self invokeReject:reject withError:error];
+    }];
+}
+
+#pragma mark - Method setNotificationStatus
+RCT_REMAP_METHOD(setNotificationsStatus,
+                  setNotificationsStatusWithNotificationIds:(NSArray*)notificationIds
+                  newStatus:(NSString*)newStatus
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+
+    [GetSocialUser setNotificationsStatus:notificationIds status:newStatus success:^{
+        resolve([NSNumber numberWithBool:YES]);
+    } failure:^(NSError * _Nonnull error) {
+        [self invokeReject:reject withError:error];
+    }];
+}
+
+#pragma mark - Method sendNotification
+RCT_REMAP_METHOD(sendNotification,
+                  sendNotificationWithRecipients:(NSArray<NSString*>*)recipients
+                  notificationContent:(NSDictionary*)notificationContentDictionary
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+
+    GetSocialNotificationContent* notificationContent = nil;
+    NSString* templateName = notificationContentDictionary[@"TEMPLATE_NAME"];
+    if (![templateName isKindOfClass:[NSNull class]] && templateName) {
+        notificationContent = [GetSocialNotificationContent withTemplateName:templateName];
+    }
+    NSString* notificationText = notificationContentDictionary[@"TEXT"];
+    if (![notificationText isKindOfClass:[NSNull class]] && notificationText && notificationContent == nil) {
+        notificationContent = [GetSocialNotificationContent withText:notificationText];
+    }
+
+    NSString* notificationTitle = notificationContentDictionary[@"TITLE"];
+    if (![notificationTitle isKindOfClass:[NSNull class]] && notificationTitle) {
+        [notificationContent setTitle:notificationTitle];
+    }
+    if (![notificationText isKindOfClass:[NSNull class]] && notificationText) {
+        [notificationContent setText:notificationText];
+    }
+
+    // media attachment
+    GetSocialMediaAttachment* mediaAttachment = [self createMediaAttachment:notificationContentDictionary[@"MEDIA_ATTACHMENT"]];
+    if (mediaAttachment) {
+        notificationContent.mediaAttachment = mediaAttachment;
+    }
+
+    NSDictionary* templatePlaceholders = notificationContentDictionary[@"TEMPLATE_PLACEHOLDERS"];
+    [templatePlaceholders enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, NSString*  _Nonnull value, BOOL * _Nonnull stop) {
+        [notificationContent addTemplatePlaceholderValue:value forKey:key];
+    }];
+    GetSocialAction* action = [self createAction: notificationContentDictionary[@"ACTION"]];
+    if (action != nil) {
+        [notificationContent setAction:action];
+    }
+    NSArray* actionButtonsDictionary = notificationContentDictionary[@"ACTION_BUTTONS"];
+    if (![actionButtonsDictionary isKindOfClass:[NSNull class]]) {
+        for(NSDictionary* actionButtonElement in actionButtonsDictionary) {
+            [notificationContent addActionButton:[GetSocialActionButton createWithTitle:actionButtonElement[@"TITLE"] andActionId:actionButtonElement[@"ACTION_ID"]]];
+        }
+    }
+
+    if (recipients.count == 0) {
+        reject(@"GetSocial", @"At least 1 recipient must be set", nil);
+        return;
+    }
+
+    [GetSocialUser sendNotification:recipients withContent:notificationContent success:^(GetSocialNotificationsSummary * _Nonnull summary) {
+        resolve([summary toJsonDictionary]);
+    } failure:^(NSError * _Nonnull error) {
+        [self invokeReject:reject withError:error];
     }];
 }
 
@@ -637,13 +876,14 @@ RCT_REMAP_METHOD(resetUser,
     [GetSocialUser resetWithSuccess:^{
         resolve(nil);
     } failure:^(NSError * _Nonnull error) {
-        reject(@"GetSocial", @"Failed to reset user", [self convertError:error]);
+        [self invokeReject:reject withError:error];
     }];
 }
 
 #pragma mark - Supported events
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"whenInitialized", @"onUserChanged", @"onGlobalError", @"InvitesUIEvent", @"InvitesEvent"];
+    return @[@"whenInitialized", @"onUserChanged", @"onGlobalError", @"InvitesUIEvent", @"InvitesEvent", @"onNotificationReceived",
+             @"NotificationUIActionButtonClickedEvent", @"NotificationUINotificationClickedEvent"];
 }
 
 #pragma mark - Setup
@@ -671,6 +911,16 @@ RCT_REMAP_METHOD(resetUser,
             [self sendEventWithName:@"onUserChanged" body:nil];
         }
     }];
+
+    // listen for notifications
+    [GetSocial setNotificationHandler:^BOOL(GetSocialNotification * _Nonnull notification, BOOL wasClicked) {
+        if (hasListeners) {
+            NSMutableDictionary* retValue = [notification toJsonDictionary];
+            retValue[@"WAS_CLICKED"] = [NSNumber numberWithBool:wasClicked];
+            [self sendEventWithName:@"onNotificationReceived" body:retValue];
+        }
+        return YES;
+    }];
 }
 
 #pragma mark - GetSocial UI methods
@@ -682,7 +932,6 @@ RCT_REMAP_METHOD(closeView,
                  reject:(RCTPromiseRejectBlock)reject) {
     dispatch_async(dispatch_get_main_queue(), ^{
         BOOL result __unused = [GetSocialUI closeView:saveState];
-        resolve(nil);
     });
 }
 
@@ -692,7 +941,6 @@ RCT_REMAP_METHOD(restoreView,
                  reject:(RCTPromiseRejectBlock)reject) {
     dispatch_async(dispatch_get_main_queue(), ^{
         BOOL result __unused = [GetSocialUI restoreView];
-        resolve(nil);
     });
 }
 
@@ -714,20 +962,9 @@ RCT_REMAP_METHOD(showInvitesView,
     mutableInviteContent.subject = customInviteSubject;
 
     // media attachment
-    NSDictionary* mediaAttachmentDictionary = inviteParameters[KEY_MEDIA_ATTACHMENT];
-    if (![mediaAttachmentDictionary isKindOfClass:[NSNull class]]) {
-        NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
-        NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
-        GetSocialMediaAttachment* mediaAttachment;
-        if (imageUrl) {
-            mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
-        }
-        if (videoUrl) {
-            mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
-        }
-        if (mediaAttachment) {
-            mutableInviteContent.mediaAttachment = mediaAttachment;
-        }
+    GetSocialMediaAttachment* mediaAttachment = [self createMediaAttachment:inviteParameters[KEY_MEDIA_ATTACHMENT]];
+    if (mediaAttachment) {
+        mutableInviteContent.mediaAttachment = mediaAttachment;
     }
 
     GetSocialUIInvitesView* invitesView = [GetSocialUI createInvitesView];
@@ -747,6 +984,38 @@ RCT_REMAP_METHOD(showInvitesView,
     });
 }
 
+#pragma mark - Method showNotificationCenterView
+RCT_REMAP_METHOD(showNotificationCenterView,
+                  showNotificationCenterViewWithWindowTitle:(NSString*)windowTitle
+                  filterTypes:(NSArray*)filterTypes
+                  filterActions:(NSArray*)filterActions
+                  handlers:(NSDictionary*)handlers
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
+
+    GetSocialUINotificationCenterView* ncView = [GetSocialUI createNotificationCenterView];
+    [ncView setWindowTitle:windowTitle];
+
+    [ncView setFilterTypes:filterTypes];
+    [ncView setFilterActions:filterActions];
+    if (handlers[@"NOTIFICATION_CLICK_HANDLER"] != nil) {
+        ncView.clickHandler = ^BOOL(GetSocialNotification *notification) {
+            [self fireNotificationUINotificationClickedEvent:notification];
+            return NO;
+        };
+    }
+    if (handlers[@"ACTIONBUTTON_CLICK_HANDLER"] != nil) {
+        ncView.actionButtonHandler = ^BOOL(GetSocialNotification *notification, GetSocialActionButton *actionButton) {
+            [self fireNotificationUIActionButtonClickedEvent:notification actionButton:actionButton];
+            return NO;
+        };
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [ncView show];
+    });
+}
+
 #pragma mark - Method loadDefaultConfiguration
 RCT_REMAP_METHOD(loadDefaultConfiguration,
                  loadDefaultConfigurationWithResolver:(RCTPromiseResolveBlock)resolve
@@ -754,7 +1023,7 @@ RCT_REMAP_METHOD(loadDefaultConfiguration,
     if ([GetSocialUI loadDefaultConfiguration]) {
         resolve(nil);
     } else {
-        reject(@"GetSocial", @"Could not load default configuration", nil);
+        reject(@"Could not load default configuration", @"Could not load default configuration", nil);
     }
 }
 
@@ -769,16 +1038,11 @@ RCT_REMAP_METHOD(loadConfiguration,
         resolve(nil);
     } else {
         NSString* errorMessage = [NSString stringWithFormat:@"Could not load configuration at path [%@]", path];
-        reject(@"GetSocial", errorMessage, RCTErrorWithMessage(errorMessage));
+        reject(errorMessage, errorMessage, RCTErrorWithMessage(errorMessage));
     }
 }
 
 #pragma mark - Helper methods
-
-- (NSError*)convertError:(NSError*)error {
-    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObject:error.localizedDescription forKey:@"MESSAGE"];
-    return [NSError errorWithDomain:@"GetSocial" code:error.code userInfo:userInfo];
-}
 
 - (void)fireInvitesEventWithStatus:(NSString*)status errorMessage:(NSString*)errorMessage
 {
@@ -790,6 +1054,17 @@ RCT_REMAP_METHOD(loadConfiguration,
     [self sendEventWithName:@"InvitesEvent" body:eventData];
 }
 
+- (void)fireNotificationUINotificationClickedEvent:(GetSocialNotification*)notification {
+    [self sendEventWithName:@"NotificationUINotificationClickedEvent" body:[notification toJsonDictionary]];
+}
+
+- (void)fireNotificationUIActionButtonClickedEvent:(GetSocialNotification*)notification actionButton:(GetSocialActionButton*)actionButton {
+    NSMutableDictionary* retValue = [NSMutableDictionary dictionary];
+    retValue[@"NOTIFICATION"] = [notification toJsonDictionary];
+    retValue[@"ACTION_BUTTON"] = [actionButton toJsonDictionary];
+    [self sendEventWithName:@"NotificationUIActionButtonClickedEvent" body:retValue];
+}
+
 - (void)fireInvitesUIEventWithStatus:(NSString*)status channelId:(NSString*)channelId errorMessage:(NSString*)errorMessage
 {
     NSMutableDictionary* eventData = [NSMutableDictionary dictionary];
@@ -799,6 +1074,42 @@ RCT_REMAP_METHOD(loadConfiguration,
         eventData[@"ERROR"]  = errorMessage;
     }
     [self sendEventWithName:@"InvitesUIEvent" body:eventData];
+}
+
+- (GetSocialMediaAttachment*)createMediaAttachment:(NSDictionary*)mediaAttachmentDictionary {
+    GetSocialMediaAttachment* mediaAttachment = nil;
+    if (![mediaAttachmentDictionary isKindOfClass:[NSNull class]]) {
+        NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
+        NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
+        if (imageUrl) {
+            mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
+        }
+        if (videoUrl) {
+            mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
+        }
+    }
+    return mediaAttachment;
+}
+
+- (GetSocialAction*)createAction:(NSDictionary*)actionDictionary {
+    GetSocialAction* action = nil;
+    if (![actionDictionary isKindOfClass:[NSNull class]]) {
+        NSString* actionType = actionDictionary[@"TYPE"];
+        GetSocialActionBuilder *builder = [[GetSocialActionBuilder alloc] initWithType:actionType];
+
+        NSDictionary* actionData = actionDictionary[@"DATA"];
+        [actionData enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, NSString*  _Nonnull value, BOOL * _Nonnull stop) {
+            [builder addActionDataValue:value withKey:key];
+        }];
+        action = [builder build];
+    }
+    return action;
+}
+
+- (void)invokeReject:(RCTPromiseRejectBlock)reject withError:(NSError*)error {
+    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObject:error.localizedDescription forKey:@"MESSAGE"];
+    NSError* errorToReturn = [NSError errorWithDomain:@"GetSocial" code:error.code userInfo:userInfo];
+    reject(error.localizedDescription, error.localizedDescription, errorToReturn);
 }
 
 @end

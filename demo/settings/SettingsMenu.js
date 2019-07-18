@@ -7,10 +7,14 @@ import {MenuItem} from './../common/MenuItem';
 import {MenuStyle} from './../common/MenuStyle';
 // eslint-disable-next-line no-unused-vars
 import {FlatList, Text, View, TouchableWithoutFeedback} from 'react-native';
+// eslint-disable-next-line no-unused-vars
+import {CheckBox} from 'react-native-elements';
+import {GetSocialUser} from 'getsocial-react-native-sdk';
 
 type Props = { navigation: Function }
 type State = {
-    menu : MenuItem[]
+    menu : MenuItem[],
+    isNotificationsEnabled: boolean,
 }
 
 export default class SettingsMenu extends Component<Props, State> {
@@ -24,17 +28,48 @@ export default class SettingsMenu extends Component<Props, State> {
       languageMenu.title = 'Change language';
       languageMenu.navigateTo = 'ChangeLanguageMenu';
 
-      const settingsMenu = [languageMenu];
+      const notificationStatus = new MenuItem();
+      notificationStatus.key = 'change-notification-status';
+      notificationStatus.title = 'Push Notifications status';
+      notificationStatus.showStatus = true;
+
+      const settingsMenu = [languageMenu, notificationStatus];
 
       this.state = {
         menu: settingsMenu,
+        isNotificationsEnabled: false,
       };
+    }
+
+    componentDidMount() {
+      GetSocialUser.isPushNotificationsEnabled().then((isEnabled) => {
+        this.setState({isNotificationsEnabled: isEnabled});
+      });
     }
 
     menuItemSelected(menuItem : MenuItem) {
       if (menuItem.navigateTo != null) {
         this.props.navigation.navigate(menuItem.navigateTo);
       }
+    }
+
+    changeNotificationStatus = async () => {
+      if (this.state.isNotificationsEnabled) {
+        GetSocialUser.disablePushNotifications().then((result) => {
+          this.setState({isNotificationsEnabled: false});
+        });
+      } else {
+        GetSocialUser.enablePushNotifications().then((result) => {
+          this.setState({isNotificationsEnabled: true});
+        });
+      }
+    }
+
+    getNotificationStatusCheckbox(menuItem: MenuItem) {
+      if (menuItem.showStatus == true) {
+        return <CheckBox center checked={this.state.isNotificationsEnabled} onPress={() => this.changeNotificationStatus()}/>;
+      }
+      return null;
     }
 
     render() {
@@ -46,8 +81,9 @@ export default class SettingsMenu extends Component<Props, State> {
               data={this.state.menu}
               renderItem={({item}) => (
                 <TouchableWithoutFeedback onPress={ () => this.menuItemSelected(item)}>
-                  <View style={MenuStyle.listitem}>
+                  <View style={MenuStyle.listitemWithCheckbox}>
                     <Text style={MenuStyle.menuitem}>{item.title}</Text>
+                    {this.getNotificationStatusCheckbox(item)}
                   </View>
                 </TouchableWithoutFeedback>
               )}

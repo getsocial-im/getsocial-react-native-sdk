@@ -6,6 +6,7 @@ class MenuItem {
   title: string
   action: ?() => {}
   navigateTo: ?string
+  showStatus: boolean
 }
 
 export {MenuItem};

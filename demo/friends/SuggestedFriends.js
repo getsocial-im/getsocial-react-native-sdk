@@ -27,7 +27,7 @@ export default class SuggestedFriends extends Component<Props, State> {
         this.setState({suggestedFriends: suggestedFriendsList});
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -38,7 +38,7 @@ export default class SuggestedFriends extends Component<Props, State> {
         Alert.alert('Friend Added', 'Number of friends: ' + friendsNumber);
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 

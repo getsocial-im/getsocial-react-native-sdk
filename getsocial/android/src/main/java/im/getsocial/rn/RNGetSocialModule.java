@@ -3,7 +3,9 @@ package im.getsocial.rn;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -13,11 +15,24 @@ import im.getsocial.sdk.Callback;
 import im.getsocial.sdk.CompletionCallback;
 import im.getsocial.sdk.GetSocial;
 import im.getsocial.sdk.GlobalErrorListener;
+import im.getsocial.sdk.actions.Action;
+import im.getsocial.sdk.actions.ActionDataKeys;
+import im.getsocial.sdk.actions.ActionTypes;
 import im.getsocial.sdk.invites.InviteCallback;
 import im.getsocial.sdk.invites.InviteChannel;
 import im.getsocial.sdk.invites.ReferredUser;
+import im.getsocial.sdk.pushnotifications.ActionButton;
+import im.getsocial.sdk.pushnotifications.Notification;
+import im.getsocial.sdk.pushnotifications.NotificationContent;
+import im.getsocial.sdk.pushnotifications.NotificationListener;
+import im.getsocial.sdk.pushnotifications.NotificationStatus;
+import im.getsocial.sdk.pushnotifications.NotificationsCountQuery;
+import im.getsocial.sdk.pushnotifications.NotificationsQuery;
+import im.getsocial.sdk.pushnotifications.NotificationsSummary;
+import im.getsocial.sdk.pushnotifications.SendNotificationPlaceholders;
 import im.getsocial.sdk.socialgraph.SuggestedFriend;
 import im.getsocial.sdk.ui.GetSocialUi;
+import im.getsocial.sdk.ui.pushnotifications.NotificationCenterViewBuilder;
 import im.getsocial.sdk.usermanagement.AddAuthIdentityCallback;
 import im.getsocial.sdk.usermanagement.AuthIdentity;
 import im.getsocial.sdk.usermanagement.ConflictUser;
@@ -35,12 +50,14 @@ import im.getsocial.sdk.usermanagement.UserReference;
 import im.getsocial.sdk.usermanagement.UsersQuery;
 import im.getsocial.utils.Converters;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-public class RNGetSocialModule extends ReactContextBaseJavaModule {
+public class RNGetSocialModule extends ReactContextBaseJavaModule implements NotificationListener {
     private final ReactApplicationContext reactContext;
 
     private static final String KEY_MEDIA_ATTACHMENT = "mediaAttachment";
@@ -62,6 +79,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
     }
 
     @Override
+    @Nonnull
     public String getName() {
         return "RNGetSocial";
     }
@@ -77,6 +95,34 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         constants.put("KEY_LINK_PARAMETER_LANDING_PAGE_CUSTOM_DESCRIPTION", LinkParams.KEY_CUSTOM_DESCRIPTION);
         constants.put("KEY_LINK_PARAMETER_LANDING_PAGE_CUSTOM_IMAGE", LinkParams.KEY_CUSTOM_IMAGE);
         constants.put("KEY_LINK_PARAMETER_LANDING_PAGE_CUSTOM_YOUTUBE_VIDEO", LinkParams.KEY_CUSTOM_YOUTUBE_VIDEO);
+        // action types
+        constants.put("ACTION_TYPE_OPEN_PROFILE", ActionTypes.OPEN_PROFILE);
+        constants.put("ACTION_TYPE_OPEN_INVITES", ActionTypes.OPEN_INVITES);
+        constants.put("ACTION_TYPE_OPEN_URL", ActionTypes.OPEN_URL);
+        constants.put("ACTION_TYPE_ADD_FRIEND", ActionTypes.ADD_FRIEND);
+        // action data keys
+        constants.put("ACTION_DATA_KEY_OPEN_PROFILE_USER_ID", ActionDataKeys.OpenProfile.USER_ID);
+        constants.put("ACTION_DATA_KEY_OPEN_URL_URL", ActionDataKeys.OpenUrl.URL);
+        constants.put("ACTION_DATA_KEY_ADD_FRIEND_USER_ID", ActionDataKeys.AddFriend.USER_ID);
+        // notification status
+        constants.put("NOTIFICATION_STATUS_READ", NotificationStatus.READ);
+        constants.put("NOTIFICATION_STATUS_UNREAD", NotificationStatus.UNREAD);
+        constants.put("NOTIFICATION_STATUS_CONSUMED", NotificationStatus.CONSUMED);
+        constants.put("NOTIFICATION_STATUS_IGNORED", NotificationStatus.IGNORED);
+        // notification receivers
+        constants.put("NOTIFICATION_RECEIVER_FRIENDS", SendNotificationPlaceholders.Receivers.FRIENDS);
+        constants.put("NOTIFICATION_RECEIVER_REFERRED_USERS", SendNotificationPlaceholders.Receivers.REFERRED_USERS);
+        constants.put("NOTIFICATION_RECEIVER_REFERRER", SendNotificationPlaceholders.Receivers.REFERRER);
+        // notification placeholders
+        constants.put("NOTIFICATION_SENDER_DISPLAY_NAME", SendNotificationPlaceholders.CustomText.SENDER_DISPLAY_NAME);
+        constants.put("NOTIFICATION_RECEIVER_DISPLAY_NAME", SendNotificationPlaceholders.CustomText.RECEIVER_DISPLAY_NAME);
+        // notification types
+        constants.put("NOTIFICATION_TYPE_NEW_FRIENDSHIP", Notification.NotificationType.NEW_FRIENDSHIP);
+        constants.put("NOTIFICATION_TYPE_INVITE_ACCEPTED", Notification.NotificationType.INVITE_ACCEPTED);
+        constants.put("NOTIFICATION_TYPE_TARGETING", Notification.NotificationType.TARGETING);
+        constants.put("NOTIFICATION_TYPE_DIRECT", Notification.NotificationType.DIRECT);
+        constants.put("NOTIFICATION_TYPE_SDK", Notification.NotificationType.SDK);
+
         return constants;
     }
 
@@ -148,7 +194,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -169,7 +215,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -195,13 +241,13 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
 
     @ReactMethod
-    public void sendInvite(final String channelId, final ReadableMap inviteParameters, final ReadableMap linkParams, final Promise promise) {
+    public void sendInvite(final String channelId, final ReadableMap inviteParameters, final ReadableMap linkParams) {
         InviteContent.Builder builder = InviteContent.createBuilder();
 
         if (inviteParameters != null) {
@@ -211,22 +257,9 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             builder.withSubject(customInviteSubject).withText(customInviteText);
 
-            ReadableMap mediaAttachmentMap = getMapOrNull(inviteParameters, KEY_MEDIA_ATTACHMENT);
-            if (mediaAttachmentMap != null) {
-                // media attachment
-                String imageUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_IMAGE_URL);
-                String videoUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_VIDEO_URL);
-
-                MediaAttachment mediaAttachment = null;
-                if (imageUrl != null) {
-                    mediaAttachment = MediaAttachment.imageUrl(imageUrl);
-                }
-                if (videoUrl != null) {
-                    mediaAttachment = MediaAttachment.videoUrl(videoUrl);
-                }
-                if (mediaAttachment != null) {
-                    builder.withMediaAttachment(mediaAttachment);
-                }
+            MediaAttachment mediaAttachment = createMediaAttachment(getMapOrNull(inviteParameters, KEY_MEDIA_ATTACHMENT));
+            if (mediaAttachment != null) {
+                builder.withMediaAttachment(mediaAttachment);
             }
         }
 
@@ -258,7 +291,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -273,7 +306,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -288,7 +321,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -305,10 +338,30 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
+
+    @ReactMethod
+    public void registerForPushNotifications() {
+        GetSocial.registerForPushNotifications();
+    }
+
+    @ReactMethod
+    public void trackCustomEvent(final String eventName, final ReadableMap eventProperties, final Promise promise) {
+        promise.resolve(GetSocial.trackCustomEvent(eventName, toStringStringMap(eventProperties)));
+    }
+
+    @ReactMethod
+    public void processAction(ReadableMap actionProperties) {
+        String type = actionProperties.getString("TYPE");
+        ReadableMap actionParameters =  actionProperties.getMap("DATA");
+        Action.Builder builder = Action.builder(type);
+        builder.addActionData(toStringStringMap(actionParameters));
+        GetSocial.processAction(builder.build());
+    }
+
     //endregion
 
     //region GetSocial.User
@@ -385,12 +438,12 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void allPublicProperties(final Promise promise) {
-        promise.resolve(GetSocial.User.getAllPublicProperties());
+        promise.resolve(Converters.convertMap(GetSocial.User.getAllPublicProperties()));
     }
 
     @ReactMethod
-    public void getPrivateProperty(final Promise promise) {
-        promise.resolve(GetSocial.User.getAllPrivateProperties());
+    public void allPrivateProperties(final Promise promise) {
+        promise.resolve(Converters.convertMap(GetSocial.User.getAllPrivateProperties()));
     }
 
     @ReactMethod
@@ -418,7 +471,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
 
             @Override
@@ -443,7 +496,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -457,7 +510,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -472,7 +525,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -486,7 +539,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -511,7 +564,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -526,7 +579,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -541,7 +594,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -556,7 +609,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         });
     }
@@ -577,6 +630,198 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         promise.resolve(Converters.convertAuthIdentities(GetSocial.User.getAuthIdentities()));
     }
 
+    // region Push Notifications
+    @ReactMethod
+    public void isPushNotificationsEnabled(final Promise promise) {
+        GetSocial.User.isPushNotificationsEnabled(new Callback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                promise.resolve(aBoolean);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                callReject(promise, exception);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void enablePushNotifications(final Promise promise) {
+        changePushNotificationsState(true, promise);
+    }
+
+    @ReactMethod
+    public void disablePushNotifications(final Promise promise) {
+        changePushNotificationsState(false, promise);
+    }
+
+    @ReactMethod
+    public void getNotifications(final ReadableMap queryMap, final Promise promise) {
+        NotificationsQuery query;
+        ReadableArray filterStatus = queryMap.getArray("STATUS");
+        if (filterStatus != null && filterStatus.size() > 0) {
+            query = NotificationsQuery.withStatuses(toStringArray(filterStatus));
+        } else {
+            query = NotificationsQuery.withAllStatuses();
+        }
+        int limit = queryMap.getInt("LIMIT");
+        query.withLimit(limit);
+
+        ReadableArray filterTypes = queryMap.getArray("TYPES");
+        if (filterTypes != null && filterTypes.size() > 0) {
+            query.ofTypes(toStringArray(filterTypes));
+        }
+
+        ReadableArray filterActions = queryMap.getArray("ACTIONS");
+        if (filterActions != null && filterActions.size() > 0) {
+            query.withActions(toStringArray(filterActions));
+        }
+
+        ReadableMap filterMap = queryMap.getMap("FILTER");
+        if (filterMap != null) {
+            int rawFilterValue = filterMap.getInt("FILTER");
+            NotificationsQuery.Filter filter = NotificationsQuery.Filter.NO_FILTER;
+            if (rawFilterValue != 0) {
+                if (rawFilterValue == 1) {
+                    filter = NotificationsQuery.Filter.OLDER;
+                }
+                if (rawFilterValue == 2) {
+                    filter = NotificationsQuery.Filter.NEWER;
+                }
+                String notificationId = queryMap.getString("NOTIFICATION_ID");
+                query.withFilter(filter, notificationId);
+            }
+        }
+
+        GetSocial.User.getNotifications(query, new Callback<List<Notification>>() {
+            @Override
+            public void onSuccess(List<Notification> notifications) {
+                promise.resolve(Converters.convertNotifications(notifications));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                callReject(promise, exception);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getNotificationsCount(final ReadableMap queryMap, final Promise promise) {
+        NotificationsCountQuery query = null;
+        ReadableArray filterStatus = queryMap.getArray("STATUS");
+        if (filterStatus != null && filterStatus.size() > 0) {
+            query = NotificationsCountQuery.withStatuses(toStringArray(filterStatus));
+        } else {
+            query = NotificationsCountQuery.withAllStatuses();
+        }
+
+        ReadableArray filterTypes = queryMap.getArray("TYPES");
+        if (filterTypes != null && filterTypes.size() > 0) {
+            query.ofTypes(toStringArray(filterTypes));
+        }
+
+        ReadableArray filterActions = queryMap.getArray("ACTIONS");
+        if (filterActions != null && filterActions.size() > 0) {
+            query.withActions(toStringArray(filterActions));
+        }
+
+        GetSocial.User.getNotificationsCount(query, new Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer numberOfNotifications) {
+                promise.resolve(numberOfNotifications);
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                callReject(promise, exception);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void sendNotification(final ReadableArray recipientsArray, final ReadableMap notificationContentMap, final Promise promise) {
+        NotificationContent notificationContent = null;
+
+        String notificationText = getStringOrNull(notificationContentMap, "TEXT");
+        String templateName = getStringOrNull(notificationContentMap, "TEMPLATE_NAME");
+        String notificationTitle = getStringOrNull(notificationContentMap, "TITLE");
+        if (templateName != null) {
+            notificationContent = NotificationContent.notificationFromTemplate(templateName);
+        }
+        if (notificationText != null && notificationContent == null) {
+            notificationContent = NotificationContent.notificationWithText(notificationText);
+        }
+        if (notificationContent == null) {
+            IllegalArgumentException invalidArgException = new IllegalArgumentException("TemplateName or notification text is mandatory.");
+            callReject(promise, invalidArgException);
+            return;
+        }
+        if (notificationText != null) {
+            notificationContent.withText(notificationText);
+        }
+        if (notificationTitle != null) {
+            notificationContent.withTitle(notificationTitle);
+        }
+
+        MediaAttachment mediaAttachment = createMediaAttachment(getMapOrNull(notificationContentMap, "MEDIA_ATTACHMENT"));
+        if (mediaAttachment != null) {
+            notificationContent.withMediaAttachment(mediaAttachment);
+        }
+
+        ReadableMap templatePlaceholdersMap = getMapOrNull(notificationContentMap, "TEMPLATE_PLACEHOLDERS");
+        if (templatePlaceholdersMap != null) {
+            ReadableMapKeySetIterator iterator = templatePlaceholdersMap.keySetIterator();
+            while(iterator.hasNextKey()) {
+                String key = iterator.nextKey();
+                notificationContent.addTemplatePlaceholder(key, templatePlaceholdersMap.getString(key));
+            }
+        }
+
+        Action action = createAction(getMapOrNull(notificationContentMap, "ACTION"));
+        if (action != null) {
+            notificationContent.withAction(action);
+        }
+
+        ReadableArray actionButtonsArray = getArrayOrNull(notificationContentMap, "ACTION_BUTTONS");
+        if (actionButtonsArray != null) {
+            for (int i = 0; i<actionButtonsArray.size(); i++ ) {
+                ReadableMap actionButtonElement = actionButtonsArray.getMap(i);
+                notificationContent.addActionButton(ActionButton.create(actionButtonElement.getString("TITLE"),
+                        actionButtonElement.getString("ACTION_ID")));
+            }
+        }
+
+        List<String> recipients = Arrays.asList(toStringArray(recipientsArray));
+        if (recipients == null || recipients.size() == 0) {
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("At least 1 recipient must be set");
+            callReject(promise, illegalArgumentException);
+            return;
+        }
+        GetSocial.User.sendNotification(recipients, notificationContent, new Callback<NotificationsSummary>() {
+            @Override
+            public void onSuccess(NotificationsSummary notificationsSummary) {
+                promise.resolve(Converters.convertNotificationsSummary(notificationsSummary));
+            }
+
+            @Override
+            public void onFailure(GetSocialException exception) {
+                callReject(promise, exception);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void setNotificationsStatus(final ReadableArray notificationIds, final String newStatus, final Promise promise) {
+        GetSocial.User.setNotificationsStatus(Arrays.asList(toStringArray(notificationIds)), newStatus, toCompletionCallback(promise));
+    }
+
+    private void changePushNotificationsState(final boolean newState, final Promise promise) {
+        GetSocial.User.setPushNotificationsEnabled(newState, toCompletionCallback(promise));
+    }
+    // endregion
+
     @ReactMethod
     public void resetUser(final Promise promise) {
         GetSocial.User.reset(toCompletionCallback(promise));
@@ -587,29 +832,27 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
     //region GetSocial UI
     @ReactMethod
-    public void closeView(final Promise promise, final boolean saveState) {
-        getCurrentActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GetSocialUi.closeView(saveState);
-                promise.resolve(null);
-            }
-        });
+    public void closeView(final boolean saveState) {
+        runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    GetSocialUi.closeView(saveState);
+                }
+            });
     }
 
     @ReactMethod
-    public void restoreView(final Promise promise) {
-        getCurrentActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GetSocialUi.restoreView();
-                promise.resolve(null);
-            }
-        });
+    public void restoreView() {
+        runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    GetSocialUi.restoreView();
+                }
+            });
     }
 
     @ReactMethod
-    public void showInvitesView(final String customWindowTitle, final ReadableMap inviteParameters, final ReadableMap linkParams, final Promise promise) {
+    public void showInvitesView(final String customWindowTitle, final ReadableMap inviteParameters, final ReadableMap linkParams) {
         // create view
         final InvitesViewBuilder viewBuilder = GetSocialUi.createInvitesView();
 
@@ -627,22 +870,9 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             builder.withSubject(customInviteSubject).withText(customInviteText);
 
-            ReadableMap mediaAttachmentMap = getMapOrNull(inviteParameters, KEY_MEDIA_ATTACHMENT);
-            if (mediaAttachmentMap != null) {
-                // media attachment
-                String imageUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_IMAGE_URL);
-                String videoUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_VIDEO_URL);
-
-                MediaAttachment mediaAttachment = null;
-                if (imageUrl != null) {
-                    mediaAttachment = MediaAttachment.imageUrl(imageUrl);
-                }
-                if (videoUrl != null) {
-                    mediaAttachment = MediaAttachment.videoUrl(videoUrl);
-                }
-                if (mediaAttachment != null) {
-                    builder.withMediaAttachment(mediaAttachment);
-                }
+            MediaAttachment mediaAttachment = createMediaAttachment(getMapOrNull(inviteParameters, KEY_MEDIA_ATTACHMENT));
+            if (mediaAttachment != null) {
+                builder.withMediaAttachment(mediaAttachment);
             }
             viewBuilder.setCustomInviteContent(builder.build());
 
@@ -665,7 +895,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                 fireInvitesUIEvent("onError", channelId, throwable.getMessage());
             }
         });
-        getCurrentActivity().runOnUiThread(new Runnable() {
+        runOnMainThread(new Runnable() {
             @Override
             public void run() {
                 viewBuilder.show();
@@ -674,11 +904,48 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void showNotificationCenterView(final String customWindowTitle, final ReadableArray filterTypes, final ReadableArray filterActions, final ReadableMap handlers) {
+        final NotificationCenterViewBuilder viewBuilder = GetSocialUi.createNotificationCenterView();
+        viewBuilder.setWindowTitle(customWindowTitle);
+        if (filterTypes != null) {
+            viewBuilder.setFilterByTypes(toStringArray(filterTypes));
+        }
+        if (filterActions != null) {
+            viewBuilder.setFilterByActions(toStringArray(filterActions));
+        }
+        if (handlers.hasKey("NOTIFICATION_CLICK_HANDLER")) {
+            viewBuilder.setNotificationClickListener(new NotificationCenterViewBuilder.NotificationClickListener() {
+                @Override
+                public boolean onNotificationClicked(Notification notification) {
+                    fireNotificationUINotificationClickedEvent(notification);
+                    return false;
+                }
+            });
+        }
+        if (handlers.hasKey("ACTIONBUTTON_CLICK_HANDLER")) {
+            viewBuilder.setActionButtonClickListener(new NotificationCenterViewBuilder.ActionButtonClickListener() {
+                @Override
+                public boolean onActionButtonClicked(Notification notification, ActionButton actionButton) {
+                    fireNotificationUIActionButtonClickedEvent(notification, actionButton);
+                    return false;
+                }
+            });
+        }
+        runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                viewBuilder.show();
+            }
+        });
+
+    }
+
+    @ReactMethod
     public void loadDefaultConfiguration(final Promise promise) {
         if(GetSocialUi.loadDefaultConfiguration(reactContext.getApplicationContext())) {
             promise.resolve(null);
         } else {
-            promise.reject("Could not load default configuration");
+            promise.reject("Could not load default configuration", "Could not load default configuration");
         }
     }
 
@@ -687,7 +954,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         if(GetSocialUi.loadConfiguration(reactContext.getApplicationContext(), configurationPath)) {
             promise.resolve(null);
         } else {
-            promise.reject("Could not load configuration at path " + configurationPath);
+            promise.reject("Could not load configuration at path " + configurationPath, "Could not load configuration at path " + configurationPath);
         }
     }
 
@@ -704,11 +971,10 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onFailure(GetSocialException exception) {
-                promise.reject(exception, convertThrowable(exception));
+                callReject(promise, exception);
             }
         };
     }
-
     private void fireInvitesEvent(String status, @Nullable String errorMessage) {
         WritableMap inviteEventData = new WritableNativeMap();
         inviteEventData.putString("STATUS", status);
@@ -717,6 +983,19 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         }
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("InvitesEvent", inviteEventData);
+    }
+
+    private void fireNotificationUINotificationClickedEvent(Notification notification) {
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("NotificationUINotificationClickedEvent", Converters.convertNotification(notification, false));
+    }
+
+    private void fireNotificationUIActionButtonClickedEvent(Notification notification, ActionButton actionButton) {
+        WritableMap retValue = new WritableNativeMap();
+        retValue.putMap("NOTIFICATION", Converters.convertNotification(notification, false));
+        retValue.putMap("ACTION_BUTTON", Converters.convertActionButton(actionButton));
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("NotificationUIActionButtonClickedEvent", retValue);
     }
 
     private void fireInvitesUIEvent(String status, String channelId, @Nullable String errorMessage) {
@@ -737,6 +1016,13 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         return null;
     }
 
+    private ReadableArray getArrayOrNull(final ReadableMap values, final String key) {
+        if (values.hasKey(key)) {
+            return values.getArray(key);
+        }
+        return null;
+    }
+
     private ReadableMap getMapOrNull(final ReadableMap values, final String key) {
         if (values.hasKey(key)) {
             return values.getMap(key);
@@ -752,11 +1038,24 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         return linkParamsInternal;
     }
 
-    private WritableMap convertThrowable(final Throwable throwable) {
-        WritableMap writableMap = new WritableNativeMap();
-        writableMap.putString("MESSAGE", throwable.getMessage());
-        return writableMap;
+    private String[] toStringArray(final ReadableArray original) {
+        return original.toArrayList().toArray(new String[original.size()]);
     }
+
+    private Map<String, String> toStringStringMap(final ReadableMap originalMap) {
+        if (originalMap == null) {
+            return null;
+        }
+        Map<String, String> retValue = new HashMap<>();
+        ReadableMapKeySetIterator keySetIterator = originalMap.keySetIterator();
+        while(keySetIterator.hasNextKey()) {
+            String key = keySetIterator.nextKey();
+            String value = originalMap.getString(key);
+            retValue.put(key, value);
+        }
+        return retValue;
+    }
+
     //endregion
 
     private void setupGetSocial() {
@@ -765,7 +1064,6 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
         GetSocial.setGlobalErrorListener(new GlobalErrorListener() {
             @Override
             public void onError(GetSocialException exception) {
-                System.out.println("### ERROR HAPPENED: " + exception.getMessage());
                 reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                         .emit("onGlobalError", exception.getMessage());
             }
@@ -793,5 +1091,60 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
             }
         };
         GetSocial.User.setOnUserChangedListener(onUserChangedListener);
+
+        GetSocial.setNotificationListener(this);
+    }
+
+    @Nullable
+    private MediaAttachment createMediaAttachment(final ReadableMap mediaAttachmentMap) {
+        MediaAttachment mediaAttachment = null;
+        if (mediaAttachmentMap != null) {
+            // media attachment
+            String imageUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_IMAGE_URL);
+            String videoUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_VIDEO_URL);
+
+            if (imageUrl != null) {
+                mediaAttachment = MediaAttachment.imageUrl(imageUrl);
+            }
+            if (videoUrl != null) {
+                mediaAttachment = MediaAttachment.videoUrl(videoUrl);
+            }
+        }
+        return mediaAttachment;
+    }
+
+    private Action createAction(final ReadableMap actionMap) {
+        Action action = null;
+        if (actionMap != null) {
+            String actionType = actionMap.getString("TYPE");
+            Action.Builder builder = Action.builder(actionType);
+
+            ReadableMap actionDataMap = actionMap.getMap("DATA");
+            ReadableMapKeySetIterator iterator = actionDataMap.keySetIterator();
+            while(iterator.hasNextKey()) {
+                String key = iterator.nextKey();
+                builder.addActionData(key, actionDataMap.getString(key));
+            }
+            action = builder.build();
+        }
+        return action;
+    }
+
+
+    @Override
+    public boolean onNotificationReceived(Notification notification, boolean wasClicked) {
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("onNotificationReceived", Converters.convertNotification(notification, wasClicked));
+        return false;
+    }
+
+    private void callReject(final Promise promise, Throwable exception) {
+        promise.reject(exception.getMessage(), exception.getLocalizedMessage());
+    }
+
+    private void runOnMainThread(final Runnable runnable) {
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().runOnUiThread(runnable);
+        }
     }
 }

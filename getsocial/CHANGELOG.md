@@ -1,3 +1,53 @@
+## v0.3.0 - Jul 18, 2019
+
+**New:**
+
++ Added new methods for sending and handling Push Notifications. [More info](https://docs.getsocial.im/guides/notifications/introduction/)
++ Added new methods to track any custom event. [More info](https://docs.getsocial.im/guides/tracked-events/custom-events/)
++ Added new methods to be able to share images and videos.
+
+**Upgrading:**
+
+No special steps required. Please follow default upgrade guide.
+
+---
+
+## v0.2.6 - Jul 16, 2019
+
+**Fixed:**
+
++ Fixed issues with Podspec.
+
+**Upgrading:**
+
+No special steps required. Please follow default upgrade guide.
+
+---
+
+## v0.2.4 - Jul 11, 2019
+
+**Fixed:**
+
++ Fixed calling reject method with incorrect parameters.
+
+**Upgrading:**
+
+No special steps required. Please follow default upgrade guide.
+
+---
+
+## v0.2.3 - Jul 10, 2019
+
+**Fixed:**
+
++ Fixed packaging issues.
+
+**Upgrading:**
+
+No special steps required. Please follow default upgrade guide.
+
+---
+
 ## v0.2.0 - Jun 27, 2019
 
 **Added:**

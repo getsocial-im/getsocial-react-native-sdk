@@ -25,7 +25,7 @@ export default class SendInviteWOUI extends Component<Props, State> {
         this.setState({inviteChannels: inviteChannels});
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 

@@ -1,18 +1,25 @@
 package im.getsocial.utils;
 
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+import im.getsocial.sdk.actions.Action;
 import im.getsocial.sdk.invites.InviteChannel;
 import im.getsocial.sdk.invites.ReferralData;
 import im.getsocial.sdk.invites.ReferredUser;
+import im.getsocial.sdk.media.MediaAttachment;
+import im.getsocial.sdk.pushnotifications.ActionButton;
+import im.getsocial.sdk.pushnotifications.Notification;
+import im.getsocial.sdk.pushnotifications.NotificationsSummary;
 import im.getsocial.sdk.socialgraph.SuggestedFriend;
 import im.getsocial.sdk.usermanagement.ConflictUser;
 import im.getsocial.sdk.usermanagement.PublicUser;
 import im.getsocial.sdk.usermanagement.UserReference;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +104,88 @@ public class Converters {
 		return writableArray;
 	}
 
+	public static WritableArray convertNotifications(List<Notification> notifications) {
+		WritableArray writableArray = new WritableNativeArray();
+		for (Notification notification : notifications) {
+			writableArray.pushMap(convertNotification(notification, false));
+		}
+		return writableArray;
+	}
+
+	public static WritableMap convertNotification(final Notification notification, final boolean wasClicked) {
+		try {
+			WritableMap writableMap = new WritableNativeMap();
+			writableMap.putString("TITLE", notification.getTitle());
+			writableMap.putString("TEXT", notification.getText());
+			writableMap.putString("TYPE", notification.getType());
+			if (notification.getAction() != null) {
+				writableMap.putMap("ACTION", convertAction(notification.getAction()));
+			} else {
+				writableMap.putNull("ACTION");
+			}
+			writableMap.putString("ID", notification.getId());
+			if (notification.getImageUrl() != null) {
+				writableMap.putString("IMAGE_URL", notification.getImageUrl());
+			} else {
+				writableMap.putNull("IMAGE_URL");
+			}
+			if (notification.getVideoUrl() != null) {
+				writableMap.putString("VIDEO_URL", notification.getVideoUrl());
+			} else {
+				writableMap.putNull("VIDEO_URL");
+			}
+			writableMap.putString("STATUS", notification.getStatus());
+			writableMap.putDouble("CREATED_AT", notification.getCreatedAt());
+			writableMap.putArray("ACTION_BUTTONS", convertActionButtons(notification.getActionButtons()));
+			if (notification.getSender() != null) {
+				writableMap.putMap("SENDER", convertUserReference(notification.getSender()));
+			} else {
+				writableMap.putNull("SENDER");
+			}
+			writableMap.putBoolean("WAS_CLICKED", wasClicked);
+
+			return writableMap;
+		} catch(Throwable t) {
+			t.printStackTrace();
+		}
+		return null;
+	}
+
+	public static WritableMap convertNotificationsSummary(final NotificationsSummary notificationsSummary) {
+		WritableMap writableMap = new WritableNativeMap();
+		writableMap.putInt("SUCCESSFULLY_SENT_COUNT", notificationsSummary.getSuccessfullySentCount());
+		return writableMap;
+	}
+
+	public static WritableMap convertActionButton(final ActionButton actionButton) {
+		WritableMap abMap = new WritableNativeMap();
+		abMap.putString("ACTION_ID", actionButton.getId());
+		abMap.putString("TITLE", actionButton.getTitle());
+		return abMap;
+	}
+
+	private static WritableArray convertActionButtons(final List<ActionButton> actionButtons) {
+		WritableArray writableArray = new WritableNativeArray();
+		for (ActionButton ab : actionButtons) {
+			writableArray.pushMap(convertActionButton(ab));
+		}
+		return writableArray;
+	}
+
+	private static WritableMap convertAction(final Action action) {
+		WritableMap writableMap = new WritableNativeMap();
+		if (action == null) {
+			return writableMap;
+		}
+		WritableMap dataMap = new WritableNativeMap();
+		for(Map.Entry<String, String> entry :  action.getData().entrySet()) {
+			dataMap.putString(entry.getKey(), entry.getValue());
+		}
+		writableMap.putMap("DATA", dataMap);
+		writableMap.putString("TYPE", action.getType());
+		return writableMap;
+	}
+
 	private static WritableMap convertInviteChannel(final InviteChannel inviteChannel) {
 		WritableMap writableMap = new WritableNativeMap();
 		writableMap.putString("ID", inviteChannel.getChannelId());
@@ -123,7 +212,7 @@ public class Converters {
 		return writableMap;
 	}
 
-	public static WritableMap convertUserReference(final UserReference userReference) {
+	private static WritableMap convertUserReference(final UserReference userReference) {
 		WritableMap writableMap = new WritableNativeMap();
 		writableMap.putString("USER_ID", userReference.getId());
 		writableMap.putString("DISPLAY_NAME", userReference.getDisplayName());
@@ -153,7 +242,7 @@ public class Converters {
 		return convertPublicUser(conflictUser);
 	}
 
-	private static WritableMap convertMap(Map<String, String> sourceMap) {
+	public static WritableMap convertMap(Map<String, String> sourceMap) {
 		WritableMap writableMap = new WritableNativeMap();
 		for (Map.Entry<String, String> entry : sourceMap.entrySet()) {
 			writableMap.putString(entry.getKey(), entry.getValue());

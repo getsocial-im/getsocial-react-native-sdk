@@ -3,6 +3,7 @@
 
 import {NativeModules} from 'react-native';
 import InvitesView from './models/InvitesView.js';
+import NotificationCenterView from './models/NotificationCenterView.js';
 const {RNGetSocial} = NativeModules;
 
 /**
@@ -14,29 +15,38 @@ export default class GetSocialUI {
   /**
    * Close the GetSocial View.
    * @param {boolean} saveViewState, true if the state of GetSocial view needs to be restored later by calling restoreView.
-   * @return {Promise<void>} will be called when view closed.
    */
-  static closeView(saveViewState: boolean): Promise<void> {
-    return RNGetSocial.closeView(saveViewState);
+  static closeView(saveViewState: boolean) {
+    RNGetSocial.closeView(saveViewState);
   }
 
   /**
    * Displays GetSocial view, which was hidden using closeView.
-   * @return {Promise<void>} will be called when view restored.
    */
-  static restoreView(): Promise<void> {
-    return RNGetSocial.restoreView();
+  static restoreView() {
+    RNGetSocial.restoreView();
   }
 
   // Invites UI section
 
   /**
    * Creates invites view.
-   * @return {GetSocialInvitesView} Returns the created invites view.
+   * @return {InvitesView} Returns the created invites view.
    */
   static createInvitesView(): InvitesView {
     return new InvitesView();
   }
+
+  // Notification Center UI section
+
+  /**
+   * Creates notification center view.
+   * @return {NotificationCenterView} Returns the created invites view.
+   */
+  static createNotificationCenterView(): NotificationCenterView {
+    return new NotificationCenterView();
+  }
+
 
   // UI configuration section
 

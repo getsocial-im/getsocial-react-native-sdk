@@ -38,6 +38,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -69,13 +70,18 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-vector-icons')
     implementation project(':react-native-fbsdk')
     implementation project(':react-native-gesture-handler')
     implementation project(':getsocial-react-native-sdk')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation ("com.android.support:appcompat-v7:27.0.2") { force = true }
+    implementation 'com.google.gms:google-services:4.2.0'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-messaging:19.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
-    implementation ("com.facebook.react:react-native:0.59.0") { force = true }
+    implementation ("com.facebook.react:react-native:0.59.3") { force = true }
 
 
 }
@@ -104,3 +110,5 @@ afterEvaluate {
         deleteFunc.curry("xxxhdpi").call()
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

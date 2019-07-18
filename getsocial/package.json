@@ -1,7 +1,7 @@
 {
   "name": "getsocial-react-native-sdk",
   "title": "GetSocial React Native SDK",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React Native wrapper for GetSocial iOS and Android SDK",
   "repository": {
     "type": "git",
@@ -21,14 +21,22 @@
     "GetSocialUI.js",
     "GetSocialUser.js",
     "GetSocialEventEmitter.js",
-    "models"
+    "models",
+    "utils",
+    "scripts",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.xcodeproj",
+    "android/src",
+    "android/build.gradle",
+    "RNGetSocial.podspec"
   ],
   "license": "Commercial",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
+    "babel-eslint": "^10.0.2",
     "documentation": "^10.1.0",
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.1",
     "eslint-config-google": "^0.12.0",
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-import": "^2.17.2",

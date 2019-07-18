@@ -21,14 +21,14 @@ export default class UICustomizationMenu extends Component<Props, State> {
       if (path.length == 0) {
         GetSocialUI.loadDefaultConfiguration().then(() => {
           Alert.alert('UI Config', 'UI Configuration has been changed to default');
-        }, (errorMessage) => {
-          Alert.alert('Error', errorMessage);
+        }, (error) => {
+          Alert.alert('Error', error['code']);
         });
       } else {
         GetSocialUI.loadConfiguration(path).then(() => {
           Alert.alert('UI Config', 'UI Configuration has been changed');
         }, (error) => {
-          Alert.alert('Error', error.message);
+          Alert.alert('Error', error['code']);
         });
       }
     }

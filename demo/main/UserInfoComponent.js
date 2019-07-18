@@ -4,9 +4,10 @@
 
 import React, {Component} from 'react';
 // eslint-disable-next-line no-unused-vars
-import {NativeModules, Text, View, Image, DeviceEventEmitter, NativeEventEmitter, Platform} from 'react-native';
+import {NativeModules, Text, TouchableWithoutFeedback, View, Image, DeviceEventEmitter, NativeEventEmitter, Platform} from 'react-native';
 import {UserInfoComponentStyle} from './UserInfoComponentStyle';
 import {GetSocial, GetSocialUser} from 'getsocial-react-native-sdk';
+import {showUserDetailsView} from './UserDetailsView.js';
 
 type Props = {}
 type State = {
@@ -14,6 +15,7 @@ type State = {
   userAvatarUrl : ?string,
   userIdentities : string,
 }
+
 export default class UserInfoComponent extends Component<Props, State> {
   updateUserInfo() {
     GetSocialUser.getDisplayName().then((displayName) => {
@@ -45,7 +47,7 @@ export default class UserInfoComponent extends Component<Props, State> {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // Listen for events to set the proper information
     GetSocialUser.onUserChanged(() => {
       this.updateUserInfo();
@@ -56,6 +58,10 @@ export default class UserInfoComponent extends Component<Props, State> {
     });
   }
 
+  showUserDetails = async () => {
+    showUserDetailsView();
+  }
+
   render() {
     let userImage;
     if (this.state.userAvatarUrl == undefined) {
@@ -64,15 +70,17 @@ export default class UserInfoComponent extends Component<Props, State> {
       userImage = <Image source={{uri: this.state.userAvatarUrl}} style={UserInfoComponentStyle.userAvatar}/>;
     }
     return (
-      <View style={UserInfoComponentStyle.userInfoComponent}>
-        <View style={{flex: 0, width: 40, height: 40, backgroundColor: 'skyblue'}}>
-          {userImage}
+      <TouchableWithoutFeedback onPress={() => this.showUserDetails()}>
+        <View style={UserInfoComponentStyle.userInfoComponent}>
+          <View style={{flex: 0, width: 40, height: 40, backgroundColor: 'skyblue'}}>
+            {userImage}
+          </View>
+          <View style={UserInfoComponentStyle.userDetailsContainer}>
+            <Text style={UserInfoComponentStyle.username}>{this.state.userDisplayName}</Text>
+            <Text style={UserInfoComponentStyle.userinfo}>{this.state.userIdentities}</Text>
+          </View>
         </View>
-        <View style={UserInfoComponentStyle.userDetailsContainer}>
-          <Text style={UserInfoComponentStyle.username}>{this.state.userDisplayName}</Text>
-          <Text style={UserInfoComponentStyle.userinfo}>{this.state.userIdentities}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

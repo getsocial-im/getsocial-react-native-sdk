@@ -7,6 +7,11 @@ import ConflictUser from './models/ConflictUser.js';
 import AuthIdentity from './models/AuthIdentity.js';
 import SuggestedFriend from './models/SuggestedFriend.js';
 import PublicUser from './models/PublicUser.js';
+import Notification from './models/Notification.js';
+import NotificationContent from './models/NotificationContent.js';
+import NotificationsQuery from './models/NotificationsQuery.js';
+import NotificationsCountQuery from './models/NotificationsCountQuery.js';
+import NotificationsSummary from './models/NotificationsSummary.js';
 
 const {RNGetSocial} = NativeModules;
 
@@ -341,5 +346,75 @@ export default class GetSocialUser {
    */
   static reset(): Promise<void> {
     return RNGetSocial.resetUser();
+  }
+
+  // Push Notifications
+
+  /**
+   * Checks if push notifications are enabled or not.
+   * @return {Promise<boolean>} True, if push notifications are enabled, otherwise false.
+   */
+  static isPushNotificationsEnabled(): Promise<boolean> {
+    return RNGetSocial.isPushNotificationsEnabled();
+  }
+
+  /**
+   * Enables push notifications for current user.
+   * @return {Promise<boolean>} Called when operation finished.
+   */
+  static enablePushNotifications(): Promise<boolean> {
+    return RNGetSocial.enablePushNotifications();
+  }
+
+  /**
+   * Disabled push notifications for current user.
+   * @return {Promise<boolean>} Called when operation finished.
+   */
+  static disablePushNotifications(): Promise<boolean> {
+    return RNGetSocial.disablePushNotifications();
+  }
+
+  /**
+   * Returns notifications based on the provided query.
+   * @param {NotificationsQuery} query to use to filter notifications.
+   * @return {Promise<[Notification]>} List of notifications based on the query.
+   */
+  static getNotifications(query: NotificationsQuery): Promise<[Notification]> {
+    return RNGetSocial.getNotifications(JSON.parse(query.toJSON())).then((notificationsArray) => {
+      return notificationsArray.map((notificationMap) => {
+        return new Notification(notificationMap);
+      });
+    });
+  }
+
+  /**
+   * Returns number of notifications based on the provided query.
+   * @param {NotificationsCountQuery} query to use to filter notifications.
+   * @return {Promise<number>} Number of notifications based on the query.
+   */
+  static getNotificationsCount(query: NotificationsCountQuery): Promise<number> {
+    return RNGetSocial.getNotificationsCount(JSON.parse(query.toJSON()));
+  }
+
+  /**
+   * Sends the provided notification content to the recipients.
+   * @param {string[]} recipients List of GetSocial id of recipients.
+   * @param {NotificationContent} content Content of push notification.
+   * @return {Promise<NotificationsSummary>} Summary of sending notifications.
+   */
+  static sendNotification(recipients: string[], content: NotificationContent): Promise<NotificationsSummary> {
+    return RNGetSocial.sendNotification(recipients, JSON.parse(content.toJSON())).then((summaryMap) => {
+      return new NotificationsSummary(summaryMap);
+    });
+  }
+
+  /**
+   * Updates notification status.
+   * @param {[string]} notificationIds Notifications to be updated.
+   * @param {string} status New status.
+   * @return {Promise<boolean>} Called when operation finished.
+   */
+  static setNotificationsStatus(notificationIds: [string], status: string): Promise<boolean> {
+    return RNGetSocial.setNotificationsStatus(notificationIds, status);
   }
 }

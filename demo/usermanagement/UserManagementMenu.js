@@ -63,7 +63,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         global.userInfoComponentRef.current.setState({userDisplayName: newDisplayName});
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -80,7 +80,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         global.userInfoComponentRef.current.setState({userAvatarUrl: newAvatarUrl});
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -114,7 +114,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         Alert.alert('Public property', 'Property value has been set to [' + newValue + ']');
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -125,7 +125,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         Alert.alert('Public property', 'Property value is [' + propertyValue + ']');
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -171,11 +171,11 @@ export default class UserManagementMenu extends Component<Props, State> {
             ]);
           }, (error) => {
             hideLoading();
-            Alert.alert('FB Add Identity Error', error);
+            Alert.alert('FB Add Identity Error', JSON.stringify(error));
           });
         }
       }, (error) => {
-        Alert.alert('FB Error', error);
+        Alert.alert('FB Error', error['code']);
       });
     }
 
@@ -197,12 +197,13 @@ export default class UserManagementMenu extends Component<Props, State> {
         ]);
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error);
+        Alert.alert('Error', JSON.stringify(error));
       });
     }
 
     removeFBIdentity = async () => {
       GetSocialUser.getAuthIdentities().then((identities) => {
+        // $FlowFixMe
         if (identities['facebook'] != undefined) {
           showLoading();
           GetSocialUser.removeAuthIdentity('facebook').then(() => {
@@ -211,7 +212,7 @@ export default class UserManagementMenu extends Component<Props, State> {
             this.updateUserDetails();
           }, (error) => {
             hideLoading();
-            Alert.alert('Error', error.userInfo['MESSAGE']);
+            Alert.alert('Error', error['code']);
           });
         } else {
           Alert.alert('Warning', 'User doesnt have Facebook identity');
@@ -221,6 +222,7 @@ export default class UserManagementMenu extends Component<Props, State> {
 
     removeCustomIdentity = async () => {
       GetSocialUser.getAuthIdentities().then((identities) => {
+        // $FlowFixMe
         if (identities['rncustomproviderid'] != undefined) {
           showLoading();
           GetSocialUser.removeAuthIdentity('rncustomproviderid').then(() => {
@@ -228,7 +230,7 @@ export default class UserManagementMenu extends Component<Props, State> {
             Alert.alert('Custom Identity', 'Custom Identity successfully removed.');
             this.updateUserDetails();
           }, (error) => {
-            Alert.alert('Error', error.userInfo['MESSAGE']);
+            Alert.alert('Error', error['code']);
           });
         } else {
           hideLoading();
@@ -249,7 +251,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         }
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -260,7 +262,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         Alert.alert('Logout', 'User logged out from all identities.');
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 

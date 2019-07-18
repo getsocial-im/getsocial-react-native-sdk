@@ -34,6 +34,16 @@ export const MenuStyle = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: 'black',
   },
+  listitemWithCheckbox: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    height: 60,
+    width: width,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'black',
+  },
   menuitem: {
     fontSize: 18,
     textAlign: 'left',

@@ -11,6 +11,8 @@ import ReferredUser from './models/ReferredUser.js';
 import PublicUser from './models/PublicUser.js';
 import UsersQuery from './models/UsersQuery.js';
 import UserReference from './models/UserReference.js';
+import Notification from './models/Notification.js';
+import Action from "./models/Action.js";
 
 const {RNGetSocial} = NativeModules;
 
@@ -235,6 +237,51 @@ export default class GetSocial {
         return new UserReference(userReferenceMap);
       });
     });
+  }
+
+  // Push Notifications
+
+  /**
+   * Call this method to register for push notifications.
+   */
+  static registerForPushNotifications() {
+    RNGetSocial.registerForPushNotifications();
+  }
+
+  /**
+   * Set a listener which will be invoked when a notification is clicked on,
+   * or handle notification while application is in foreground.
+   * @param {function} notificationReceived function to process notification.
+   */
+  static onNotificationReceived(notificationReceived: (notification : Notification, wasClicked: boolean) => void) {
+    GetSocialEventEmitter.addListener('onNotificationReceived', function(rawNotification) {
+      const wasClicked = rawNotification['WAS_CLICKED'];
+      const receivedNotification = new Notification(rawNotification);
+      notificationReceived(receivedNotification, wasClicked);
+    });
+  }
+
+  // Action handling
+
+	/**
+	 * Process action with default GetSocial behaviour.
+	 * @param {Action} action action to be processed.
+	 */
+  static processAction(action: Action): void {
+    RNGetSocial.processAction(JSON.parse(action.toJSON()));
+  }
+
+  // Event tracking
+
+	/**
+	 * Reports custom event to Dashboard.
+	 * @param {string} eventName Name of custom event.
+	 * @param {Map<string, string>} eventProperties Properties of custom event.
+	 * @return {Promise<boolean>} Promise called when operation finished. True if operation was successful, otherwise false.
+	 *
+	 */
+  static trackCustomEvent(eventName: string, eventProperties: Map<string, string>): Promise<boolean> {
+    return RNGetSocial.trackCustomEvent(eventName, JSON.parse(JSON.stringify(eventProperties)));
   }
 
   // constants for link parameters

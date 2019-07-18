@@ -21,7 +21,7 @@ export default class ChangeLanguageMenu extends Component<Props, State> {
       GetSocial.setLanguage(newLanguage).then(() => {
         Alert.alert('Language', 'Language has been changed to \'' + newLanguage + '\'');
       }, (error) => {
-        Alert.alert('Error', error.message);
+        Alert.alert('Error', error['code']);
       });
     }
 

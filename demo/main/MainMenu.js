@@ -38,6 +38,16 @@ export default class MainMenu extends Component<Props, State> {
       invitesMenu.title = 'Smart Invites';
       invitesMenu.navigateTo = 'InvitesMenu';
 
+      const notificationsMenu = new MenuItem();
+      notificationsMenu.key = 'notifications';
+      notificationsMenu.title = 'Notifications';
+      notificationsMenu.navigateTo = 'NotificationsMenu';
+
+      const eventTrackingMenu = new MenuItem();
+      eventTrackingMenu.key = 'event-tracking';
+      eventTrackingMenu.title = 'Event tracking';
+      eventTrackingMenu.navigateTo = 'EventTrackingMenu';
+
       const uiConfigMenu = new MenuItem();
       uiConfigMenu.key = 'ui-config';
       uiConfigMenu.title = 'UI Customization';
@@ -48,7 +58,7 @@ export default class MainMenu extends Component<Props, State> {
       settingsMenu.title = 'Settings';
       settingsMenu.navigateTo = 'SettingsMenu';
 
-      const mainMenu = [userManagementMenu, friendsMenu, invitesMenu, uiConfigMenu, settingsMenu];
+      const mainMenu = [userManagementMenu, friendsMenu, invitesMenu, notificationsMenu, eventTrackingMenu, uiConfigMenu, settingsMenu];
 
       this.state = {
         menu: mainMenu,

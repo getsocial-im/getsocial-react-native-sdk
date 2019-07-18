@@ -34,7 +34,7 @@ export default class InvitesMenu extends Component<Props, State> {
         }
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -45,7 +45,7 @@ export default class InvitesMenu extends Component<Props, State> {
         Alert.alert('Referral data', 'Referral data was cleared.');
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -60,7 +60,7 @@ export default class InvitesMenu extends Component<Props, State> {
         }
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -71,7 +71,7 @@ export default class InvitesMenu extends Component<Props, State> {
         Alert.alert('Invite URL', inviteUrl);
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 

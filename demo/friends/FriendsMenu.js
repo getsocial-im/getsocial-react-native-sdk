@@ -29,7 +29,7 @@ export default class FriendsMenu extends Component<Props, State> {
         this.setState({friends: friendsList});
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -41,7 +41,7 @@ export default class FriendsMenu extends Component<Props, State> {
         this.loadFriends();
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
@@ -53,7 +53,7 @@ export default class FriendsMenu extends Component<Props, State> {
         this.loadFriends();
       }, (error) => {
         hideLoading();
-        Alert.alert('Error', error.userInfo['MESSAGE']);
+        Alert.alert('Error', error['code']);
       });
     }
 
