@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Intent;
 import com.facebook.CallbackManager;
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication{
       return Arrays.<ReactPackage>asList(
               new RNGetSocialPackage(),
           new MainReactPackage(),
+            new ImagePickerPackage(),
             new VectorIconsPackage(),
             new FBSDKPackage(getCallbackManager()),
             new RNGestureHandlerPackage()

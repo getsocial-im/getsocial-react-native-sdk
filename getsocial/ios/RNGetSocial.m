@@ -32,7 +32,9 @@
 #define KEY_INVITE_CONTENT_PARAMETER_CUSTOM_SUBJECT @"inviteSubject"
 #define KEY_INVITE_CONTENT_PARAMETER_CUSTOM_TEXT @"inviteText"
 #define KEY_MEDIA_ATTACHMENT_IMAGE_URL @"imageUrl"
+#define KEY_MEDIA_ATTACHMENT_LOCAL_IMAGE_URI @"imageUri"
 #define KEY_MEDIA_ATTACHMENT_VIDEO_URL @"videoUrl"
+#define KEY_MEDIA_ATTACHMENT_LOCAL_VIDEO_URI @"videoUri"
 
 RCT_EXPORT_MODULE()
 
@@ -135,9 +137,9 @@ RCT_REMAP_METHOD(getLanguage,
 
 #pragma mark - Method setLanguage
 RCT_REMAP_METHOD(setLanguage,
-                  setLanguage:(NSString*)language
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject) {
+                 setLanguage:(NSString*)language
+                 resolve:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject) {
     BOOL result = [GetSocial setLanguage:language];
     resolve([NSNumber numberWithBool:result]);
 }
@@ -147,7 +149,7 @@ RCT_REMAP_METHOD(setLanguage,
 RCT_REMAP_METHOD(getReferralData,
                  getReferralDataWithResolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
-    
+
     [GetSocial referralDataWithSuccess:^(GetSocialReferralData *_Nullable referralData) {
         if (referralData == nil) {
             resolve(nil);
@@ -234,13 +236,12 @@ RCT_REMAP_METHOD(sendInvite,
     mutableInviteContent.subject = customInviteSubject;
 
     // media attachment
-
     GetSocialMediaAttachment* mediaAttachment = [self createMediaAttachment:inviteParameters[KEY_MEDIA_ATTACHMENT]];
     if (mediaAttachment) {
         mutableInviteContent.mediaAttachment = mediaAttachment;
     }
 
-    [GetSocial sendInviteWithChannelId:channelId inviteContent:mutableInviteContent linkParams:linkParams success:^{
+    [GetSocial sendInviteWithChannelId:channelId inviteContent:mutableInviteContent linkParams:[self processLinkParams:linkParams] success:^{
         [self fireInvitesEventWithStatus:@"onComplete" errorMessage:nil];
     } cancel:^{
         [self fireInvitesEventWithStatus:@"onCancel" errorMessage:nil];
@@ -263,8 +264,8 @@ RCT_REMAP_METHOD(getUserById,
 
 #pragma mark - Method getUserByAuthIdentity
 RCT_REMAP_METHOD(getUserByAuthIdentity,
-                  getUserByAuthIdentityWithProviderId:(NSString*)providerId
-                  providerUserId:(NSString*)providerUserId
+                 getUserByAuthIdentityWithProviderId:(NSString*)providerId
+                 providerUserId:(NSString*)providerUserId
                  withResolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
     [GetSocial userWithId:providerUserId forProvider:providerId success:^(GetSocialPublicUser * _Nonnull publicUser) {
@@ -324,8 +325,8 @@ RCT_REMAP_METHOD(registerForPushNotifications,
 
 #pragma mark - Method trackCustomEvent
 RCT_REMAP_METHOD(trackCustomEvent,
-                  trackCustomEventWithEventName:(NSString*)eventName
-                  eventProperties:(NSDictionary*)eventProperties
+                 trackCustomEventWithEventName:(NSString*)eventName
+                 eventProperties:(NSDictionary*)eventProperties
                  resolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
     resolve([NSNumber numberWithBool:[GetSocial trackCustomEventWithName:eventName eventProperties:eventProperties]]);
@@ -399,8 +400,8 @@ RCT_REMAP_METHOD(setAvatarUrl,
 
 #pragma mark - Method setPublicProperty
 RCT_REMAP_METHOD(setPublicProperty,
-                  setPublicProperty:(NSString*)propertyKey
-                  propertyValue:(NSString*)propertyValue
+                 setPublicProperty:(NSString*)propertyKey
+                 propertyValue:(NSString*)propertyValue
                  withResolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
     [GetSocialUser setPublicPropertyValue:propertyValue forKey:propertyKey success:^{
@@ -652,8 +653,8 @@ RCT_REMAP_METHOD(getFriendsCount,
 
 #pragma mark - Method getFriends
 RCT_REMAP_METHOD(getFriends,
-                  getFriendsWithOffset:(int)offset
-                  limit:(int)limit
+                 getFriendsWithOffset:(int)offset
+                 limit:(int)limit
                  withResolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
     [GetSocialUser friendsWithOffset:0 limit:1000 success:^(NSArray<GetSocialPublicUser *> * _Nonnull friends) {
@@ -701,8 +702,8 @@ RCT_REMAP_METHOD(disablePushNotifications,
 }
 
 - (void)changePushNotificationsStatusToEnabled:(BOOL)isEnabled
-               resolver:(RCTPromiseResolveBlock)resolve
-            reject:(RCTPromiseRejectBlock)reject {
+                                      resolver:(RCTPromiseResolveBlock)resolve
+                                        reject:(RCTPromiseRejectBlock)reject {
     [GetSocialUser setPushNotificationsEnabled:isEnabled success:^{
         resolve([NSNumber numberWithBool:YES]);
     } failure:^(NSError * _Nonnull error) {
@@ -799,8 +800,8 @@ RCT_REMAP_METHOD(getNotificationsCount,
 
 #pragma mark - Method setNotificationStatus
 RCT_REMAP_METHOD(setNotificationsStatus,
-                  setNotificationsStatusWithNotificationIds:(NSArray*)notificationIds
-                  newStatus:(NSString*)newStatus
+                 setNotificationsStatusWithNotificationIds:(NSArray*)notificationIds
+                 newStatus:(NSString*)newStatus
                  resolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
 
@@ -813,8 +814,8 @@ RCT_REMAP_METHOD(setNotificationsStatus,
 
 #pragma mark - Method sendNotification
 RCT_REMAP_METHOD(sendNotification,
-                  sendNotificationWithRecipients:(NSArray<NSString*>*)recipients
-                  notificationContent:(NSDictionary*)notificationContentDictionary
+                 sendNotificationWithRecipients:(NSArray<NSString*>*)recipients
+                 notificationContent:(NSDictionary*)notificationContentDictionary
                  resolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
 
@@ -894,7 +895,7 @@ RCT_REMAP_METHOD(resetUser,
             [self sendEventWithName:@"onGlobalError" body:error];
         }
     }];
-    
+
     //listen to the library being initialized
     [GetSocial executeWhenInitialized:^() {
         // notify the JS thread that the GetSocial SDK has been initialized
@@ -947,12 +948,12 @@ RCT_REMAP_METHOD(restoreView,
 
 #pragma mark - Method showInvitesView
 RCT_REMAP_METHOD(showInvitesView,
-                  showInvitesViewWithWindowTitle:(NSString*)windowTitle
-                  inviteParameters:(NSDictionary*)inviteParameters
-                  linkParams:(NSDictionary*)linkParams
+                 showInvitesViewWithWindowTitle:(NSString*)windowTitle
+                 inviteParameters:(NSDictionary*)inviteParameters
+                 linkParams:(NSDictionary*)linkParams
                  resolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
-    
+
     // subject and text
     NSString* customInviteSubject = [inviteParameters safeValueForKey:KEY_INVITE_CONTENT_PARAMETER_CUSTOM_SUBJECT];
     NSString* customInviteText = [inviteParameters safeValueForKey:KEY_INVITE_CONTENT_PARAMETER_CUSTOM_TEXT];
@@ -962,22 +963,23 @@ RCT_REMAP_METHOD(showInvitesView,
     mutableInviteContent.subject = customInviteSubject;
 
     // media attachment
-    GetSocialMediaAttachment* mediaAttachment = [self createMediaAttachment:inviteParameters[KEY_MEDIA_ATTACHMENT]];
+    GetSocialMediaAttachment* mediaAttachment = [self createMediaAttachment: inviteParameters[KEY_MEDIA_ATTACHMENT]];
     if (mediaAttachment) {
         mutableInviteContent.mediaAttachment = mediaAttachment;
     }
 
     GetSocialUIInvitesView* invitesView = [GetSocialUI createInvitesView];
     [invitesView setCustomInviteContent:mutableInviteContent];
-    [invitesView setLinkParams:linkParams];
+
+    [invitesView setLinkParams:[self processLinkParams:linkParams]];
     [invitesView setWindowTitle:windowTitle];
 
     [invitesView setHandlerForInvitesSent:^(NSString * _Nonnull channelId) {
         [self fireInvitesUIEventWithStatus:@"onComplete" channelId:channelId errorMessage:nil];
-        } cancel:^(NSString * _Nonnull channelId) {
-            [self fireInvitesUIEventWithStatus:@"onCancel" channelId:channelId errorMessage:nil];
-        } failure:^(NSString * _Nonnull channelId, NSError * _Nonnull error) {
-            [self fireInvitesUIEventWithStatus:@"onError" channelId:channelId errorMessage: error.description];
+    } cancel:^(NSString * _Nonnull channelId) {
+        [self fireInvitesUIEventWithStatus:@"onCancel" channelId:channelId errorMessage:nil];
+    } failure:^(NSString * _Nonnull channelId, NSError * _Nonnull error) {
+        [self fireInvitesUIEventWithStatus:@"onError" channelId:channelId errorMessage: error.description];
     }];
     dispatch_async(dispatch_get_main_queue(), ^{
         [invitesView show];
@@ -986,10 +988,10 @@ RCT_REMAP_METHOD(showInvitesView,
 
 #pragma mark - Method showNotificationCenterView
 RCT_REMAP_METHOD(showNotificationCenterView,
-                  showNotificationCenterViewWithWindowTitle:(NSString*)windowTitle
-                  filterTypes:(NSArray*)filterTypes
-                  filterActions:(NSArray*)filterActions
-                  handlers:(NSDictionary*)handlers
+                 showNotificationCenterViewWithWindowTitle:(NSString*)windowTitle
+                 filterTypes:(NSArray*)filterTypes
+                 filterActions:(NSArray*)filterActions
+                 handlers:(NSDictionary*)handlers
                  resolver:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
 
@@ -1076,19 +1078,48 @@ RCT_REMAP_METHOD(loadConfiguration,
     [self sendEventWithName:@"InvitesUIEvent" body:eventData];
 }
 
-- (GetSocialMediaAttachment*)createMediaAttachment:(NSDictionary*)mediaAttachmentDictionary {
+- (UIImage*) loadImageFromFile:(NSString*)fileUri {
+    NSURL *url = [NSURL URLWithString:fileUri];
+    NSData* imageData = [NSData dataWithContentsOfURL:url];
+    UIImage* image = [UIImage imageWithData:imageData];
+    return image;
+}
+
+- (GetSocialMediaAttachment*) createMediaAttachment:(NSDictionary*)mediaAttachmentDictionary {
     GetSocialMediaAttachment* mediaAttachment = nil;
     if (![mediaAttachmentDictionary isKindOfClass:[NSNull class]]) {
         NSString* imageUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_IMAGE_URL];
+        NSString* imageUri = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_LOCAL_IMAGE_URI];
         NSString* videoUrl = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_VIDEO_URL];
+        NSString* videoUri = [mediaAttachmentDictionary safeValueForKey:KEY_MEDIA_ATTACHMENT_LOCAL_VIDEO_URI];
         if (imageUrl) {
             mediaAttachment = [GetSocialMediaAttachment imageUrl:imageUrl];
-        }
-        if (videoUrl) {
+        } else if (imageUri) {
+            UIImage* image = [self loadImageFromFile:imageUri];
+            if (image) {
+                mediaAttachment = [GetSocialMediaAttachment image:image];
+            }
+        } else if (videoUrl) {
             mediaAttachment = [GetSocialMediaAttachment videoUrl:videoUrl];
+        } else if (videoUri) {
+            NSURL *url = [NSURL URLWithString:videoUri];
+            NSData* videoData = [NSData dataWithContentsOfURL:url];
+            mediaAttachment = [GetSocialMediaAttachment video:videoData];
         }
     }
     return mediaAttachment;
+}
+
+- (NSDictionary*)processLinkParams:(NSDictionary*)linkParams
+{
+    NSMutableDictionary* mutableLinkParams = [linkParams mutableCopy];
+    if (mutableLinkParams[GetSocial_Custom_Image]) {
+        UIImage* image = [self loadImageFromFile:linkParams[GetSocial_Custom_Image]];
+        if (image) {
+            mutableLinkParams[GetSocial_Custom_Image] = image;
+        }
+    }
+    return mutableLinkParams;
 }
 
 - (GetSocialAction*)createAction:(NSDictionary*)actionDictionary {

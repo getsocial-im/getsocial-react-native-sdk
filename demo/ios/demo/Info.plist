@@ -84,6 +84,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to use your photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Lato-Black.ttf</string>
@@ -134,7 +136,7 @@
 	<key>im.getsocial.sdk.AutoRegisterForPush</key>
 	<true/>
 	<key>im.getsocial.sdk.DebugMode</key>
-	<false/>
+	<true/>
 	<key>im.getsocial.sdk.DisableFacebookReferralCheck</key>
 	<false/>
 	<key>im.getsocial.sdk.Runtime</key>

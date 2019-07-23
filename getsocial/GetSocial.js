@@ -254,6 +254,7 @@ export default class GetSocial {
    * @param {function} notificationReceived function to process notification.
    */
   static onNotificationReceived(notificationReceived: (notification : Notification, wasClicked: boolean) => void) {
+    GetSocialEventEmitter.removeAllListeners('onNotificationReceived');
     GetSocialEventEmitter.addListener('onNotificationReceived', function(rawNotification) {
       const wasClicked = rawNotification['WAS_CLICKED'];
       const receivedNotification = new Notification(rawNotification);

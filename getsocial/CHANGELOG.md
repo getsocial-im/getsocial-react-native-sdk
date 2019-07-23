@@ -1,10 +1,21 @@
+## v0.3.1 - Jul 18, 2019
+
+**New:**
+
++ Added new methods to be able to share images and videos.
+
+**Upgrading:**
+
+No special steps required. Please follow default upgrade guide.
+
+---
+
 ## v0.3.0 - Jul 18, 2019
 
 **New:**
 
 + Added new methods for sending and handling Push Notifications. [More info](https://docs.getsocial.im/guides/notifications/introduction/)
 + Added new methods to track any custom event. [More info](https://docs.getsocial.im/guides/tracked-events/custom-events/)
-+ Added new methods to be able to share images and videos.
 
 **Upgrading:**
 

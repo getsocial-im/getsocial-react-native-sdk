@@ -1,5 +1,13 @@
 package im.getsocial.rn;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.view.View;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -52,17 +60,24 @@ import im.getsocial.utils.Converters;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+
+import static android.provider.MediaStore.Video.Thumbnails.MINI_KIND;
 
 public class RNGetSocialModule extends ReactContextBaseJavaModule implements NotificationListener {
     private final ReactApplicationContext reactContext;
 
     private static final String KEY_MEDIA_ATTACHMENT = "mediaAttachment";
     private static final String KEY_MEDIA_ATTACHMENT_IMAGE_URL = "imageUrl";
+    private static final String KEY_MEDIA_ATTACHMENT_IMAGE_URI = "imageUri";
     private static final String KEY_MEDIA_ATTACHMENT_VIDEO_URL = "videoUrl";
+    private static final String KEY_MEDIA_ATTACHMENT_VIDEO_URI = "videoUri";
     private static final String KEY_INVITE_CONTENT_PARAMETER_CUSTOM_SUBJECT = "inviteSubject";
     private static final String KEY_INVITE_CONTENT_PARAMETER_CUSTOM_TEXT = "inviteText";
 
@@ -1102,12 +1117,23 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule implements Not
             // media attachment
             String imageUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_IMAGE_URL);
             String videoUrl = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_VIDEO_URL);
+            String imageUri = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_IMAGE_URI);
+            String videoUri = getStringOrNull(mediaAttachmentMap, KEY_MEDIA_ATTACHMENT_VIDEO_URI);
 
             if (imageUrl != null) {
                 mediaAttachment = MediaAttachment.imageUrl(imageUrl);
-            }
-            if (videoUrl != null) {
+            } else if (imageUri != null) {
+                Bitmap bitmap = createBitmap(imageUri);
+                if (bitmap != null) {
+                    mediaAttachment = MediaAttachment.image(bitmap);
+                }
+            } else if (videoUrl != null) {
                 mediaAttachment = MediaAttachment.videoUrl(videoUrl);
+            } else if (videoUri != null) {
+                byte[] videoContent = getVideoContent(videoUri);
+                if (videoContent != null && videoContent.length > 0) {
+                    mediaAttachment = MediaAttachment.video(videoContent);
+                }
             }
         }
         return mediaAttachment;
@@ -1147,4 +1173,75 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule implements Not
             getCurrentActivity().runOnUiThread(runnable);
         }
     }
+
+    private static String getRealPathFromUri(Context context, Uri contentUri) {
+        if (!("content".equalsIgnoreCase(contentUri.getScheme()))) {
+            return contentUri.getPath();
+        }
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+            if (cursor != null) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                return cursor.getString(column_index);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return "";
+    }
+
+    private Bitmap createBitmap(String imageUri) {
+        Bitmap thumbnail = null;
+        FileInputStream is = null;
+        try {
+            File f = new File(getRealPathFromUri(getReactApplicationContext(), Uri.parse(imageUri)));
+            if (f.exists()) {
+                is = new FileInputStream(f);
+                thumbnail = BitmapFactory.decodeStream(is);
+            }
+        } catch (Exception exception) {
+            System.out.println("Could not load image from: " + imageUri);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception exception) {
+                    System.out.println("Could not close input stream.");
+                }
+            }
+        }
+        return thumbnail;
+    }
+
+    private byte[] getVideoContent(String videoUri) {
+        File file = new File(getRealPathFromUri(getReactApplicationContext(), Uri.parse(videoUri)));
+        if (file.exists()) {
+            FileInputStream fin = null;
+            byte fileContent[] = null;
+            try {
+                fin = new FileInputStream(file);
+                fileContent = new byte[(int)file.length()];
+                fin.read(fileContent);
+            } catch (Exception ioe) {
+                System.out.println("Exception while reading file " + ioe);
+            } finally {
+                // close the streams using close method
+                try {
+                    if (fin != null) {
+                        fin.close();
+                    }
+                } catch (IOException ioe) {
+                    System.out.println("Error while closing stream: " + ioe);
+                }
+            }
+            return fileContent;
+        }
+        return null;
+    }
+
 }

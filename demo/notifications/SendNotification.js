@@ -5,12 +5,13 @@
 
 import React, {Component} from 'react';
 // eslint-disable-next-line no-unused-vars
-import {Alert, View, Text, TextInput, Button, ScrollView, FlatList, Picker} from 'react-native';
+import {Alert, View, Image, Text, TextInput, Button, ScrollView, FlatList, Picker} from 'react-native';
 import {SendNotificationStyle} from './SendNotificationStyle';
 import {GetSocialUser, MediaAttachment, Action, ActionButton, NotificationContent} from 'getsocial-react-native-sdk';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {CheckBox} from 'react-native-elements';
+import ImagePicker from 'react-native-image-picker';
 
 type Props = {}
 
@@ -20,7 +21,9 @@ type State = {
     notificationText: ?string,
     notificationTitle: ?string,
     imageUrl: ?string,
+    localImageUri: ?string,
     videoUrl: ?string,
+    localVideoUri: ?string,
     action: string,
     actionButtons: Array<any>,
     notificationData: Array<any>,
@@ -28,6 +31,9 @@ type State = {
     sendToFriends: boolean,
     sendToReferrer: boolean,
     sendToReferredUsers: boolean,
+    sendingNotification: boolean,
+    selectImageButtonDisabled: boolean,
+    selectVideoButtonDisabled: boolean,
 }
 
 export default class SendNotification extends Component<Props, State> {
@@ -41,7 +47,9 @@ export default class SendNotification extends Component<Props, State> {
         notificationText: null,
         notificationTitle: null,
         imageUrl: null,
+        localImageUri: null,
         videoUrl: null,
+        localVideoUri: null,
         action: 'default',
         actionButtons: [],
         notificationData: [],
@@ -49,6 +57,9 @@ export default class SendNotification extends Component<Props, State> {
         sendToFriends: false,
         sendToReferrer: false,
         sendToReferredUsers: false,
+        sendingNotification: false,
+        selectImageButtonDisabled: false,
+        selectVideoButtonDisabled: false,
       };
     }
 
@@ -141,7 +152,65 @@ export default class SendNotification extends Component<Props, State> {
       });
     }
 
+    updateButtonsState = async () => {
+      if (this.state.localImageUri == null) {
+        if (this.state.localVideoUri == null) {
+          this.setState({selectImageButtonDisabled: false});
+          this.setState({selectVideoButtonDisabled: false});
+        } else {
+          this.setState({selectImageButtonDisabled: true});
+          this.setState({selectVideoButtonDisabled: false});
+        }
+      } else {
+        if (this.state.localVideoUri == null) {
+          this.setState({selectImageButtonDisabled: false});
+          this.setState({selectVideoButtonDisabled: true});
+        } else {
+          this.setState({selectImageButtonDisabled: false});
+          this.setState({selectVideoButtonDisabled: false});
+        }
+      }
+    }
+
+    selectImage = async () => {
+      ImagePicker.launchImageLibrary({}, (response) => {
+        if (response.uri != undefined) {
+          this.setState({localImageUri: response.uri}, () => {
+            this.updateButtonsState();
+          });
+        }
+      });
+    }
+
+    removeImage = async () => {
+      this.setState({localImageUri: null}, () => {
+        this.updateButtonsState();
+      });
+    }
+
+    selectVideo = async () => {
+      const options = {mediaType: 'video'};
+      ImagePicker.launchImageLibrary(options, (response) => {
+        if (response.uri != undefined) {
+          this.setState({localVideoUri: response.uri}, () => {
+            this.updateButtonsState();
+          });
+        }
+      });
+    }
+
+    removeVideo = async () => {
+      this.setState({localVideoUri: null}, () => {
+        this.updateButtonsState();
+      });
+    }
+
     sendNotification = async () => {
+      if (this.state.sendingNotification == true) {
+        console.log('Sending notification in progress...');
+        return;
+      }
+      this.setState({sendingNotification: true});
       const notification = this.state.templateName == null ? NotificationContent.withText(this.state.notificationText == null ? '' : this.state.notificationText) : NotificationContent.withTemplate(this.state.templateName);
       const templateData = new Map();
       this.state.templateData.forEach((item) => {
@@ -154,11 +223,18 @@ export default class SendNotification extends Component<Props, State> {
       if (this.state.notificationTitle != null) {
         notification.withTitle(this.state.notificationTitle);
       }
+      let mediaAttachment = null;
       if (this.state.imageUrl != null) {
-        notification.withMediaAttachment(MediaAttachment.withImageUrl(this.state.imageUrl));
+        mediaAttachment = MediaAttachment.withImageUrl(this.state.imageUrl);
+      } else if (this.state.videoUrl != null) {
+        mediaAttachment = MediaAttachment.withVideoUrl(this.state.videoUrl);
+      } else if (this.state.localImageUri != null) {
+        mediaAttachment = MediaAttachment.withLocalImageUri(this.state.localImageUri);
+      } else if (this.state.localVideoUri != null) {
+        mediaAttachment = MediaAttachment.withLocalVideoUri(this.state.localVideoUri);
       }
-      if (this.state.videoUrl != null) {
-        notification.withMediaAttachment(MediaAttachment.withVideoUrl(this.state.videoUrl));
+      if (mediaAttachment != null) {
+        notification.withMediaAttachment(mediaAttachment);
       }
       this.state.actionButtons.forEach((item) => {
         notification.addActionButton(ActionButton.create(item.name, item.value));
@@ -184,14 +260,47 @@ export default class SendNotification extends Component<Props, State> {
         recipients.push('referred_users');
       }
       showLoading();
+      console.log('Sending notification...');
       GetSocialUser.sendNotification(recipients, notification)
           .then((notificationSummary) => {
+            this.setState({sendingNotification: false});
             hideLoading();
+            console.log('Notification was sent...');
             Alert.alert('Notifications', 'Notification was sent to ' + notificationSummary.successfullySentCount + ' recipients');
           }, (error) => {
+            this.setState({sendingNotification: false});
             hideLoading();
             Alert.alert('Error', 'Could not send notification, error: ' + error['code']);
           });
+    }
+
+    renderMedia(image: any, onDelete:(() => void)) {
+      return (<View style={SendNotificationStyle.formEntryRow}>
+        <View style={SendNotificationStyle.formEntryTitleContainer}>
+          <Image source={image} style={{width: 100, height: 50}}/>
+        </View>
+        <View style={SendNotificationStyle.formEntryInputContainer}>
+          <Button title={'Remove'} onPress={() => onDelete()}/>
+        </View>
+      </View>);
+    }
+
+    renderImage() {
+      if (this.state.localImageUri != null) {
+        return this.renderMedia({uri: this.state.localImageUri}, () => {
+          this.removeImage();
+        });
+      }
+      return null;
+    }
+
+    renderVideo() {
+      if (this.state.localVideoUri != null) {
+        return this.renderMedia(require('./../img/video-thumbnail.jpg'), () => {
+          this.removeVideo();
+        });
+      }
+      return null;
     }
 
     render() {
@@ -272,6 +381,24 @@ export default class SendNotification extends Component<Props, State> {
               <TextInput style={SendNotificationStyle.formEntryInput} value={this.state.videoUrl} onChangeText={(text) => this.setState({videoUrl: text})} placeholder='Video Url'/>
             </View>
           </View>
+          <View style={SendNotificationStyle.formEntryRow}>
+            <View style={SendNotificationStyle.formEntryTitleContainer}>
+              <Text style={SendNotificationStyle.formEntryTitle} >Image</Text>
+            </View>
+            <View style={SendNotificationStyle.formEntryInputContainer}>
+              <Button title={'Select'} disabled={this.state.selectImageButtonDisabled} onPress={() => this.selectImage()}/>
+            </View>
+          </View>
+          {this.renderImage()}
+          <View style={SendNotificationStyle.formEntryRow}>
+            <View style={SendNotificationStyle.formEntryTitleContainer}>
+              <Text style={SendNotificationStyle.formEntryTitle} >Video</Text>
+            </View>
+            <View style={SendNotificationStyle.formEntryInputContainer}>
+              <Button title={'Select'} disabled={this.state.selectVideoButtonDisabled} onPress={() => this.selectVideo()}/>
+            </View>
+          </View>
+          {this.renderVideo()}
           <View style={SendNotificationStyle.sectionTitleRow}>
             <View style={{flex: 1, justifyContent: 'center'}}>
               <Text style={SendNotificationStyle.sectionTitle} >Action</Text>

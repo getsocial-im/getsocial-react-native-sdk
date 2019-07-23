@@ -5,7 +5,9 @@
  */
 export default class MediaAttachment {
   #imageUrl = null;
+  #imageUri = null;
   #videoUrl = null;
+  #videoUri = null;
 
   /**
    * Creates media attachment instance with image url.
@@ -30,13 +32,37 @@ export default class MediaAttachment {
   }
 
   /**
+   * @param {string} imageUri Uri of the image.
+   * Creates media attachment instance with local image uri.
+   * @return {MediaAttachment} Created media attachment instance.
+   */
+  static withLocalImageUri(imageUri: string): MediaAttachment {
+    const ma = new MediaAttachment();
+    ma.#imageUri = imageUri;
+    return ma;
+  }
+
+  /**
+   * Creates media attachment instance with local video uri.
+   * @param {string} videoUri Uri of the video.
+   * @return {MediaAttachment} Created media attachment instance.
+   */
+  static withLocalVideoUri(videoUri: string): MediaAttachment {
+    const ma = new MediaAttachment();
+    ma.#videoUri = videoUri;
+    return ma;
+  }
+
+  /**
    * Generates JSON string.
    * @return {string} object as json.
    */
   toJSON(): string {
     return JSON.stringify({
       'imageUrl': this.#imageUrl,
+      'imageUri': this.#imageUri,
       'videoUrl': this.#videoUrl,
+      'videoUri': this.#videoUri,
     });
   }
 }

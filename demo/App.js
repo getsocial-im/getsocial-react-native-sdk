@@ -24,7 +24,7 @@ import {UserDetailsView} from './main/UserDetailsView.js';
 
 // eslint-disable-next-line no-unused-vars
 import {View, Alert} from 'react-native';
-import {GetSocial, Action} from 'getsocial-react-native-sdk';
+import {GetSocial} from 'getsocial-react-native-sdk';
 
 const MainNavigator = createStackNavigator({
   MainMenu: {screen: MainMenu},
