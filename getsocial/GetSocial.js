@@ -44,7 +44,13 @@ export default class GetSocial {
     @param {function} onInit function to be invoked.
    */
   static whenInitialized(onInit: () => void) {
-    GetSocialEventEmitter.addListener('whenInitialized', onInit);
+    GetSocial.isInitialized().then((isInitialized) => {
+      if (isInitialized) {
+        onInit();
+      } else {
+        GetSocialEventEmitter.addListener('whenInitialized', onInit);
+      }
+    });
   }
 
   /**

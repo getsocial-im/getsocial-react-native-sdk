@@ -89,7 +89,7 @@ class UserDetailsView extends Component<Props, State> {
               <Text style={UserDetailsViewStyle.formEntryTitle} >Display name:</Text>
             </View>
             <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text>{this.state.displayName}</Text>
+              <Text accessibilityLabel='Display name'>{this.state.displayName}</Text>
             </View>
           </View>
           <View style={UserDetailsViewStyle.formEntryRow}>
@@ -97,7 +97,7 @@ class UserDetailsView extends Component<Props, State> {
               <Text style={UserDetailsViewStyle.formEntryTitle} >User Id:</Text>
             </View>
             <View style={UserDetailsViewStyle.formEntryInputContainer}>
-              <TextInput style={UserDetailsViewStyle.formEntryInput} value={this.state.userId}/>
+              <TextInput accessibilityLabel='User Id' style={UserDetailsViewStyle.formEntryInput} value={this.state.userId}/>
             </View>
           </View>
           <View style={UserDetailsViewStyle.formEntryRow}>
@@ -105,7 +105,7 @@ class UserDetailsView extends Component<Props, State> {
               <Text style={UserDetailsViewStyle.formEntryTitle} >Avatar Url:</Text>
             </View>
             <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text>{this.state.privateProperties}</Text>
+              <Text accessibilityLabel='Avatar Url'>{this.state.privateProperties}</Text>
             </View>
           </View>
           <View style={UserDetailsViewStyle.formEntryRow}>
@@ -113,7 +113,7 @@ class UserDetailsView extends Component<Props, State> {
               <Text style={UserDetailsViewStyle.formEntryTitle} >Auth identities: </Text>
             </View>
             <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text>{this.state.authIdentities}</Text>
+              <Text accessibilityLabel='Auth identities'>{this.state.authIdentities}</Text>
             </View>
           </View>
           <View style={UserDetailsViewStyle.formEntryRow}>
@@ -121,7 +121,7 @@ class UserDetailsView extends Component<Props, State> {
               <Text style={UserDetailsViewStyle.formEntryTitle} >Public properties:</Text>
             </View>
             <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text>{this.state.publicProperties}</Text>
+              <Text accessibilityLabel='Public properties'>{this.state.publicProperties}</Text>
             </View>
           </View>
           <View style={UserDetailsViewStyle.formEntryRow}>
@@ -129,7 +129,7 @@ class UserDetailsView extends Component<Props, State> {
               <Text style={UserDetailsViewStyle.formEntryTitle} >Private properties:</Text>
             </View>
             <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text>{this.state.privateProperties}</Text>
+              <Text accessibilityLabel='Private properties'>{this.state.privateProperties}</Text>
             </View>
           </View>
         </ScrollView>

@@ -92,15 +92,15 @@ export default class FriendsMenu extends Component<Props, State> {
               <Text style={FriendsMenuStyle.inputTitle}>Add friend: </Text>
             </View>
             <View style={FriendsMenuStyle.inputTextContainer}>
-              <TextInput style={FriendsMenuStyle.inputText} value={this.state.newFriendGUID}
+              <TextInput accessibilityLabel='User GUID input' style={FriendsMenuStyle.inputText} value={this.state.newFriendGUID}
                 onChangeText={(text) => this.setState({newFriendGUID: text})} placeholder='User GUID'/>
             </View>
             <View style={FriendsMenuStyle.inputButtonContainer}>
-              <Button style={FriendsMenuStyle.buttonStyle} title='Add' onPress={ this.addFriend }/>
+              <Button accessibilityLabel='Add friend button' style={FriendsMenuStyle.buttonStyle} title='Add' onPress={ this.addFriend }/>
             </View>
           </View>
           <View style={FriendsMenuStyle.suggestFriendsRow}>
-            <Button style={FriendsMenuStyle.buttonStyle} title='Suggest Friends' onPress={ this.showSuggestedFriends }/>
+            <Button accessibilityLabel='Show suggested friends button' style={FriendsMenuStyle.buttonStyle} title='Suggest Friends' onPress={ this.showSuggestedFriends }/>
           </View>
           {/* menu starts */}
           <View style={MenuStyle.menuContainer}>

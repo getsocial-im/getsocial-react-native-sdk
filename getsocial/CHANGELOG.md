@@ -1,3 +1,15 @@
+## v0.3.2 - Aug 8, 2019
+
+**Fixed:**
+
++ Fixed issues with `whenInitialized` callback on iOS causing callback is not invoked.
+
+**Upgrading:**
+
+No special steps required. Please follow default upgrade guide.
+
+---
+
 ## v0.3.1 - Jul 18, 2019
 
 **New:**
