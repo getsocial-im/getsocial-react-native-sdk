@@ -1,0 +1,49 @@
+{
+  "name": "sdk7demo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "postinstall": "npx patch-package"
+  },
+  "dependencies": {
+    "@react-native-community/checkbox": "^0.5.2",
+    "@react-native-community/masked-view": "^0.1.10",
+    "moment": "^2.27.0",
+    "patch-package": "^6.2.2",
+    "react": "16.13.1",
+    "react-native": "0.63.2",
+    "react-native-actionsheet": "^2.4.2",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-elements": "^2.0.4",
+    "react-native-fbsdk": "^2.0.0",
+    "react-native-gesture-handler": "^1.7.0",
+    "react-native-image-picker": "^2.3.3",
+    "react-native-safe-area-context": "^3.1.1",
+    "react-native-screens": "^2.9.0",
+    "react-native-search-bar": "^3.5.1",
+    "react-native-vector-icons": "^7.0.0",
+    "react-navigation": "^4.4.0",
+    "react-navigation-stack": "^2.8.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.10.5",
+    "@babel/runtime": "7.10.5",
+    "@react-native-community/eslint-config": "1.1.0",
+    "babel-jest": "25.5.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-native": "^3.9.1",
+    "hermes-engine": "0.5.1",
+    "jest": "25.5.4",
+    "metro-react-native-babel-preset": "0.59.0",
+    "react-test-renderer": "16.13.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

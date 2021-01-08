@@ -1,0 +1,27 @@
+diff --git a/node_modules/react-native-actionsheet/.DS_Store b/node_modules/react-native-actionsheet/.DS_Store
+new file mode 100644
+index 0000000..a67d688
+Binary files /dev/null and b/node_modules/react-native-actionsheet/.DS_Store differ
+diff --git a/node_modules/react-native-actionsheet/lib/ActionSheetCustom.js b/node_modules/react-native-actionsheet/lib/ActionSheetCustom.js
+index 7a0fc35..989e1cf 100644
+--- a/node_modules/react-native-actionsheet/lib/ActionSheetCustom.js
++++ b/node_modules/react-native-actionsheet/lib/ActionSheetCustom.js
+@@ -68,14 +68,16 @@ class ActionSheet extends React.Component {
+     Animated.timing(this.state.sheetAnim, {
+       toValue: 0,
+       duration: 250,
+-      easing: Easing.out(Easing.ease)
++      easing: Easing.out(Easing.ease),
++      useNativeDriver: true
+     }).start()
+   }
+ 
+   _hideSheet (callback) {
+     Animated.timing(this.state.sheetAnim, {
+       toValue: this.translateY,
+-      duration: 200
++      duration: 200,
++      useNativeDriver: true,
+     }).start(callback)
+   }
+ 

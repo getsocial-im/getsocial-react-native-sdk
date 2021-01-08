@@ -1,0 +1,20 @@
+{
+    "autoInit": true,
+    "debug": true,
+    "pushNotifications": {
+        "android": {
+            "titleColor": null,
+            "messageColor": null,
+            "channelName": null,
+            "icon": null,
+            "backgroundImage": null,
+            "channelDescription": null,
+            "largeIcon": null
+        },
+        "autoRegister": true,
+        "customListener": true,
+        "foreground": true
+    },
+    "disableFacebookReferralCheck": false,
+    "uiConfig": null
+}

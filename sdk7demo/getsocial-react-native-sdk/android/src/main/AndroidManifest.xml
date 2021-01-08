@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="im.getsocial.rn">
+    <application>
+        <meta-data android:name="im.getsocial.sdk.WrapperVersion" android:value="7.0.0" />
+        <meta-data android:name="im.getsocial.sdk.Runtime" android:value="REACTNATIVE" />
+    </application>
+</manifest>

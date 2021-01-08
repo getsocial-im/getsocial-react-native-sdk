@@ -1,0 +1,56 @@
+{
+  "name": "getsocial-react-native-sdk",
+  "title": "GetSocial React Native SDK",
+  "version": "7.0.7",
+  "description": "React Native wrapper for GetSocial iOS and Android SDK",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/getsocial-im/getsocial-react-native-sdk"
+  },
+  "main": "index.js",
+  "scripts": {
+    "flow": "flow",
+    "eslint": "eslint"
+  },
+  "keywords": [
+    "react-native",
+    "getsocial",
+    "social", "feed", "topic", "chat", "referral", "invite", "friends" 
+  ],
+  "files": [
+    "Analytics.js",
+    "Communities.js",
+    "CurrentUser.js",
+    "GetSocial.js",
+    "GetSocialEventEmitter.js",
+    "GetSocialUI.js",
+    "index.js",
+    "Invites.js",
+    "Notifications.js",
+    "PromoCodes.js",
+    "models",
+    "utils",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.xcodeproj",
+    "android/src",
+    "android/build.gradle",
+    "RNGetSocial.podspec"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "documentation": "^13.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-google": "^0.12.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-native": "^3.8.1",
+    "flow-bin": "^0.113.0",
+    "react": "16.11.0",
+    "react-native": "^0.62.2"
+  }
+}
