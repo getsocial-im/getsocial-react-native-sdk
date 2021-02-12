@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 // @flow
 
@@ -25,16 +26,23 @@ import {LoadingIndicator} from './common/LoadingIndicator';
 import {UserDetailsView} from './main/UserDetailsView.js';
 import TagsListView from './communities/TagsList.js';
 import TopicsListView from './communities/TopicsList.js';
+import CreateGroupView from './communities/CreateGroup.js';
+import UpdateGroupView from './communities/UpdateGroup.js';
+import AddGroupMemberView from './communities/AddGroupMember.js';
+import GroupsListView from './communities/GroupsList.js';
+import GroupMembersListView from './communities/GroupMembersList.js';
 import TopicsMenu from './communities/TopicsMenu.js';
+import GroupsMenu from './communities/GroupsMenu.js';
 import UsersListView from './communities/UsersList.js';
+import ChatsListView from './communities/ChatsList.js';
+import ChatMessagesListView from './communities/ChatMessagesList.js';
 import FollowersListView from './communities/FollowersList.js';
 import FollowingsListView from './communities/FollowingsList.js';
 import ActivitiesMenu from './communities/ActivitiesMenu.js';
 
 // eslint-disable-next-line no-unused-vars
 import {View, Alert} from 'react-native';
-import {Notifications, Invites, ReferralData, Notification, NotificationContext} from 'getsocial-react-native-sdk';
-import FollowersList from './communities/FollowersList';
+import {Notifications, Invites} from 'getsocial-react-native-sdk';
 import CreateActivityPost from './communities/CreateActivityPost';
 import UpdateActivityPost from './communities/UpdateActivityPost';
 import SetReferrer from './invites/SetReferrer';
@@ -45,38 +53,46 @@ import AddIdentity from './usermanagement/AddIdentity';
 import {globalActionProcessor} from './common/CommonMethods.js';
 
 const MainNavigator = createStackNavigator({
-  MainMenu: {screen: MainMenu},
-  SettingsMenu: {screen: SettingsMenu},
-  ChangeLanguageMenu: {screen: ChangeLanguageMenu},
-  UICustomizationMenu: {screen: UICustomizationMenu},
-  SendCustomInvite: {screen: SendCustomInvite},
-  InvitesMenu: {screen: InvitesMenu},
-  NotificationsMenu: {screen: NotificationsMenu},
-  SendNotification: {screen: SendNotification},
-  UMMenu: {screen: UserManagementMenu},
-  FriendsMenu: {screen: FriendsMenu},
-  SuggestedFriends: {screen: SuggestedFriends},
-  SendInviteWOUI: {screen: SendInviteWOUI},
-  NotificationsList: {screen: NotificationsList},
-  EventTrackingMenu: {screen: EventTrackingMenu},
-  PromoCodesMenu: {screen: PromoCodesMenu},
-  TagsList: {screen: TagsListView},
-  TopicsList: {screen: TopicsListView},
-  UsersList: {screen: UsersListView},
-  FollowersList: {screen: FollowersListView},
-  FollowingsList: {screen: FollowingsListView},
-  ActivitiesMenu: {screen: ActivitiesMenu},
-  CreateActivityPost: {screen: CreateActivityPost},
-  UpdateActivityPost: {screen: UpdateActivityPost},
-  CreatePromoCode: {screen: CreatePromoCode},
-  ClaimPromoCode: {screen: ClaimPromoCode},
-  SetReferrer: {screen: SetReferrer},
-  PromoCodeInfo: {screen: PromoCodeInfo},
-  AddIdentity: {screen: AddIdentity},
-  TopicsMenu: {screen: TopicsMenu}
+    MainMenu: {screen: MainMenu},
+    SettingsMenu: {screen: SettingsMenu},
+    ChangeLanguageMenu: {screen: ChangeLanguageMenu},
+    UICustomizationMenu: {screen: UICustomizationMenu},
+    SendCustomInvite: {screen: SendCustomInvite},
+    InvitesMenu: {screen: InvitesMenu},
+    NotificationsMenu: {screen: NotificationsMenu},
+    SendNotification: {screen: SendNotification},
+    UMMenu: {screen: UserManagementMenu},
+    FriendsMenu: {screen: FriendsMenu},
+    SuggestedFriends: {screen: SuggestedFriends},
+    SendInviteWOUI: {screen: SendInviteWOUI},
+    NotificationsList: {screen: NotificationsList},
+    EventTrackingMenu: {screen: EventTrackingMenu},
+    PromoCodesMenu: {screen: PromoCodesMenu},
+    TagsList: {screen: TagsListView},
+    TopicsList: {screen: TopicsListView},
+    UsersList: {screen: UsersListView},
+    FollowersList: {screen: FollowersListView},
+    FollowingsList: {screen: FollowingsListView},
+    ActivitiesMenu: {screen: ActivitiesMenu},
+    CreateActivityPost: {screen: CreateActivityPost},
+    UpdateActivityPost: {screen: UpdateActivityPost},
+    CreatePromoCode: {screen: CreatePromoCode},
+    ClaimPromoCode: {screen: ClaimPromoCode},
+    SetReferrer: {screen: SetReferrer},
+    PromoCodeInfo: {screen: PromoCodeInfo},
+    AddIdentity: {screen: AddIdentity},
+    TopicsMenu: {screen: TopicsMenu},
+    GroupsMenu: {screen: GroupsMenu},
+    GroupsList: {screen: GroupsListView},
+    GroupMembersList: {screen: GroupMembersListView},
+    ChatsList: {screen: ChatsListView},
+    ChatMessagesView: {screen: ChatMessagesListView},
+    CreateGroup: {screen: CreateGroupView},
+    UpdateGroup: {screen: UpdateGroupView},
+    AddGroupMember: {screen: AddGroupMemberView},
 },
 {
-  initialRouteName: 'MainMenu',
+    initialRouteName: 'MainMenu',
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -86,39 +102,40 @@ type Props = { }
 type State = { }
 
 export default class App extends React.Component<Props, State> {
-  constructor(props: any) {
-    super(props);
-    global.loadingIndicatorRef = React.createRef();
-    global.userDetailsViewRef = React.createRef();
-  }
+    constructor(props: any) {
+        super(props);
+        global.navigationRef = React.createRef();
+        global.loadingIndicatorRef = React.createRef();
+        global.userDetailsViewRef = React.createRef();
+    }
 
-  componentDidMount() {
+    componentDidMount() {
     // // Listen for events to set the proper information
-    Notifications.setOnNotificationReceivedListener((notification) => {
-      if (notification.action !== undefined && notification.action != null) {
-        globalActionProcessor(notification.action);
-      } else {
-        Alert.alert('Notification received', notification.toJSON());
-      }
-    });
-    Notifications.setOnNotificationClickedListener((notification, context) => {
-      if (notification.action !== undefined && notification.action != null) {
-        globalActionProcessor(notification.action);
-      } else {
-        Alert.alert('Notification clicked', notification.toJSON());
-      }
-    });
-    Invites.setOnReferralDataReceivedListener((referralData) => {
-      InvitesMenu.storedReferralData = referralData;
-      Alert.alert('Referral data', JSON.stringify(referralData));
-    });
-  }
+        Notifications.setOnNotificationReceivedListener((notification) => {
+            if (notification.action !== undefined && notification.action != null) {
+                globalActionProcessor(notification.action);
+            } else {
+                Alert.alert('Notification received', notification.toJSON());
+            }
+        });
+        Notifications.setOnNotificationClickedListener((notification, context) => {
+            if (notification.action !== undefined && notification.action != null) {
+                globalActionProcessor(notification.action);
+            } else {
+                Alert.alert('Notification clicked', notification.toJSON());
+            }
+        });
+        Invites.setOnReferralDataReceivedListener((referralData) => {
+            InvitesMenu.storedReferralData = referralData;
+            Alert.alert('Referral data', JSON.stringify(referralData));
+        });
+    }
 
-  render() {
-    return <View style={{flex: 1}}>
-      <AppContainer/>
-      <UserDetailsView ref={global.userDetailsViewRef}/>
-      <LoadingIndicator ref={global.loadingIndicatorRef}/>
-    </View>;
-  }
-};
+    render() {
+        return <View style={{flex: 1}}>
+            <AppContainer ref={global.navigationRef}/>
+            <UserDetailsView ref={global.userDetailsViewRef}/>
+            <LoadingIndicator ref={global.loadingIndicatorRef}/>
+        </View>;
+    }
+}

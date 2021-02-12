@@ -13,29 +13,29 @@ type State = {
 }
 
 const showLoading = () => {
-  global.loadingIndicatorRef.current.setState({visible: true});
+    global.loadingIndicatorRef.current.setState({visible: true});
 };
 const hideLoading = () => {
-  global.loadingIndicatorRef.current.setState({visible: false});
+    global.loadingIndicatorRef.current.setState({visible: false});
 };
 
 class LoadingIndicator extends React.Component<Props, State> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
-  }
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            visible: false,
+        };
+    }
 
-  render() {
-    {if (this.state.visible) {
-      return <View style={LoadingIndicatorStyle.loading}>
-        <ActivityIndicator animating={true} size='large'/>
-      </View>;
-    } else {
-      return null;
-    }}
-  }
-};
+    render() {
+        {if (this.state.visible) {
+            return <View style={LoadingIndicatorStyle.loading}>
+                <ActivityIndicator animating={true} size='large'/>
+            </View>;
+        } else {
+            return null;
+        }}
+    }
+}
 
 export {LoadingIndicator, showLoading, hideLoading};

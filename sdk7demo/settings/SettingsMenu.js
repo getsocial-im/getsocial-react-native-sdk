@@ -21,78 +21,78 @@ export default class SettingsMenu extends Component<Props, State> {
     static navigationOptions = {title: 'Settings'};
 
     constructor(props: any) {
-      super(props);
+        super(props);
 
-      const languageMenu = new MenuItem();
-      languageMenu.key = 'change-language';
-      languageMenu.title = 'Change language';
-      languageMenu.navigateTo = 'ChangeLanguageMenu';
+        const languageMenu = new MenuItem();
+        languageMenu.key = 'change-language';
+        languageMenu.title = 'Change language';
+        languageMenu.navigateTo = 'ChangeLanguageMenu';
 
-      const notificationStatus = new MenuItem();
-      notificationStatus.key = 'change-notification-status';
-      notificationStatus.title = 'Push Notifications status';
-      notificationStatus.showStatus = true;
+        const notificationStatus = new MenuItem();
+        notificationStatus.key = 'change-notification-status';
+        notificationStatus.title = 'Push Notifications status';
+        notificationStatus.showStatus = true;
 
-      const settingsMenu = [languageMenu, notificationStatus];
+        const settingsMenu = [languageMenu, notificationStatus];
 
-      this.state = {
-        menu: settingsMenu,
-        isNotificationsEnabled: false,
-      };
+        this.state = {
+            menu: settingsMenu,
+            isNotificationsEnabled: false,
+        };
     }
 
     componentDidMount() {
-      Notifications.arePushNotificationsEnabled().then((isEnabled) => {
-        this.setState({isNotificationsEnabled: isEnabled});
-      });
+        Notifications.arePushNotificationsEnabled().then((isEnabled) => {
+            this.setState({isNotificationsEnabled: isEnabled});
+        });
     }
 
     menuItemSelected(menuItem : MenuItem) {
-      if (menuItem.navigateTo != null) {
-        this.props.navigation.navigate(menuItem.navigateTo);
-      }
+        if (menuItem.navigateTo != null) {
+            this.props.navigation.navigate(menuItem.navigateTo);
+        }
     }
 
     changeNotificationStatus = async () => {
-      Notifications.setPushNotificationsEnabled(!this.state.isNotificationsEnabled).then(() => {
-        if (this.state.isNotificationsEnabled === true) {
-          this.setState({isNotificationsEnabled: false});
-        } else {
-          this.setState({isNotificationsEnabled: true});
-        }
-      });
+        Notifications.setPushNotificationsEnabled(!this.state.isNotificationsEnabled).then(() => {
+            if (this.state.isNotificationsEnabled === true) {
+                this.setState({isNotificationsEnabled: false});
+            } else {
+                this.setState({isNotificationsEnabled: true});
+            }
+        });
     }
 
     getNotificationStatusCheckbox(menuItem: MenuItem) {
-      if (menuItem.showStatus == true) {
-        return <CheckBox 
-          value={this.state.isNotificationsEnabled} 
-          onValueChange={() => this.changeNotificationStatus()}
-          />;
-      }
-      return null;
+        if (menuItem.showStatus == true) {
+            return <CheckBox
+                value={this.state.isNotificationsEnabled}
+                onValueChange={() => this.changeNotificationStatus()}
+            />;
+        }
+        return null;
     }
 
     render() {
-      return (
-        <View style={MenuStyle.container}>
-          {/* menu starts */}
-          <View style={MenuStyle.menuContainer}>
-            <FlatList style={{flex: 1}}
-              data={this.state.menu}
-              renderItem={({item}) => (
-                <TouchableWithoutFeedback onPress={ () => this.menuItemSelected(item)}>
-                  <View style={MenuStyle.listitemWithCheckbox}>
-                    <Text style={MenuStyle.menuitem}>{item.title}</Text>
-                    {this.getNotificationStatusCheckbox(item)}
-                  </View>
-                </TouchableWithoutFeedback>
-              )}
-              keyExtractor={(item) => item.key}
-            />
-          </View>
-          {/* menu ends */}
-        </View>
-      );
+        return (
+            <View style={MenuStyle.container}>
+                {/* menu starts */}
+                <View style={MenuStyle.menuContainer}>
+                    <FlatList style={{flex: 1}}
+                        data={this.state.menu}
+                        renderItem={({item}) => (
+                            <TouchableWithoutFeedback onPress={ () => this.menuItemSelected(item)}>
+                                <View style={MenuStyle.listitemWithCheckbox}>
+                                    <Text style={MenuStyle.menuitem}>{item.title}</Text>
+                                    {this.getNotificationStatusCheckbox(item)}
+                                </View>
+                            </TouchableWithoutFeedback>
+                        )}
+                        keyExtractor={(item) => item.key}
+                    />
+                </View>
+                {/* menu ends */}
+            </View>
+        );
     }
 }

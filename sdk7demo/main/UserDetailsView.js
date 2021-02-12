@@ -9,7 +9,7 @@ import {Modal, View, Text, FlatList, ScrollView, TextInput, Button} from 'react-
 import {CheckBox} from 'react-native-elements';
 // eslint-disable-next-line no-unused-vars
 import {UserDetailsViewStyle} from './UserDetailsViewStyle.js';
-import {GetSocial, CurrentUser} from 'getsocial-react-native-sdk';
+import {GetSocial} from 'getsocial-react-native-sdk';
 
 type Props = {}
 type State = {
@@ -23,106 +23,106 @@ type State = {
 }
 
 const showUserDetailsView = () => {
-  global.userDetailsViewRef.current.setState({visible: true});
-  global.userDetailsViewRef.current.updateUserDetails();
+    global.userDetailsViewRef.current.setState({visible: true});
+    global.userDetailsViewRef.current.updateUserDetails();
 };
 
 class UserDetailsView extends Component<Props, State> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      visible: false,
-      userId: '',
-      displayName: '',
-      avatarUrl: undefined,
-      publicProperties: '',
-      privateProperties: '',
-      authIdentities: '',
-    };
-  }
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            visible: false,
+            userId: '',
+            displayName: '',
+            avatarUrl: undefined,
+            publicProperties: '',
+            privateProperties: '',
+            authIdentities: '',
+        };
+    }
 
-  updateUserDetails() {
-    GetSocial.getCurrentUser().then((currentUser) => {
-      this.setState({userId: currentUser.id});
-      this.setState({displayName: currentUser.displayName});
-      if (currentUser.avatarUrl != '') {
-        this.setState({avatarUrl: currentUser.avatarUrl});
-      } else {
-        this.setState({avatarUrl: undefined});
-      }
-      if (currentUser.isAnonymous()) {
-        this.setState({authIdentities: 'Anonymous'});
-      } else {
-        this.setState({authIdentities: JSON.stringify(currentUser.identities)});
-      }
-      this.setState({publicProperties: JSON.stringify(currentUser.publicProperties)});
-      this.setState({privateProperties: JSON.stringify(currentUser.privateProperties)});
-  });
-  }
+    updateUserDetails() {
+        GetSocial.getCurrentUser().then((currentUser) => {
+            this.setState({userId: currentUser.id});
+            this.setState({displayName: currentUser.displayName});
+            if (currentUser.avatarUrl != '') {
+                this.setState({avatarUrl: currentUser.avatarUrl});
+            } else {
+                this.setState({avatarUrl: undefined});
+            }
+            if (currentUser.isAnonymous()) {
+                this.setState({authIdentities: 'Anonymous'});
+            } else {
+                this.setState({authIdentities: JSON.stringify(currentUser.identities)});
+            }
+            this.setState({publicProperties: JSON.stringify(currentUser.publicProperties)});
+            this.setState({privateProperties: JSON.stringify(currentUser.privateProperties)});
+        });
+    }
 
   closeView = async () => {
-    this.setState({visible: false});
+      this.setState({visible: false});
   }
 
   render() {
-    return (
-      <Modal animationType="slide"
-        transparent={false}
-        visible={this.state.visible}
-        onRequestClose={() => {}}>
-        <ScrollView style={{flex: 1, padding: 10}}>
-          <Button title={'Close'} onPress={() => this.closeView()}/>
-          <View style={UserDetailsViewStyle.formEntryRow}>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text style={UserDetailsViewStyle.formEntryTitle} >Display name:</Text>
-            </View>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text accessibilityLabel='Display name'>{this.state.displayName}</Text>
-            </View>
-          </View>
-          <View style={UserDetailsViewStyle.formEntryRow}>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text style={UserDetailsViewStyle.formEntryTitle} >User Id:</Text>
-            </View>
-            <View style={UserDetailsViewStyle.formEntryInputContainer}>
-              <TextInput accessibilityLabel='User Id' style={UserDetailsViewStyle.formEntryInput} value={this.state.userId}/>
-            </View>
-          </View>
-          <View style={UserDetailsViewStyle.formEntryRow}>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text style={UserDetailsViewStyle.formEntryTitle} >Avatar Url:</Text>
-            </View>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text accessibilityLabel='Avatar Url'>{this.state.privateProperties}</Text>
-            </View>
-          </View>
-          <View style={UserDetailsViewStyle.formEntryRow}>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text style={UserDetailsViewStyle.formEntryTitle} >Auth identities: </Text>
-            </View>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text accessibilityLabel='Auth identities'>{this.state.authIdentities}</Text>
-            </View>
-          </View>
-          <View style={UserDetailsViewStyle.formEntryRow}>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text style={UserDetailsViewStyle.formEntryTitle} >Public properties:</Text>
-            </View>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text accessibilityLabel='Public properties'>{this.state.publicProperties}</Text>
-            </View>
-          </View>
-          <View style={UserDetailsViewStyle.formEntryRow}>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text style={UserDetailsViewStyle.formEntryTitle} >Private properties:</Text>
-            </View>
-            <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-              <Text accessibilityLabel='Private properties'>{this.state.privateProperties}</Text>
-            </View>
-          </View>
-        </ScrollView>
-      </Modal>
-    );
+      return (
+          <Modal animationType="slide"
+              transparent={false}
+              visible={this.state.visible}
+              onRequestClose={() => {}}>
+              <ScrollView style={{flex: 1, padding: 10}}>
+                  <Button title={'Close'} onPress={() => this.closeView()}/>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Display name:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Display name'>{this.state.displayName}</Text>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >User Id:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryInputContainer}>
+                          <TextInput accessibilityLabel='User Id' style={UserDetailsViewStyle.formEntryInput} value={this.state.userId}/>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Avatar Url:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Avatar Url'>{this.state.privateProperties}</Text>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Auth identities: </Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Auth identities'>{this.state.authIdentities}</Text>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Public properties:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Public properties'>{this.state.publicProperties}</Text>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Private properties:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Private properties'>{this.state.privateProperties}</Text>
+                      </View>
+                  </View>
+              </ScrollView>
+          </Modal>
+      );
   }
 }
 

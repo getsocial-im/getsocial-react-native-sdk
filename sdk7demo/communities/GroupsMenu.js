@@ -11,39 +11,47 @@ import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, View, FlatList, TouchableWithoutFeedback, Text} from 'react-native';
 import {UserId} from './../getsocial-react-native-sdk';
-import TopicsQuery from '../getsocial-react-native-sdk/models/communities/TopicsQuery.js';
-import TopicsListView from './TopicsList.js';
+import GroupsQuery from '../getsocial-react-native-sdk/models/communities/GroupsQuery.js';
+// import CreateGroup from './CreateActivityPost';
+import GroupsListView from './GroupsList.js';
 
 type Props = { navigation: Function }
 type State = {
     menu : MenuItem[]
 }
 
-export default class TopicsMenu extends Component<Props, State> {
-    static navigationOptions = {title: 'Topics'};
+export default class GroupsMenu extends Component<Props, State> {
+    static navigationOptions = {title: 'Groups'};
 
     constructor(props: any) {
         super(props);
+
+        const create = new MenuItem();
+        create.key = 'Create';
+        create.title = 'Create';
+        create.action = () => {
+            this.props.navigation.navigate('CreateGroup');
+        };
 
         const search = new MenuItem();
         search.key = 'search';
         search.title = 'Search';
         search.action = () => {
-            TopicsListView.query = null;
-            TopicsListView.areFollowedTopics = false;
-            this.props.navigation.navigate('TopicsList');
+            GroupsListView.query = null;
+            GroupsListView.myGroups = false;
+            this.props.navigation.navigate('GroupsList');
         };
 
-        const mytopics = new MenuItem();
-        mytopics.key = 'mytopics';
-        mytopics.title = 'Followed by me';
-        mytopics.action = () => {
-            TopicsListView.areFollowedTopics = true;
-            TopicsListView.query = TopicsQuery.all().followedBy(UserId.currentUser());
-            this.props.navigation.navigate('TopicsList');
+        const myGroups = new MenuItem();
+        myGroups.key = 'mygroups';
+        myGroups.title = 'My Groups';
+        myGroups.action = () => {
+            GroupsListView.query = GroupsQuery.all().withMember(UserId.currentUser());
+            GroupsListView.myGroups = true;
+            this.props.navigation.navigate('GroupsList');
         };
 
-        const mainMenu = [search, mytopics];
+        const mainMenu = [create, search, myGroups];
 
         this.state = {
             menu: mainMenu,
