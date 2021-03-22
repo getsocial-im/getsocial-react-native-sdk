@@ -123,24 +123,27 @@ export default class TopicsListView extends Component<Props, State> {
         }
     }
 
-    handleActionSheetSelection = async (selectedIndex: number) => {
+    handleActionSheetSelection = async (selected: string, selectedIndex: number) => {
         if (selectedIndex == this.generateOptions().length - 1) {
             return;
         }
-        switch (selectedIndex) {
-        case 0:
+        switch (selected) {
+        case 'Details':
             this.showDetails();
             break;
-        case 1:
+        case 'Show Feed':
             this.showFeed();
             break;
-        case 2:
+        case 'Follow':
             this.updateFollowStatus();
             break;
-        case 3:
+        case 'Unfollow':
+            this.updateFollowStatus();
+            break;
+        case 'Show Followers':
             this.showFollowers();
             break;
-        case 4:
+        case 'Post':
             this.showCreatePost();
             break;
         }
@@ -225,7 +228,7 @@ export default class TopicsListView extends Component<Props, State> {
                     options={this.generateOptions()}
                     cancelButtonIndex={this.generateOptions().length - 1}
                     onPress={(index) => {
-                        this.handleActionSheetSelection(index);
+                        this.handleActionSheetSelection(this.generateOptions()[index], index);
                     }}
                 />
             </View>

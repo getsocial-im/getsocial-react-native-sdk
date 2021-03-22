@@ -10,7 +10,7 @@ export default class ReactionsQuery {
 
     // eslint-disable-next-line require-jsdoc
     constructor(ids: CommunitiesIds) {
-      this.ids = ids;
+        this.ids = ids;
     }
 
     /**
@@ -20,7 +20,7 @@ export default class ReactionsQuery {
    * @return {ReactionsQuery} new query object.
    */
     static forActivity(id: string): ReactionsQuery {
-      return new ReactionsQuery(CommunitiesIds.activity(id));
+        return new ReactionsQuery(CommunitiesIds.activity(id));
     }
 
     /**
@@ -30,18 +30,7 @@ export default class ReactionsQuery {
    * @return {ReactionsQuery} the same query instance.
    */
     withReaction(reaction: string): ReactionsQuery {
-      this.reaction = reaction;
-      return this;
-    }
-
-    /**
-  * Generates JSON string.
-  * @return {string} object as json.
-  */
-    toJSON(): string {
-      return JSON.stringify({
-        'ids': this.ids,
-        'reaction': this.reaction,
-      });
+        this.reaction = reaction;
+        return this;
     }
 }

@@ -13,9 +13,9 @@ export default class UserIdList {
    * @return {UserIdList} new identifiers.
    */
   static create(ids: [string]): UserIdList {
-    const instance = new UserIdList();
-    instance.#ids = ids;
-    return instance;
+      const instance = new UserIdList();
+      instance.#ids = ids;
+      return instance;
   }
 
   /**
@@ -26,32 +26,29 @@ export default class UserIdList {
    * @return {UserIdList} new identifiers.
    */
   static createWithProvider(providerId: string, ids: [string]): UserIdList {
-    const instance = new UserIdList();
-    instance.#ids = ids;
-    instance.#providerId = providerId;
-    return instance;
+      const instance = new UserIdList();
+      instance.#ids = ids;
+      instance.#providerId = providerId;
+      return instance;
   }
 
   // eslint-disable-next-line require-jsdoc
   toString() :[string] {
-    if (this.#providerId == undefined) {
-      return this.#ids;
-    }
-    const result = [];
-    this.#ids.forEach((element) => {
-      result.push((this.#providerId + ':' + element));
-    });
-    return result;
+      if (this.#providerId == undefined) {
+          return this.#ids;
+      }
+      const result = [];
+      this.#ids.forEach((element) => {
+          result.push((this.#providerId + ':' + element));
+      });
+      return result;
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-      '"ids": ' + JSON.stringify(this.#ids) + ',' +
-      '"provider": ' + (this.#providerId == undefined ? 'null' : '"' + this.#providerId + '"') +
-    '}';
+  toJSON() {
+      return {ids: this.#ids, provider: this.#providerId};
   }
 }

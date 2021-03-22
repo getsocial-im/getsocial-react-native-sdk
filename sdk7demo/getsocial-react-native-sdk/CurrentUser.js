@@ -25,7 +25,7 @@ export default class User {
    * @return {void}   A callback to indicate if this operation was successful.
    */
   updateDetails(update: UserUpdate): Promise<void> {
-    return RNGetSocial.callAsync('CurrentUser.updateDetails', update.toJSON());
+      return RNGetSocial.callAsync('CurrentUser.updateDetails', JSON.stringify(update));
   }
 
   /**
@@ -33,10 +33,10 @@ export default class User {
    * @return {bool} true, if user does not have any authentication info attached.
    */
   isAnonymous(): bool {
-    if (this.identities.size === 0) {
-      return true;
-    }
-    return false;
+      if (Object.keys(this.identities).length === 0) {
+          return true;
+      }
+      return false;
   }
 
   /**
@@ -48,13 +48,15 @@ export default class User {
    * @return {void} Method simply returns after invoking, check the callbacks for result.
    */
   addIdentity(identity: Identity, onSuccess: (() => void), onConflict: ((conflictUser: ConflictUser) => void), onError: (error: string) => void): void {
-    return RNGetSocial.callAsync('CurrentUser.addIdentity', identity.toJSON()).then((result) => {
-      if (result === null || JSON.parse(result)['result'] === null) {
-        onSuccess();
-      } else {
-        onConflict(new ConflictUser(JSON.parse(result)));
-      }
-    });
+      return RNGetSocial.callAsync('CurrentUser.addIdentity', JSON.stringify(identity)).then((result) => {
+          if (result === null || JSON.parse(result)['result'] === null || JSON.parse(result)['result'] == '') {
+              onSuccess();
+          } else {
+              onConflict(new ConflictUser(JSON.parse(result)));
+          }
+      }, (error) => {
+          onError(error);
+      });
   }
 
   /**
@@ -63,7 +65,15 @@ export default class User {
    * @return {Promise<void>} Called when operation finished.
    */
   removeIdentity(providerId: string): Promise<void> {
-    return RNGetSocial.callAsync('CurrentUser.removeIdentity', providerId);
+      return RNGetSocial.callAsync('CurrentUser.removeIdentity', providerId);
+  }
+
+  /**
+   * Refresh user properties.
+   * @return {Promise<void>} Called when operation finished.
+   */
+  refresh(): Promise<void> {
+      return RNGetSocial.callAsync('CurrentUser.refresh', '');
   }
 
 
@@ -72,14 +82,16 @@ export default class User {
    * @param {any} userMap public user parameters
    */
   constructor(userMap: any) {
-    const jsonObject = JSON.parse(userMap);
-    this.id = jsonObject['userId'];
-    this.displayName = jsonObject['displayName'];
-    this.displayName = jsonObject['displayName'];
-    this.avatarUrl = jsonObject['avatarUrl'];
-    this.identities = jsonObject['identities'];
-    this.publicProperties = jsonObject['publicProperties'];
-    this.privateProperties = jsonObject['privateProperties'];
-    Object.freeze(this);
+      const jsonObject = JSON.parse(userMap);
+      if (jsonObject == null || jsonObject === undefined) {
+          return;
+      }
+      this.id = jsonObject['userId'];
+      this.displayName = jsonObject['displayName'];
+      this.avatarUrl = jsonObject['avatarUrl'];
+      this.identities = jsonObject['identities'];
+      this.publicProperties = jsonObject['publicProperties'];
+      this.privateProperties = jsonObject['privateProperties'];
+      Object.freeze(this);
   }
 }

@@ -19,6 +19,13 @@ Follow the Getting Started guide for React Native at: [docs.getsocial.im/guides/
 Check [GetSocial React Native SDK Reference](http://docs.getsocial.im/reference/react-native/) for a full API reference.
 
 
+## Repo Structure
+
+This repository contains all you need to explore GetSocial platform:
+
+- `demo/`: an example application that showcases all GetSocial features.
+- `getsocial/`: a source code for the GetSocial React Native SDK wrapper. For the SDK integration use npm as described in the [Getting Started](http://docs.getsocial.im/guides/getting-started/react-native/) guide.
+
 ## Licence
 
 Demo app is distributed under [Apache 2](https://choosealicense.com/licenses/apache-2.0/) license. 

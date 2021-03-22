@@ -19,16 +19,16 @@ export default class Topic {
    * @param {any} topicMap activity parameters
    */
   constructor(topicMap: any) {
-    this.id = topicMap['id'];
-    this.title = topicMap['title'];
-    this.description = topicMap['description'];
-    this.avatarUrl = topicMap['avatarUrl'];
-    this.createdAt = topicMap['createdAt'];
-    this.updatedAt = topicMap['updatedAt'];
-    this.settings = new CommunitiesSettings(topicMap['settings']);
-    this.followersCount = topicMap['followersCount'];
-    this.isFollowedByMe = topicMap['isFollowedByMe'] === true;
+      this.id = topicMap['id'];
+      this.title = topicMap['title'];
+      this.description = topicMap['description'];
+      this.avatarUrl = topicMap['avatarUrl'];
+      this.createdAt = topicMap['createdAt'];
+      this.updatedAt = topicMap['updatedAt'];
+      this.settings = new CommunitiesSettings(topicMap['settings']);
+      this.followersCount = topicMap['followersCount'];
+      this.isFollowedByMe = topicMap['isFollowedByMe'] === true;
 
-    Object.freeze(this);
+      Object.freeze(this);
   }
 }

@@ -47,26 +47,8 @@ export default class NotificationContent {
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-      '"text":' + (this.text == undefined ? 'null' : '"' + this.text + '"') + ',' +
-      '"title": ' + (this.title == undefined ? 'null' : '"' + this.title + '"')  + ',' +
-      '"mediaAttachment": ' + (this.mediaAttachment == null ? 'null' : this.mediaAttachment.toJSON()) + ',' +
-      '"templateName": ' + (this.templateName == null ? 'null' : '"' + this.templateName + '"') + ',' +
-      '"templatePlaceholders": ' + (this.templatePlaceholders == null ? 'null' : JSON.stringify(this.templatePlaceholders)) + ',' +
-      '"action": ' + (this.action == null ? 'null' : this.action.toJSON()) + "," +
-      '"actionButtons": [' + this.generateActionButtonsMap() + '],' + 
-      '"customization": ' + (this.customization == null ? 'null' : this.customization.toJSON()) + ',' +
-      '"badge": ' + (this.badge == null ? 'null' : this.badge.toJSON()) +
-    '}';
-  }
-
-  generateActionButtonsMap(): string {
-    var retValue = '';
-    this.actionButtons.forEach((actionButton) => {
-      retValue += actionButton.toJSON() + ',';
-    });
-    retValue = retValue.substring(0, retValue.length - 1);
-    return retValue;
+  toJSON() {
+    return {text: this.text, title: this.title, mediaAttachment: this.mediaAttachment, templateName: this.templateName, templatePlaceholders: this.templatePlaceholders,
+      action: this.action, actionButtons: this.actionButtons, customization: this.customization, badge: this.badge};
   }
 }

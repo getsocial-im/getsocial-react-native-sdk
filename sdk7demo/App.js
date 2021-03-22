@@ -112,6 +112,7 @@ export default class App extends React.Component<Props, State> {
     componentDidMount() {
     // // Listen for events to set the proper information
         Notifications.setOnNotificationReceivedListener((notification) => {
+            Notifications.setStatus('read', [notification.id]);
             if (notification.action !== undefined && notification.action != null) {
                 globalActionProcessor(notification.action);
             } else {
@@ -119,6 +120,7 @@ export default class App extends React.Component<Props, State> {
             }
         });
         Notifications.setOnNotificationClickedListener((notification, context) => {
+            Notifications.setStatus('read', [notification.id]);
             if (notification.action !== undefined && notification.action != null) {
                 globalActionProcessor(notification.action);
             } else {

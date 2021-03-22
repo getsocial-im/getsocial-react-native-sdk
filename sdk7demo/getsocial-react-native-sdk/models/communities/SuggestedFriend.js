@@ -14,8 +14,8 @@ export default class SuggestedFriend extends User {
    * @param {any} suggestedFriendMap suggested friend parameters
    */
   constructor(suggestedFriendMap: any) {
-    super(suggestedFriendMap);
-    this.mutualFriendsCount = suggestedFriendMap['mutualFriendsCount'];
-    Object.freeze(this);
+      super(suggestedFriendMap);
+      this.mutualFriendsCount = suggestedFriendMap['mutualFriendsCount'];
+      Object.freeze(this);
   }
 }

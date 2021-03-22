@@ -8,7 +8,7 @@ export default class RemoveActivitiesQuery {
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: string[]) {
-    this.ids = ids;
+      this.ids = ids;
   }
 
   /**
@@ -18,16 +18,6 @@ export default class RemoveActivitiesQuery {
    * @return {RemoveActivitiesQuery} new instance.
    */
   static activityIds(ids: string[]) {
-    return new RemoveActivitiesQuery(ids);
-  }
-
-  /**
-  * Generates JSON string.
-  * @return {string} object as json.
-  */
-  toJSON(): string {
-    return JSON.stringify({
-      'activityIds': this.ids,
-    });
+      return new RemoveActivitiesQuery(ids);
   }
 }

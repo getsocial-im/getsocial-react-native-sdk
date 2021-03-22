@@ -49,12 +49,12 @@ export default class ChatMessagesListView extends Component<Props, State> {
         Alert.alert('Details', stringified + '\n \n \n');
     }
 
-    handleActionSheetSelection = async (selectedIndex: number) => {
+    handleActionSheetSelection = async (selected: string, selectedIndex: number) => {
         if (selectedIndex == this.generateOptions().length - 1) {
             return;
         }
-        switch (selectedIndex) {
-        case 0:
+        switch (selected) {
+        case 'Details':
             this.showDetails();
             break;
         }
@@ -100,37 +100,26 @@ export default class ChatMessagesListView extends Component<Props, State> {
         showLoading();
         const chatMessageContent = new ChatMessageContent();
         chatMessageContent.text = this.state.text;
+        const attachments: [MediaAttachment] = [];
         if (this.state.imageURL != null) {
-            const previousAttachments = this.state.attachments;
-            previousAttachments.push(MediaAttachment.withImageUrl(this.state.imageURL));
-            this.setState({attachments: previousAttachments});
+            attachments.push(MediaAttachment.withImageUrl(this.state.imageURL));
         }
         if (this.state.videoURL != null) {
-            const previousAttachments = this.state.attachments;
-            previousAttachments.push(MediaAttachment.withVideoUrl(this.state.videoURL));
-            this.setState({attachments: previousAttachments});
+            attachments.push(MediaAttachment.withVideoUrl(this.state.videoURL));
         }
         if (this.state.attachmentImage != null) {
-            const previousAttachments = this.state.attachments;
-            previousAttachments.push(this.state.attachmentImage);
-            this.setState({attachments: previousAttachments});
+            attachments.push(this.state.attachmentImage);
         }
         if (this.state.attachmentVideo != null) {
-            const previousAttachments = this.state.attachments;
-            previousAttachments.push(this.state.attachmentVideo);
-            this.setState({attachments: previousAttachments});
+            attachments.push(this.state.attachmentVideo);
         }
-        chatMessageContent.attachments = this.state.attachments;
+        chatMessageContent.attachments = attachments;
         Communities.sendChatMessage(chatMessageContent, ChatMessagesListView.chatId).then((result) => {
             // insert last message
-            const previousMessages = this.state.messages;
-            previousMessages.push(result);
-            this.setState({messages: previousMessages, text: null, imageURL: null, videoURL: null, attachments: []}, () => {
-                setTimeout(() => {
-                    this.FlatList.scrollToEnd();
-                    hideLoading();
-                }, 500);
-            });
+            setTimeout(() => {
+                this.refreshMessages();
+                hideLoading();
+            }, 500);
         }, (error) => {
             console.log(error);
             hideLoading();
@@ -307,7 +296,7 @@ export default class ChatMessagesListView extends Component<Props, State> {
                     options={this.generateOptions()}
                     cancelButtonIndex={this.generateOptions().length - 1}
                     onPress={(index) => {
-                        this.handleActionSheetSelection(index);
+                        this.handleActionSheetSelection(this.generateOptions()[index], index);
                     }}
                 />
             </View>

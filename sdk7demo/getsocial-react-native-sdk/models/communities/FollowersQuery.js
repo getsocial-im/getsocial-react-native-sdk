@@ -10,7 +10,7 @@ export default class FollowersQuery {
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
-    this.ids = ids;
+      this.ids = ids;
   }
 
   /**
@@ -20,7 +20,17 @@ export default class FollowersQuery {
    * @return {FollowersQuery} new query.
    */
   static ofTopic(id: string): FollowersQuery {
-    return new FollowersQuery(CommunitiesIds.topic(id));
+      return new FollowersQuery(CommunitiesIds.topic(id));
+  }
+
+  /**
+   * Get followers of group with ID.
+   *
+   * @param {string} id Group ID.
+   * @return {FollowersQuery} new query.
+   */
+  static ofGroup(id: string): FollowersQuery {
+      return new FollowersQuery(CommunitiesIds.group(id));
   }
 
   /**
@@ -30,16 +40,14 @@ export default class FollowersQuery {
    * @return {FollowersQuery} new query.
    */
   static ofUser(id: UserId): FollowersQuery {
-    return new FollowersQuery(CommunitiesIds.user(id));
+      return new FollowersQuery(CommunitiesIds.user(id));
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-      '"ids": ' + this.ids.toJSON() +
-    '}';
+  toJSON() {
+      return {ids: this.ids};
   }
 }

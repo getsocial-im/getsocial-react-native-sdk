@@ -176,7 +176,7 @@ export default class SendCustomInvite extends Component<Props, State> {
         content.subject = this.state.inviteSubject;
         content.mediaAttachment = mediaAttachment;
 
-        const linkParams = new Map();
+        const linkParams = {};
         if (this.state.landingPageTitle != null) {
             linkParams['$title'] = this.state.landingPageTitle;
         }
@@ -189,8 +189,8 @@ export default class SendCustomInvite extends Component<Props, State> {
         if (this.state.landingPageVideoUrl != null) {
             linkParams['$youtube_video'] = this.state.landingPageVideoUrl;
         }
-        if (this.state.landingPageLocalImageUri != null) {
-            linkParams['$image'] = this.state.landingPageBase64Image;
+        if (this.state.landingPageImageUri != null) {
+            linkParams['$image'] = this.state.landingPageImageData;
         }
         content.linkParams = linkParams;
 

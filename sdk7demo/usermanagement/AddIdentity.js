@@ -30,14 +30,19 @@ export default class AddIdentity extends Component<Props, State> {
     }
 
     updateUserDetails = async () => {
-        GetSocial.getCurrentUser((currentUser) => {
+        GetSocial.getCurrentUser().then((currentUser) => {
             if (currentUser.isAnonymous()) {
                 global.userInfoComponentRef.current.setState({userIdentities: 'Anonymous'});
             } else {
                 global.userInfoComponentRef.current.setState({userIdentities: JSON.stringify(currentUser.identities)});
             }
+            if (currentUser.avatarUrl !== '') {
+                global.userInfoComponentRef.current.setState({userAvatarUrl: currentUser.avatarUrl});
+            } else {
+                global.userInfoComponentRef.current.setState({userAvatarUrl: undefined});
+            }
+
             global.userInfoComponentRef.current.setState({userDisplayName: currentUser.displayName});
-            global.userInfoComponentRef.current.setState({userAvatarUrl: currentUser.avatarUrl});
         });
     }
 

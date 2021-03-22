@@ -16,7 +16,7 @@ export default class PromoCodeContent {
    * @return {PromoCodeContent} new promo code content instance.
    */
   static withRandomCode(): PromoCodeContent {
-    return new PromoCodeContent();
+      return new PromoCodeContent();
   }
 
   /**
@@ -25,9 +25,9 @@ export default class PromoCodeContent {
    * @return {PromoCodeContent} new promo code content instance.
    */
   static withCode(code: string): PromoCodeContent {
-    const obj = new PromoCodeContent();
-    obj.#code = code;
-    return obj;
+      const obj = new PromoCodeContent();
+      obj.#code = code;
+      return obj;
   }
 
   /**
@@ -37,21 +37,15 @@ export default class PromoCodeContent {
    * @param {number} endDate   date when the Promo Code should not be available anymore.
    */
   setTimeLimit(startDate: number, endDate: number) {
-    this.#startDate = startDate;
-    this.#endDate = endDate;
+      this.#startDate = startDate;
+      this.#endDate = endDate;
   }
 
   /**
    * Generates JSON string.
    * @return {string} object as json.
    */
-  toJSON(): string {
-    return '{' +
-      '"code": ' + (this.#code == undefined ? 'null' : '"' + this.#code + '"') + ',' +
-      '"startDate": ' + (this.#startDate == undefined ? 'null' : this.#startDate) + ',' +
-      '"endDate": ' + (this.#endDate == undefined ? 'null' : this.#endDate) + ',' +
-      '"data": ' + JSON.stringify(this.properties) + ',' +
-      '"maxClaimCount": ' + (this.maxClaims == undefined ? 'null' : this.maxClaims) +
-    '}';
+  toJSON() {
+      return {code: this.#code, startDate: this.#startDate, endDate: this.#endDate, data: this.properties, maxClaimCount: this.maxClaims};
   }
 }

@@ -16,21 +16,10 @@ export default class NotificationButton {
    * @return {NotificationButton} new instance.
    */
   static create(title: string, actionId: string): NotificationButton {
-    const instance = new NotificationButton([]);
-    instance.title = title;
-    instance.actionId = actionId;
-    return instance;
-  }
-
-  /**
-   * Generates JSON string.
-   * @return {string} object as json.
-   */
-  toJSON(): string {
-    return JSON.stringify({
-      'actionId': this.actionId,
-      'title': this.title,
-    });
+      const instance = new NotificationButton([]);
+      instance.title = title;
+      instance.actionId = actionId;
+      return instance;
   }
 
   /**
@@ -38,7 +27,7 @@ export default class NotificationButton {
    * @param {any} buttonMap notification parameters
    */
   constructor(buttonMap: any) {
-    this.actionId = buttonMap['actionId'];
-    this.title = buttonMap['title'];
+      this.actionId = buttonMap['actionId'];
+      this.title = buttonMap['title'];
   }
 }

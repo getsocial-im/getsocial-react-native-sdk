@@ -18,10 +18,10 @@ export default class InviteChannel {
    * @param {any} channelObject invite channel parameters
    */
   constructor(channelObject: any) {
-    this.channelId = channelObject['id'];
-    this.name = channelObject['name'];
-    this.iconUrl = channelObject['iconImageUrl'];
-    this.displayOrder = channelObject['displayOrder'];
-    Object.freeze(this);
+      this.channelId = channelObject['id'];
+      this.name = channelObject['name'];
+      this.iconUrl = channelObject['iconImageUrl'];
+      this.displayOrder = channelObject['displayOrder'];
+      Object.freeze(this);
   }
 }

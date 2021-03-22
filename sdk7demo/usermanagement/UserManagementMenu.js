@@ -101,7 +101,9 @@ export default class UserManagementMenu extends Component<Props, State> {
                 global.userInfoComponentRef.current.setState({userIdentities: JSON.stringify(currentUser.identities)});
             }
             global.userInfoComponentRef.current.setState({userDisplayName: currentUser.displayName});
-            global.userInfoComponentRef.current.setState({userAvatarUrl: currentUser.avatarUrl});
+            if (currentUser.avatarUrl !== undefined && currentUser.avatarUrl !== null && currentUser.avatarUrl.length != 0) {
+                global.userInfoComponentRef.current.setState({userAvatarUrl: currentUser.avatarUrl});
+            }
         });
     }
 
@@ -125,7 +127,12 @@ export default class UserManagementMenu extends Component<Props, State> {
         showLoading();
         GetSocial.getCurrentUser().then((currentUser) => {
             hideLoading();
-            Alert.alert('Public property', 'Property value is [' + currentUser.publicProperties['DEMO_PUBLIC_KEY'] + ']');
+            const value = currentUser.publicProperties['DEMO_PUBLIC_KEY'];
+            if (value === undefined) {
+                Alert.alert('Public property', 'Property not found');
+            } else {
+                Alert.alert('Public property', 'Property value is [' + value + ']');
+            }
         }, (error) => {
             hideLoading();
             Alert.alert('Error', error.message);
@@ -270,6 +277,19 @@ export default class UserManagementMenu extends Component<Props, State> {
         });
     }
 
+    refresh = async () => {
+        showLoading();
+        GetSocial.getCurrentUser().then((currentUser) => {
+            currentUser.refresh().then(() => {
+                hideLoading();
+                Alert.alert('Refresh', 'User refreshed.');
+            }, (error) => {
+                hideLoading();
+                Alert.alert('Refresh', 'Failed to refresh user, error: ' + error.message);
+            });
+        });
+    }
+
     constructor(props: any) {
         super(props);
 
@@ -292,6 +312,11 @@ export default class UserManagementMenu extends Component<Props, State> {
         getUserProperty.key = 'getUserProperty';
         getUserProperty.title = 'Get User Property';
         getUserProperty.action = () => this.getUserProperty();
+
+        const refresh = new MenuItem();
+        refresh.key = 'refresh';
+        refresh.title = 'Refresh';
+        refresh.action = () => this.refresh();
 
         const addFBIdentity = new MenuItem();
         addFBIdentity.key = 'addFBIdentity';
@@ -318,7 +343,7 @@ export default class UserManagementMenu extends Component<Props, State> {
         logout.title = 'Logout';
         logout.action = () => this.logout();
 
-        const mainMenu = [changeDisplayName, changeUserAvatar, setUserProperty, getUserProperty,
+        const mainMenu = [changeDisplayName, changeUserAvatar, setUserProperty, getUserProperty, refresh,
             addCustomIdentity, removeCustomIdentity, addFBIdentity, removeFBIdentity, logout];
 
         this.state = {

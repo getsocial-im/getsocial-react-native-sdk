@@ -71,7 +71,6 @@ class UserDetailsView extends Component<Props, State> {
               visible={this.state.visible}
               onRequestClose={() => {}}>
               <ScrollView style={{flex: 1, padding: 10}}>
-                  <Button title={'Close'} onPress={() => this.closeView()}/>
                   <View style={UserDetailsViewStyle.formEntryRow}>
                       <View style={UserDetailsViewStyle.formEntryTitleContainer}>
                           <Text style={UserDetailsViewStyle.formEntryTitle} >Display name:</Text>
@@ -93,7 +92,7 @@ class UserDetailsView extends Component<Props, State> {
                           <Text style={UserDetailsViewStyle.formEntryTitle} >Avatar Url:</Text>
                       </View>
                       <View style={UserDetailsViewStyle.formEntryTitleContainer}>
-                          <Text accessibilityLabel='Avatar Url'>{this.state.privateProperties}</Text>
+                          <Text accessibilityLabel='Avatar Url'>{this.state.avatarUrl}</Text>
                       </View>
                   </View>
                   <View style={UserDetailsViewStyle.formEntryRow}>
@@ -120,6 +119,7 @@ class UserDetailsView extends Component<Props, State> {
                           <Text accessibilityLabel='Private properties'>{this.state.privateProperties}</Text>
                       </View>
                   </View>
+                  <Button title={'Close'} onPress={() => this.closeView()}/>
               </ScrollView>
           </Modal>
       );

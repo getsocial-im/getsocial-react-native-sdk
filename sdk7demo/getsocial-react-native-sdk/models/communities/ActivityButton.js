@@ -16,18 +16,7 @@ export default class ActivityButton {
    * @return {ActivityButton} New instance.
    */
   static create(title: string, action: Action): ActivityButton {
-    return new ActivityButton({'title': title, 'action': action});
-  }
-
-  /**
-   * Generates JSON string.
-   * @return {string} object as json.
-   */
-  toJSON(): string {
-    return '{' +
-      '"title": ' + '"' + this.title + '"' + ',' +
-      '"action": ' + this.action.toJSON() +
-    '}';
+      return new ActivityButton({'title': title, 'action': action});
   }
 
   /**
@@ -35,11 +24,11 @@ export default class ActivityButton {
    * @param {any} activityButtonMap activity button parameters
    */
   constructor(activityButtonMap: any) {
-    this.title = activityButtonMap['title'];
-    const rawAction = activityButtonMap['action'];
-    if (rawAction !== undefined && rawAction != null) {
-      this.action = new Action(rawAction);
-    }
-    Object.freeze(this);
+      this.title = activityButtonMap['title'];
+      const rawAction = activityButtonMap['action'];
+      if (rawAction !== undefined && rawAction != null) {
+          this.action = new Action(rawAction);
+      }
+      Object.freeze(this);
   }
 }

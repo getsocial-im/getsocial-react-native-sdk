@@ -33,16 +33,16 @@ export default class ReferralData {
    * @param {any} referralDataMap referral data parameters
    */
   constructor(referralDataMap: any) {
-    this.token = referralDataMap['token'];
-    this.referrerUserId = referralDataMap['referrerUserId'];
-    this.referrerChannelId = referralDataMap['referrerChannelId'];
-    this.isFirstMatch = referralDataMap['isFirstMatch'];
-    this.isGuaranteedMatch = referralDataMap['isGuaranteedMatch'];
-    this.isReinstall = referralDataMap['isReinstall'];
-    this.isFirstMatchLink = referralDataMap['isFirstMatchLink'];
-    this.referralLinkParams = referralDataMap['linkParams'];
-    this.originalReferralLinksParams = referralDataMap['originalLinkParams'];
+      this.token = referralDataMap['token'];
+      this.referrerUserId = referralDataMap['referrerUserId'];
+      this.referrerChannelId = referralDataMap['referrerChannelId'];
+      this.isFirstMatch = referralDataMap['isFirstMatch'];
+      this.isGuaranteedMatch = referralDataMap['isGuaranteedMatch'];
+      this.isReinstall = referralDataMap['isReinstall'];
+      this.isFirstMatchLink = referralDataMap['isFirstMatchLink'];
+      this.referralLinkParams = referralDataMap['linkParams'];
+      this.originalReferralLinksParams = referralDataMap['originalLinkParams'];
 
-    Object.freeze(this);
+      Object.freeze(this);
   }
 }

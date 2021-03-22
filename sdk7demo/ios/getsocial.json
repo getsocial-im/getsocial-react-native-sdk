@@ -1,1 +1,12 @@
-{"appId": "VwQZq89f0V1",				"autoInit": true,				"debug": true,				"disableFacebookReferralCheck": false,				"pushNotifications": {				"autoRegister": true,				"customListener": true,				"foreground": true				},				"uiConfig": null				}
+{
+  "appId":"VwQZq89f0V1",
+  "autoInit":true,
+  "debug":true,
+  "disableFacebookReferralCheck":false,
+  "pushNotifications":{
+    "autoRegister":true,
+    "customListener":true,
+    "foreground":false
+  },
+  "uiConfig":null
+}

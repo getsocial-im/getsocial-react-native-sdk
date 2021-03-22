@@ -17,16 +17,16 @@ export default class PromoCode {
 
     // eslint-disable-next-line require-jsdoc
     constructor(codeMap: any) {
-      this.code = codeMap['code'];
-      this.properties = codeMap['properties'];
-      this.maxClaimCount = codeMap['maxClaimCount'];
-      this.startDate = codeMap['startDate'];
-      this.endDate = codeMap['endDate'];
-      this.creator = new User(codeMap['creator']);
-      this.claimCount = codeMap['claimCount'];
-      this.isEnabled = codeMap['isEnabled'] === true;
-      this.isClaimable = codeMap['isClaimable'] === true;
+        this.code = codeMap['code'];
+        this.properties = codeMap['data'];
+        this.maxClaimCount = codeMap['maxClaimCount'];
+        this.startDate = codeMap['startDate'];
+        this.endDate = codeMap['endDate'];
+        this.creator = new User(codeMap['creator']);
+        this.claimCount = codeMap['claimCount'];
+        this.isEnabled = codeMap['isEnabled'] === true;
+        this.isClaimable = codeMap['isClaimable'] === true;
 
-      Object.freeze(this);
+        Object.freeze(this);
     }
 }

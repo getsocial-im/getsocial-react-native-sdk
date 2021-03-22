@@ -18,9 +18,9 @@ export default class MediaAttachment {
    * @return {MediaAttachment} Created media attachment instance.
    */
   static withImageUrl(imageUrl: string): MediaAttachment {
-    const ma = new MediaAttachment();
-    ma.#imageUrl = imageUrl;
-    return ma;
+      const ma = new MediaAttachment();
+      ma.#imageUrl = imageUrl;
+      return ma;
   }
 
   /**
@@ -29,9 +29,9 @@ export default class MediaAttachment {
    * @return {MediaAttachment} Created media attachment instance.
    */
   static withVideoUrl(videoUrl: string): MediaAttachment {
-    const ma = new MediaAttachment();
-    ma.#videoUrl = videoUrl;
-    return ma;
+      const ma = new MediaAttachment();
+      ma.#videoUrl = videoUrl;
+      return ma;
   }
 
   /**
@@ -40,9 +40,9 @@ export default class MediaAttachment {
    * @return {MediaAttachment} Created media attachment instance.
    */
   static withBase64Image(image: string): MediaAttachment {
-    const ma = new MediaAttachment();
-    ma.#base64Image = image;
-    return ma;
+      const ma = new MediaAttachment();
+      ma.#base64Image = image.replace(/\r\n/g, '');
+      return ma;
   }
 
   /**
@@ -51,14 +51,14 @@ export default class MediaAttachment {
    * @return {MediaAttachment} Created media attachment instance.
    */
   static withBase64Video(video: string): MediaAttachment {
-    const ma = new MediaAttachment();
-    ma.#base64Video = video;
-    return ma;
+      const ma = new MediaAttachment();
+      ma.#base64Video = video.replace(/\r\n/g, '');
+      return ma;
   }
 
   // eslint-disable-next-line require-jsdoc
   static loadLocalResource(uri: string): Promise<string> {
-    return RNGetSocial.loadLocalResource(uri);
+      return RNGetSocial.loadLocalResource(uri);
   }
 
   /**
@@ -66,7 +66,7 @@ export default class MediaAttachment {
    * @return {string} Image url.
    */
   getImageUrl(): ?string {
-    return this.#imageUrl;
+      return this.#imageUrl;
   }
 
   /**
@@ -74,25 +74,20 @@ export default class MediaAttachment {
    * @return {string} Video url.
    */
   getVideoUrl(): ?string {
-    return this.#videoUrl;
+      return this.#videoUrl;
   }
 
   /**
    * Generates JSON string.
    * @return {string} object as json.
    */
-  toJSON(): string {
-    const json = '{' +
-       '"imageUrl": ' + (this.#imageUrl == undefined ? 'null' : '"' + this.#imageUrl + '"') + ', ' +
-      '"image":' + (this.#base64Image == undefined ? 'null' : '"' + this.#base64Image + '"') + ', ' +
-      '"videoUrl":' + (this.#videoUrl == undefined ? 'null' : '"' + this.#videoUrl + '"') + ', ' +
-      '"video":' + (this.#base64Video == undefined ? 'null' : '"' + this.#base64Video + '"') + '}';
-    return json;
+  toJSON() {
+      return {imageUrl: this.#imageUrl, image: this.#base64Image, videoUrl: this.#videoUrl, video: this.#base64Video};
   }
 
   // eslint-disable-next-line require-jsdoc
   constructor(attachmentMap: any) {
-    this.#imageUrl = attachmentMap == null ? null : attachmentMap['imageUrl'];
-    this.#videoUrl = attachmentMap == null ? null :attachmentMap['videoUrl'];
+      this.#imageUrl = attachmentMap == null ? null : attachmentMap['imageUrl'];
+      this.#videoUrl = attachmentMap == null ? null :attachmentMap['videoUrl'];
   }
 }

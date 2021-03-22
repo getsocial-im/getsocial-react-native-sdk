@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-search-bar/ios/RNSearchBar.m b/node_modules/react-native-search-bar/ios/RNSearchBar.m
+index 8b07391..a3a0b62 100644
+--- a/node_modules/react-native-search-bar/ios/RNSearchBar.m
++++ b/node_modules/react-native-search-bar/ios/RNSearchBar.m
+@@ -61,6 +61,8 @@ RCT_NOT_IMPLEMENTED(-initWithCoder:(NSCoder *)aDecoder)
+ 
+ - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+ {
++
++	[self resignFirstResponder];
+     self.onSearchButtonPress(@{
+                                @"target": self.reactTag,
+                                @"button": @"search",

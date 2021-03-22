@@ -11,7 +11,7 @@ export default class TagsQuery {
 
     // eslint-disable-next-line require-jsdoc
     constructor(search: string) {
-      this.search = search;
+        this.search = search;
     }
 
     /**
@@ -20,7 +20,7 @@ export default class TagsQuery {
      * @return {TagsQuery} New instance.
      */
     static search(searchTerm: string): TagsQuery {
-      return new TagsQuery(searchTerm);
+        return new TagsQuery(searchTerm);
     }
 
     /**
@@ -29,18 +29,15 @@ export default class TagsQuery {
      * @return {TagsQuery} New instance.
      */
     inTarget(target: PostActivityTarget): TagsQuery {
-      this.target = target;
-      return this;
+        this.target = target;
+        return this;
     }
 
     /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-    toJSON(): string {
-      return '{' +
-      '"query": "' + this.search + '",' +
-      '"target": ' + ((this.target === undefined || this.target == null) ? 'null' : this.target.toJSON()) +
-    '}';
+    toJSON() {
+        return {query: this.search, target: this.target};
     }
 }

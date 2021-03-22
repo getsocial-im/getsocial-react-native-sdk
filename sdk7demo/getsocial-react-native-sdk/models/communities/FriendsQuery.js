@@ -15,18 +15,16 @@ export default class FriendsQuery {
    * @return {FriendsQuery} new query.
    */
   static ofUser(userId: UserId) {
-    const instance = new FriendsQuery();
-    instance.userId = userId;
-    return instance;
+      const instance = new FriendsQuery();
+      instance.userId = userId;
+      return instance;
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-      '"userId": ' + this.userId.toJSON() +
-    '}';
+  toJSON() {
+      return {userId: this.userId};
   }
 }

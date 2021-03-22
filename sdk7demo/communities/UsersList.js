@@ -8,7 +8,7 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, FlatList, Text, TextInput, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
-import {Communities, ChatId, UsersQuery, User, PagingQuery, UserId, UserIdList, FollowQuery, ActivitiesQuery, ActivitiesView} from './../getsocial-react-native-sdk';
+import {Communities, ChatId, CurrentUser, GetSocial, UsersQuery, User, PagingQuery, UserId, UserIdList, FollowQuery, ActivitiesQuery, ActivitiesView} from './../getsocial-react-native-sdk';
 import FollowersQuery from '../getsocial-react-native-sdk/models/communities/FollowersQuery';
 import FollowersListView from './FollowersList';
 import FollowingsListView from './FollowingsList';
@@ -18,6 +18,7 @@ import ActionSheet from 'react-native-actionsheet';
 
 type Props = { navigation: Function }
 type State = {
+    currentUserId: string,
     users: [User],
     selectedUser: ?User,
     friendsStatus: ?Map<string, boolean>,
@@ -35,15 +36,19 @@ export default class UsersListView extends Component<Props, State> {
     generateOptions() : [string] {
         const options = [];
         options.push('Details');
-        const areFriends = this.state.selectedUser != undefined && this.state.friendsStatus != undefined && this.state.friendsStatus[this.state.selectedUser.userId] === true;
-        options.push(areFriends ? 'Remove friend': 'Add friend');
-        const isFollowed = this.state.followStatus != undefined && this.state.selectedUser != undefined && this.state.followStatus[this.state.selectedUser.userId] === true;
-        options.push(isFollowed ? 'Unfollow': 'Follow');
+        if (this.state.currentUserId != undefined && this.state.selectedUser != undefined && this.state.currentUserId != this.state.selectedUser.userId) {
+            const areFriends = this.state.selectedUser != undefined && this.state.friendsStatus != undefined && this.state.friendsStatus[this.state.selectedUser.userId] === true;
+            options.push(areFriends ? 'Remove friend': 'Add friend');
+            const isFollowed = this.state.followStatus != undefined && this.state.selectedUser != undefined && this.state.followStatus[this.state.selectedUser.userId] === true;
+            options.push(isFollowed ? 'Unfollow': 'Follow');
+        }
         options.push('Show Followers');
         options.push('Show Followings');
         options.push('User\'s Posts');
         options.push('User\'s Feed');
-        options.push('Open Chat');
+        if (this.state.currentUserId != undefined && this.state.selectedUser != undefined && this.state.currentUserId != this.state.selectedUser.userId) {
+            options.push('Open Chat');
+        }
         options.push('Cancel');
         return options;
     }
@@ -72,7 +77,7 @@ export default class UsersListView extends Component<Props, State> {
 
     showFeed = async () => {
         const query = ActivitiesQuery.feedOf(UserId.create(this.state.selectedUser.userId));
-        query.byUser(UserId.create(this.state.selectedUser.userId));
+        // query.byUser(UserId.create(this.state.selectedUser.userId));
         ActivitiesView.create(query).show();
     }
 
@@ -149,6 +154,12 @@ export default class UsersListView extends Component<Props, State> {
     }
 
     componentDidMount() {
+        GetSocial.getCurrentUser().then((user) => {
+            console.log('done');
+            this.setState({
+                currentUserId: user.id,
+            });
+        });
     }
 
     updateFriendStatus = async () => {
@@ -220,33 +231,40 @@ export default class UsersListView extends Component<Props, State> {
         }
     }
 
-    handleActionSheetSelection = async (selectedIndex: number) => {
+    handleActionSheetSelection = async (selected: string, selectedIndex: number) => {
         if (selectedIndex == this.generateOptions().length - 1) {
             return;
         }
-        switch (selectedIndex) {
-        case 0:
+        console.log(selected);
+        switch (selected) {
+        case 'Details':
             this.showDetails();
             break;
-        case 1:
+        case 'Add friend':
             this.updateFriendStatus();
             break;
-        case 2:
+        case 'Remove friend':
+            this.updateFriendStatus();
+            break;
+        case 'Follow':
             this.updateFollowStatus();
             break;
-        case 3:
+        case 'Unfollow':
+            this.updateFollowStatus();
+            break;
+        case 'Show Followers':
             this.showFollowers();
             break;
-        case 4:
+        case 'Show Followings':
             this.showFollowings();
             break;
-        case 5:
+        case 'User\'s Posts':
             this.showPosts();
             break;
-        case 6:
+        case 'User\'s Feed':
             this.showFeed();
             break;
-        case 7:
+        case 'Open Chat':
             this.openChat();
             break;
         }
@@ -267,7 +285,7 @@ export default class UsersListView extends Component<Props, State> {
                     autoCapitalize='none'
                     onChangeText= { (text) => this.updateSearchText(text) }
                     placeholder="Search"
-                    onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadUsers()) }
+                    onCancelButtonPress= { () => this.updateSearchText(null) }
                     onSearchButtonPress={ () => this.loadUsers() }
                 />
                 <View style={MenuStyle.menuContainer}>
@@ -294,7 +312,7 @@ export default class UsersListView extends Component<Props, State> {
                     options={this.generateOptions()}
                     cancelButtonIndex={this.generateOptions().length - 1}
                     onPress={(index) => {
-                        this.handleActionSheetSelection(index);
+                        this.handleActionSheetSelection(this.generateOptions()[index], index);
                     }}
                 />
             </View>

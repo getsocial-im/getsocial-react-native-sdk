@@ -8,6 +8,7 @@ import React, {Component} from 'react';
 import {Alert, Image, View, Text, TextInput, Button, ScrollView} from 'react-native';
 import {CreatePromoCodeStyle} from './CreatePromoCodeStyle';
 import {PromoCodeContent, PromoCodes} from 'getsocial-react-native-sdk';
+import DatePicker from 'react-native-datepicker';
 
 type Props = {}
 
@@ -59,7 +60,11 @@ export default class CreatePromoCode extends Component<Props, State> {
             content.endDate = this.state.endDate;
         }
         if (this.state.maxClaims != undefined) {
-            content.maxClaims = this.state.maxClaims;
+            content.maxClaims = Number(this.state.maxClaims);
+            if (content.maxClaims > 99999) {
+                Alert.alert('Error', 'MaxClaims cannot be larger than 99999');
+                return;
+            }
         }
         if (this.state.customKey1 != undefined && this.state.customValue1 != undefined) {
             content.properties[this.state.customKey1] = this.state.customValue1;

@@ -37,7 +37,7 @@ export default class SendInviteWOUI extends Component<Props, State> {
         const customInviteContent = new InviteContent();
 
         // customInviteContent.subject = 'Hey mate, look what I have found';
-        customInviteContent.text = 'Check this game [APP_INVITE_URL]. It’s amazing!';
+        // customInviteContent.text = 'Check this game [APP_INVITE_URL]. It’s amazing!';
         // customInviteContent.mediaAttachment = MediaAttachment.withImageUrl('https://api.adorable.io/avatars/250/documentation_app.png');
 
         Invites.send(customInviteContent, channelId, () => {

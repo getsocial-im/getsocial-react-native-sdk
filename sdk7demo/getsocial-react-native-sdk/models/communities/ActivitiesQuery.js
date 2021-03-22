@@ -13,7 +13,7 @@ export default class ActivitiesQuery {
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
-    this.ids = ids;
+      this.ids = ids;
   }
 
   /**
@@ -23,7 +23,7 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   static feedOf(id: UserId): ActivitiesQuery {
-    return new ActivitiesQuery(CommunitiesIds.user(id));
+      return new ActivitiesQuery(CommunitiesIds.user(id));
   }
 
   /**
@@ -33,7 +33,7 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   static inTopic(id: string): ActivitiesQuery {
-    return new ActivitiesQuery(CommunitiesIds.topic(id));
+      return new ActivitiesQuery(CommunitiesIds.topic(id));
   }
 
   /**
@@ -42,7 +42,17 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   static inAllTopics(): ActivitiesQuery {
-    return new ActivitiesQuery(CommunitiesIds.topics([]));
+      return new ActivitiesQuery(CommunitiesIds.topics([]));
+  }
+
+  /**
+   * Get activities in a group.
+   *
+   * @param {string} id ID of group.
+   * @return {ActivitiesQuery} new query.
+   */
+  static inGroup(id: string): ActivitiesQuery {
+      return new ActivitiesQuery(CommunitiesIds.group(id));
   }
 
   /**
@@ -51,7 +61,7 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   static timeline(): ActivitiesQuery {
-    return new ActivitiesQuery(CommunitiesIds.timeline());
+      return new ActivitiesQuery(CommunitiesIds.timeline());
   }
 
   /**
@@ -60,7 +70,7 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   static everywhere(): ActivitiesQuery {
-    return new ActivitiesQuery(CommunitiesIds.everywhere());
+      return new ActivitiesQuery(CommunitiesIds.everywhere());
   }
 
   /**
@@ -70,7 +80,7 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   static commentsToActivity(id: string): ActivitiesQuery {
-    return new ActivitiesQuery(CommunitiesIds.activity(id));
+      return new ActivitiesQuery(CommunitiesIds.activity(id));
   }
 
   /**
@@ -80,8 +90,8 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   byUser(id: UserId): ActivitiesQuery {
-    this.author = id;
-    return this;
+      this.author = id;
+      return this;
   }
 
   /**
@@ -91,19 +101,15 @@ export default class ActivitiesQuery {
    * @return {ActivitiesQuery} new query.
    */
   withTag(tag: string): ActivitiesQuery {
-    this.tag = tag;
-    return self;
+      this.tag = tag;
+      return this;
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-        '"ids":' + this.ids.toJSON() + ',' +
-        '"author": ' + (this.author == undefined ? 'null' : this.author.toJSON()) + ',' +
-        '"tag": ' + (this.tag == undefined ? 'null' : '"' + this.tag + '"') +
-      '}';
+  toJSON() {
+      return {ids: this.ids, author: this.author, tag: this.tag};
   }
 }

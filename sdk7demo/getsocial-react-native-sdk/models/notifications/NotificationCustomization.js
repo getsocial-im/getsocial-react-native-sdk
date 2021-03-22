@@ -11,8 +11,8 @@ export default class NotificationCustomization {
 
   // eslint-disable-next-line require-jsdoc
   static create(): NotificationCustomization {
-    const ins = new NotificationCustomization([]);
-    return ins;
+      const ins = new NotificationCustomization([]);
+      return ins;
   }
 
   /**
@@ -20,20 +20,16 @@ export default class NotificationCustomization {
    * @param {any} customizationMap customization parameters
    */
   constructor(customizationMap: any) {
-    this.backgroundImage = customizationMap['backgroundImage'];
-    this.titleColor = customizationMap['titleColor'];
-    this.textColor = customizationMap['textColor'];
+      this.backgroundImage = customizationMap['backgroundImage'];
+      this.titleColor = customizationMap['titleColor'];
+      this.textColor = customizationMap['textColor'];
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-      '"backgroundImage":' + (this.backgroundImage == undefined ? 'null' : '"' + this.backgroundImage + '"') + ',' +
-      '"titleColor": ' + (this.titleColor == undefined ? 'null' : '"' + this.titleColor + '"') + ',' +
-      '"textColor": ' + (this.textColor == undefined ? 'null': '"' + this.textColor + '"') +
-    '}';
+  toJSON() {
+      return {backgroundImage: this.backgroundImage, titleColor: this.titleColor, textColor: this.textColor};
   }
 }

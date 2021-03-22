@@ -53,13 +53,37 @@ import NotificationBadge from './models/notifications/NotificationBadge.js';
 import NotificationCustomization from './models/notifications/NotificationCustomization.js';
 import ActivitiesView from './models/communities/ActivitiesView.js';
 import SendNotificationTarget from './models/notifications/SendNotificationTarget.js';
+import Group from './models/communities/Group.js';
+import GroupContent from './models/communities/GroupContent.js';
+import GroupsQuery from './models/communities/GroupsQuery.js';
+import AddGroupMembersQuery from './models/communities/AddGroupMembersQuery.js';
+import JoinGroupQuery from './models/communities/JoinGroupQuery.js';
+import UpdateGroupMembersQuery from './models/communities/UpdateGroupMembersQuery.js';
+import RemoveGroupMembersQuery from './models/communities/RemoveGroupMembersQuery.js';
+import MembersQuery from './models/communities/MembersQuery.js';
+import GroupMember from './models/communities/GroupMember.js';
+import MemberStatus from './models/communities/MemberStatus.js';
+import Role from './models/communities/Role.js';
+import Membership from './models/communities/Membership.js';
+import Chat from './models/communities/ChatId.js';
+import ChatMessage from './models/communities/ChatMessage.js';
+import ChatMessageContent from './models/communities/ChatMessageContent.js';
+import ChatId from './models/communities/ChatId.js';
+import ChatMessagesQuery from './models/communities/ChatMessagesQuery.js';
+import CommunitiesAction from './models/communities/CommunitiesAction.js';
+import ChatMessagesPagingQuery from './models/communities/ChatMessagesPagingQuery.js';
+import ChatMessagesPagingResult from './models/communities/ChatMessagesPagingResult.js';
 
 module.exports = {GetSocial, GetSocialUI, CurrentUser,
-  Action, Analytics, Communities, FriendsQuery, Identity, ConflictUser, InviteContent, InviteChannel, InvitesView,
-  MediaAttachment, Notifications, Notification, NotificationCenterView, NotificationContent, NotificationsQuery,
-  User, SuggestedFriend, UserUpdate, TagsQuery, Topic, PurchaseData, AnnouncementsQuery, PostActivityTarget, ReactionsQuery,
-  UsersQuery, PagingQuery, PagingResult, UserId, UserIdList, UserReactions, RemoveActivitiesQuery, Invite,
-  Invites, ReferralData, ReferralUser, ReferralUsersQuery, NotificationButton, NotificationBadge, NotificationCustomization,
-  TopicsQuery, ActivitiesView, ActivitiesQuery, FollowQuery, FollowersQuery,
-  PromoCode, PromoCodeContent, Activity, ActivityContent, PromoCodes, SendNotificationTarget,
+    Action, Analytics, Communities, FriendsQuery, Identity, ConflictUser, InviteContent, InviteChannel, InvitesView,
+    MediaAttachment, Notifications, Notification, NotificationCenterView, NotificationContent, NotificationsQuery,
+    User, SuggestedFriend, UserUpdate, TagsQuery, Topic, PurchaseData, AnnouncementsQuery, PostActivityTarget, ReactionsQuery,
+    UsersQuery, PagingQuery, PagingResult, UserId, UserIdList, UserReactions, RemoveActivitiesQuery, Invite,
+    Invites, ReferralData, ReferralUser, ReferralUsersQuery, NotificationButton, NotificationBadge, NotificationCustomization,
+    TopicsQuery, ActivitiesView, ActivitiesQuery, FollowQuery, FollowersQuery,
+    PromoCode, PromoCodeContent, Activity, ActivityContent, PromoCodes, SendNotificationTarget,
+    Group, GroupsQuery, GroupContent, GroupMember, Membership, MemberStatus, Role, MembersQuery,
+    AddGroupMembersQuery, UpdateGroupMembersQuery, JoinGroupQuery, RemoveGroupMembersQuery,
+    Chat, ChatId, ChatMessage, ChatMessageContent, ChatMessagesQuery,
+    ChatMessagesPagingQuery, ChatMessagesPagingResult, CommunitiesAction,
 };

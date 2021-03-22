@@ -45,15 +45,15 @@ export default class ChatsListView extends Component<Props, State> {
         this.props.navigation.navigate('ChatMessagesView');
     }
 
-    handleActionSheetSelection = async (selectedIndex: number) => {
+    handleActionSheetSelection = async (selected: string, selectedIndex: number) => {
         if (selectedIndex == this.generateOptions().length - 1) {
             return;
         }
-        switch (selectedIndex) {
-        case 0:
+        switch (selected) {
+        case 'Details':
             this.showDetails();
             break;
-        case 1:
+        case 'Open':
             this.showChat();
             break;
         }
@@ -164,7 +164,7 @@ export default class ChatsListView extends Component<Props, State> {
                     options={this.generateOptions()}
                     cancelButtonIndex={this.generateOptions().length - 1}
                     onPress={(index) => {
-                        this.handleActionSheetSelection(index);
+                        this.handleActionSheetSelection(this.generateOptions()[index], index);
                     }}
                 />
             </View>

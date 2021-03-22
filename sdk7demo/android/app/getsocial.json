@@ -13,7 +13,7 @@
         },
         "autoRegister": true,
         "customListener": true,
-        "foreground": true
+        "foreground": false
     },
     "disableFacebookReferralCheck": false,
     "uiConfig": null

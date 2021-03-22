@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 // eslint-disable-next-line no-unused-vars
 import {Alert, Image, View, Text, TextInput, Button, ScrollView, Picker, FlatList, KeyboardAvoidingView} from 'react-native';
 import {CreateActivityPostStyle} from './CreateActivityPostStyle';
-import {Communities, ActivityContent, Activity, MediaAttachment, ActivitiesView} from 'getsocial-react-native-sdk';
+import {Communities, ActivityContent, Activity, MediaAttachment, ActivitiesView, UserId} from 'getsocial-react-native-sdk';
 import ImagePicker from 'react-native-image-picker';
 import PostActivityTarget from '../getsocial-react-native-sdk/models/communities/PostActivityTarget';
 import ActivitiesQuery from '../getsocial-react-native-sdk/models/communities/ActivitiesQuery';
@@ -277,7 +277,9 @@ export default class UpdateActivityPost extends Component<Props, State> {
         showLoading();
         Communities.updateActivity(UpdateActivityPost.oldActivity.id, content).then((post) => {
             hideLoading();
-            ActivitiesView.create(ActivitiesQuery.timeline()).show();
+            let query = ActivitiesQuery.everywhere();
+            query = query.byUser(UserId.currentUser());
+            ActivitiesView.create(query).show();
         }, (error) => {
             hideLoading();
             Alert.alert('Error', error.message);

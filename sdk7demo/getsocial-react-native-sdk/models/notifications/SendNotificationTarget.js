@@ -16,7 +16,7 @@ export default class SendNotificationTarget {
    * @return {SendNotificationTarget} new instance.
    */
     static create(): SendNotificationTarget {
-      return new SendNotificationTarget();
+        return new SendNotificationTarget();
     }
 
     /**
@@ -26,9 +26,9 @@ export default class SendNotificationTarget {
    * @return {SendNotificationTarget} new instance.
    */
     static usersWithIds(userIdList: UserIdList): SendNotificationTarget {
-      const object = new SendNotificationTarget();
-      object.userIdList = userIdList;
-      return object;
+        const object = new SendNotificationTarget();
+        object.userIdList = userIdList;
+        return object;
     }
 
     /**
@@ -38,18 +38,15 @@ export default class SendNotificationTarget {
    * @return {SendNotificationTarget} same instance for methods chaining.
    */
     addReceiverPlaceholder(placeholder: string): SendNotificationTarget {
-      this.placeholders.push(placeholder);
-      return this;
+        this.placeholders.push(placeholder);
+        return this;
     }
 
     /**
     * Generates JSON string.
     * @return {string} object as json.
     */
-    toJSON(): string {
-      return '{' +
-        '"userIdList": ' + (this.userIdList == undefined ? 'null' : this.userIdList.toJSON()) + ', ' +
-        '"placeholderIds": ' + JSON.stringify(this.placeholders) +
-      '}';
+    toJSON() {
+        return {userIdList: this.userIdList, placeholderIds: this.placeholders};
     }
 }

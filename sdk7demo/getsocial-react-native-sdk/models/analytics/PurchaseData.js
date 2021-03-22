@@ -1,9 +1,10 @@
+/* eslint-disable max-len */
 // @flow
 /**
  * Purchase data object.
  */
 export default class PurchaseData {
-  productId: String;
+  productId: string;
   productTitle: string;
   productType: number;
   price: number;
@@ -15,16 +16,8 @@ export default class PurchaseData {
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return JSON.stringify({
-      'productId': this.productId,
-      'productTitle': this.productTitle,
-      'productType': this.productType,
-      'price': this.price,
-      'priceCurrency': this.priceCurrency,
-      'purchaseDate': this.purchaseDate,
-      'transactionIdentifier': this.transactionIdentifier,
-    });
+  toJSON() {
+      return {productId: this.productId, productTitle: this.productTitle, productType: this.productType, price: this.price, priceCurrency: this.priceCurrency, purchaseDate: this.purchaseDate, purchaseId: this.transactionIdentifier};
   }
 }
 

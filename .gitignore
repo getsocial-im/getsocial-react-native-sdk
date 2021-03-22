@@ -1,49 +1,16 @@
-# OSX
-#
-.DS_Store
-
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
+*/**/.idea/
+demo/android/.gradle
+demo/ios/Frameworks
+demo/ios/GetSocial/
 
 
-# Xcode
-#
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-project.xcworkspace
-ios/Pods
+demo/ios/getsocial-installer-script-*/
+**/.gradle/
+**/node_modules/
+**/build/*
 
-# Android/IntelliJ
-#
-build/
-.idea
-.gradle
-local.properties
-*.iml
+sdk7demo/getsocial-react-native-sdk/docs
+sdk7demo/getsocial-react-native-sdk/eslint_result_demo.log
+sdk7demo/ios/getsocial-sdk7-installer-script*
 
-# BUCK
-buck-out/
-\.buckd/
-*.keystore
-demo/ios/getsocial-installer-script*
-getsocial-installer-script.zip
-eslint_result_*.log
-demo/ios/GetSocial
-getsocial/docs
+sdk7demo/getsocial-react-native-sdk/test_results.txt

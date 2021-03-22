@@ -25,7 +25,6 @@ export default class NotificationsMenu extends Component<Props, State> {
         const query = NotificationsQuery.withAllStatus();
         const notificationCenterView = NotificationCenterView.create(query);
         notificationCenterView.onNotificationClickListener = (notification, context) => {
-            GetSocialUI.closeView();
             this.changeNotificationStatus(notification.id, 'read');
             globalActionProcessor(notification.action);
         };

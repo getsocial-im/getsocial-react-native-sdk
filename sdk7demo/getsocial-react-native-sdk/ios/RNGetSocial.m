@@ -48,42 +48,42 @@ RCT_EXPORT_MODULE()
 
     if ([eventName isEqualToString:@"onInitialized"]) {
         [GetSocialJSONBridge addListener:@"GetSocial.addOnInitializedListener" listener:^(NSString * result) {
-            if (self->hasListeners) {
+            if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onInitialized" body: result];
             }
         }];
     }
     if ([eventName isEqualToString:@"onCurrentUserChanged"]) {
         [GetSocialJSONBridge addListener:@"GetSocial.addOnCurrentUserChangedListener" listener:^(NSString * result) {
-            if (self->hasListeners) {
+            if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onCurrentUserChanged" body: result];
             }
         }];
     }
     if ([eventName isEqualToString:@"onNotificationReceived"]) {
         [GetSocialJSONBridge addListener:@"Notifications.setOnNotificationReceivedListener" listener:^(NSString * notificationJSON) {
-            if (self->hasListeners) {
+            if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onNotificationReceived" body: notificationJSON];
             }
         }];
     }
     if ([eventName isEqualToString:@"onNotificationClicked"]) {
         [GetSocialJSONBridge addListener:@"Notifications.setOnNotificationClickedListener" listener:^(NSString * notificationClickedJSON) {
-            if (self->hasListeners) {
+            if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onNotificationClicked" body: notificationClickedJSON];
             }
         }];
     }
     if ([eventName isEqualToString:@"onTokenReceived"]) {
         [GetSocialJSONBridge addListener:@"Notifications.setOnTokenReceivedListener" listener:^(NSString * tokenJSON) {
-            if (self->hasListeners) {
+            if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onTokenReceived" body: tokenJSON];
             }
         }];
     }
     if ([eventName isEqualToString:@"onReferralDataReceived"]) {
         [GetSocialJSONBridge addListener:@"Invites.setOnReferralDataReceivedListener" listener:^(NSString * referralDataJSON) {
-            if (self->hasListeners) {
+			if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onReferralDataReceived" body: referralDataJSON];
             }
         }];
@@ -124,7 +124,7 @@ RCT_REMAP_METHOD(callAsync,
     }
     
     if ([method isEqualToString:@"Communities.removeActivities"]) {
-        newParameters = [newParameters stringByReplacingOccurrencesOfString:@"ids" withString:@"activityIds"];
+        newParameters = [newParameters stringByReplacingOccurrencesOfString:@"activityIds" withString:@"ids"];
     }
     [GetSocialJSONBridge callAsyncMethod:method with:newParameters success:^(NSString * result) {
         resolve(result);
@@ -185,10 +185,14 @@ RCT_REMAP_METHOD(callAsyncUI,
                  resolve:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject) {
     if ([method isEqualToString:@"closeView"]) {
-        [GetSocialUI closeView:[parameter boolValue]];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[GetSocialUI closeView:[parameter boolValue]];
+		});
     }
     if ([method isEqualToString:@"restoreView"]) {
-        [GetSocialUI restoreView];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[GetSocialUI restoreView];
+		});
     }
     if ([method isEqualToString:@"loadDefaultConfiguration"]) {
         if ([GetSocialUI loadDefaultConfiguration]) {
@@ -214,10 +218,10 @@ RCT_REMAP_METHOD(callAsyncUI,
     NSString* customContent = [parameters objectForKey: @"inviteContent"];
     
     GetSocialUIInvitesView* invitesView = [GetSocialUIInvitesView new];
-    if (windowTitle.length > 0) {
+	if (![windowTitle isKindOfClass:[NSNull class]] && windowTitle.length > 0) {
         invitesView.windowTitle = windowTitle;
     }
-    if (customContent > 0) {
+	if (![customContent isKindOfClass:[NSNull class]] && customContent.length > 0) {
         GetSocialInviteContent* inviteContent = [GetSocialJSONBridge decodeInviteContent:customContent];
         [invitesView setCustomInviteContent:inviteContent];
     }
@@ -247,7 +251,7 @@ RCT_REMAP_METHOD(callAsyncUI,
     }
     GetSocialActivitiesQuery* query = [GetSocialJSONBridge decodeActivitiesQuery:queryParameters];
     GetSocialUIActivityFeedView* feedView = [GetSocialUIActivityFeedView viewForQuery:query];
-    if (windowTitle.length > 0) {
+	if (![windowTitle isKindOfClass:[NSNull class]] && windowTitle.length > 0) {
         feedView.windowTitle = windowTitle;
     }
     
@@ -284,7 +288,7 @@ RCT_REMAP_METHOD(callAsyncUI,
     }
     GetSocialNotificationsQuery* query = [GetSocialJSONBridge decodeNotificationsQuery: queryParameters];
     GetSocialUINotificationCenterView* ncView = [GetSocialUINotificationCenterView viewForQuery:query];
-    if (windowTitle.length > 0) {
+	if (![windowTitle isKindOfClass:[NSNull class]] && windowTitle.length > 0) {
         ncView.windowTitle = windowTitle;
     }
     
@@ -295,7 +299,7 @@ RCT_REMAP_METHOD(callAsyncUI,
     }];
     [ncView setClickHandler:^(GetSocialNotification *notification, GetSocialNotificationContext *notificationContext) {
         NSDictionary* notificationClickBody = @{ @"notification" : [GetSocialJSONBridge encodeAny:notification], @"context": [GetSocialJSONBridge encodeAny: notificationContext] };
-        [self fireUIEvent:@"ncview_notificationclick" body: [GetSocialJSONBridge encodeAny:notificationClickBody]];
+        [self fireUIEvent:@"ncview_notificationclick" body: notificationClickBody];
     }];
     dispatch_async(dispatch_get_main_queue(), ^{
         [ncView show];
@@ -341,7 +345,11 @@ RCT_REMAP_METHOD(loadLocalResource,
 
 
 - (void)fireUIEvent:(NSString*)uiEvent body:(id)body {
-    [self sendEventWithName:uiEvent body: body];
+	if (self.bridge) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self sendEventWithName:uiEvent body: body];
+		});
+	}
 }
 
 - (void)fireUIEvent:(NSString*)uiEvent channelId:(NSString*)channelId errorMessage:(NSString*)errorMessage
@@ -351,10 +359,17 @@ RCT_REMAP_METHOD(loadLocalResource,
     if (errorMessage) {
         eventData[@"error"]  = errorMessage;
     }
-    [self sendEventWithName: uiEvent body:eventData];
+	if (self.bridge) {
+		[self sendEventWithName: uiEvent body:eventData];
+	}
 }
 
 - (NSData*) loadImageFromFile:(NSString*)fileUri {
+	NSArray<NSString*>* parts = [fileUri componentsSeparatedByString:@"."];
+	NSString* imagePath = [[NSBundle mainBundle] pathForResource: parts[0] ofType: parts[1]];
+	if ([NSFileManager.defaultManager fileExistsAtPath:imagePath]) {
+		return [NSData dataWithContentsOfFile: imagePath];
+	}
     NSURL *url = [NSURL URLWithString:fileUri];
     NSData* imageData = [NSData dataWithContentsOfURL:url];
     return imageData;

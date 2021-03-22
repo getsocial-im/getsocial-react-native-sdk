@@ -10,7 +10,7 @@ export default class AnnouncementsQuery {
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
-    this.ids = ids;
+      this.ids = ids;
   }
 
   /**
@@ -20,7 +20,7 @@ export default class AnnouncementsQuery {
    * @return {AnnouncementsQuery} a new query.
    */
   static forFeedOf(id: UserId): AnnouncementsQuery {
-    return new AnnouncementsQuery(CommunitiesIds.user(id));
+      return new AnnouncementsQuery(CommunitiesIds.user(id));
   }
 
   /**
@@ -30,7 +30,17 @@ export default class AnnouncementsQuery {
    * @return {AnnouncementsQuery} a new query.
    */
   static inTopic(id: string): AnnouncementsQuery {
-    return new AnnouncementsQuery(CommunitiesIds.topic(id));
+      return new AnnouncementsQuery(CommunitiesIds.topic(id));
+  }
+
+  /**
+   * Get announcements in a group.
+   *
+   * @param {string} id ID of group.
+   * @return {AnnouncementsQuery} new query.
+   */
+  static inGroup(id: string): AnnouncementsQuery {
+      return new AnnouncementsQuery(CommunitiesIds.group(id));
   }
 
   /**
@@ -39,16 +49,14 @@ export default class AnnouncementsQuery {
    * @return {AnnouncementsQuery} a new query.
    */
   static timeline(): AnnouncementsQuery {
-    return new AnnouncementsQuery(CommunitiesIds.timeline());
+      return new AnnouncementsQuery(CommunitiesIds.timeline());
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return JSON.stringify({
-      'ids': this.ids,
-    });
+  toJSON() {
+      return {ids: this.ids};
   }
 }

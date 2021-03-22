@@ -16,6 +16,9 @@ android {
     abortOnError false
     warning 'InvalidPackage'
   }
+  testOptions {
+    unitTests.returnDefaultValues = true
+  }
 }
 
 repositories {
@@ -23,11 +26,14 @@ repositories {
 }
 
 dependencies {
+  testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.2"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.2"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:5.3.2"
   compileOnly "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
 
   //these classes need to be accessible in the :app project
-  api "im.getsocial:getsocial-core:7.3.8@aar"
-  api "im.getsocial:getsocial-ui:7.3.8@aar"
+  api "im.getsocial:getsocial-core:7.4.6@aar"
+  api "im.getsocial:getsocial-ui:7.4.6@aar"
 
   // Optional. GetSocial is using it to obtain more accurate data about installs and make attribution more reliable
   implementation 'com.android.installreferrer:installreferrer:2.1'

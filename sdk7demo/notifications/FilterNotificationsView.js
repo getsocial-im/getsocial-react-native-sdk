@@ -121,7 +121,7 @@ class FilterNotificationsView extends Component<Props, State> {
               transparent={false}
               visible={this.state.visible}
               onRequestClose={() => {}}>
-              <ScrollView style={{flex: 1, padding: 10}}>
+              <ScrollView style={{flex: 1, padding: 30}}>
                   <View style={FilterNotificationsViewStyle.formEntryRow}>
                       <Button title='Discard' onPress={ this.discardChanges }/>
                       <Button title='Save' onPress={ this.updateFilter }/>

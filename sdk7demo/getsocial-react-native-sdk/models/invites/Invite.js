@@ -19,14 +19,14 @@ export default class Invite {
    * @param {any} inviteMap invite channel parameters
    */
   constructor(inviteMap: any) {
-    this.text = inviteMap['text'];
-    this.subject = inviteMap['nasubjectme'];
-    this.userName = inviteMap['userName'];
-    this.imageURL = inviteMap['imageURL'];
-    this.imageBase64 = inviteMap['imageBase64'];
-    this.gifURL = inviteMap['gifURL'];
-    this.videoURL = inviteMap['videoURL'];
-    this.referralURL = inviteMap['referralURL'];
-    this.linkParams = inviteMap['linkParams'];
+      this.text = inviteMap['text'];
+      this.subject = inviteMap['subject'];
+      this.userName = inviteMap['userName'];
+      this.imageURL = inviteMap['imageUrl'];
+      this.imageBase64 = inviteMap['imageBase64'];
+      this.gifURL = inviteMap['gifUrl'];
+      this.videoURL = inviteMap['videoUrl'];
+      this.referralURL = inviteMap['referralUrl'];
+      this.linkParams = inviteMap['linkParams'];
   }
 }

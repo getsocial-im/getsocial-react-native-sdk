@@ -5,6 +5,6 @@ import {DeviceEventEmitter, NativeEventEmitter, NativeModules, Platform} from 'r
 const {RNGetSocial} = NativeModules;
 
 export const GetSocialEventEmitter = Platform.select({
-  android: DeviceEventEmitter,
-  ios: new NativeEventEmitter(RNGetSocial),
+    android: DeviceEventEmitter,
+    ios: new NativeEventEmitter(RNGetSocial),
 });

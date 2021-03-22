@@ -8,7 +8,7 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, FlatList, Text, TextInput, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
-import {GetSocial, ActivitiesQuery, Action, User, ActivitiesView, Communities, RemoveGroupMembersQuery, UserIdList, JoinGroupQuery, GroupsQuery, Group, PagingQuery, MemberStatus, Role, CommunitiesAction} from './../getsocial-react-native-sdk';
+import {GetSocial, ActivitiesQuery, Action, FollowQuery, User, ActivitiesView, Communities, RemoveGroupMembersQuery, UserIdList, JoinGroupQuery, GroupsQuery, Group, PagingQuery, MemberStatus, Role, CommunitiesAction} from './../getsocial-react-native-sdk';
 // eslint-disable-next-line no-unused-vars
 import ActionSheet from 'react-native-actionsheet';
 import moment from 'moment';
@@ -27,6 +27,7 @@ type State = {
     selectedGroup: ?Group,
     searchText: string,
     myGroups: boolean,
+    followStatus: ?Map<string, boolean>,
 }
 
 export default class GroupsListView extends Component<Props, State> {
@@ -72,6 +73,10 @@ export default class GroupsListView extends Component<Props, State> {
         if (membership == null) {
             options.push('Join');
         }
+        if (membership != null) {
+            const isFollowed = this.state.selectedGroup != undefined && (this.state.selectedGroup.isFollowedByMe === true || this.state.followStatus[this.state.selectedGroup.id] === true);
+            options.push(isFollowed === true ? 'Unfollow' : 'Follow');
+        }
         if (membership != null && role != Role.Owner) {
             options.push('Leave');
         }
@@ -101,6 +106,39 @@ export default class GroupsListView extends Component<Props, State> {
             hideLoading();
             Alert.alert('Error', error.message);
         });
+    }
+
+    updateFollowStatus = async () => {
+        showLoading();
+        const isFollowed = this.state.selectedGroup != undefined && (this.state.selectedGroup.isFollowedByMe === true || this.state.followStatus[this.state.selectedGroup.id] === true);
+        const query = FollowQuery.groups([this.state.selectedGroup.id]);
+        if (isFollowed) {
+            Communities.unfollow(query).then(
+                (result) => {
+                    hideLoading();
+                    Alert.alert('Unfollowed', 'You are following now ' + result + ' groups');
+                    const mp = this.state.followStatus;
+                    mp[this.state.selectedGroup.id] = false;
+                    this.setState({followStatus: mp});
+                },
+                (error) => {
+                    hideLoading();
+                    Alert.alert('Error', error.message);
+                });
+        } else {
+            Communities.follow(query).then(
+                (result) => {
+                    hideLoading();
+                    Alert.alert('Followed', 'You are following now ' + result + ' groups');
+                    const mp = this.state.followStatus;
+                    mp[this.state.selectedGroup.id] = true;
+                    this.setState({followStatus: mp});
+                },
+                (error) => {
+                    hideLoading();
+                    Alert.alert('Error', error.message);
+                });
+        }
     }
 
     approveInvite = async () => {
@@ -223,6 +261,12 @@ export default class GroupsListView extends Component<Props, State> {
         case 'Approve invitation':
             this.approveInvite();
             break;
+        case 'Follow':
+            this.updateFollowStatus();
+            break;
+        case 'Unfollow':
+            this.updateFollowStatus();
+            break;
         }
     }
 
@@ -247,6 +291,7 @@ export default class GroupsListView extends Component<Props, State> {
             groups: emptyGroups,
             selectedGroup: undefined,
             searchText: null,
+            followStatus: {},
         };
     }
 

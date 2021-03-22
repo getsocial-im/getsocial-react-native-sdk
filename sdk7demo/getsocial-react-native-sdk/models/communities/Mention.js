@@ -14,10 +14,10 @@ export default class Mention {
    * @param {any} mentionMap reaction parameters
    */
   constructor(mentionMap: any) {
-    this.userId = mentionMap['userId'];
-    this.type = mentionMap['type'];
-    this.startIndex = mentionMap['startIndex'];
-    this.endIndex = mentionMap['endIndex'];
-    Object.freeze(this);
+      this.userId = mentionMap['userId'];
+      this.type = mentionMap['type'];
+      this.startIndex = mentionMap['startIndex'];
+      this.endIndex = mentionMap['endIndex'];
+      Object.freeze(this);
   }
 }

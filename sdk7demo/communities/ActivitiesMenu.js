@@ -10,7 +10,7 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, View, FlatList, TouchableWithoutFeedback, Text} from 'react-native';
-import {PagingQuery, Action, ActivitiesView, ActivitiesQuery, AnnouncementsQuery, UserId, User} from './../getsocial-react-native-sdk';
+import {PagingQuery, Action, ActivitiesView, ActivitiesQuery, UserId, User} from './../getsocial-react-native-sdk';
 import Communities from '../getsocial-react-native-sdk/Communities';
 import CreateActivityPost from './CreateActivityPost';
 import UpdateActivityPost from './UpdateActivityPost';
@@ -25,11 +25,17 @@ export default class ActivitiesMenu extends Component<Props, State> {
     static navigationOptions = {title: 'Activities'};
 
     loadLastPost = async () => {
-        const query = AnnouncementsQuery.timeline();
-        Communities.getAnnouncements(query).then((result) => {
-            console.log('ok');
+        const query = ActivitiesQuery.everywhere().byUser(UserId.currentUser());
+        Communities.getActivities(new PagingQuery(query)).then((result) => {
+            hideLoading();
+            if (result.entries === undefined || result.entries.length == 0) {
+                Alert.alert('Info', 'No activity to edit');
+            } else {
+                UpdateActivityPost.oldActivity = result.entries[0];
+                this.props.navigation.navigate('UpdateActivityPost');
+            }
         }, (error) => {
-            console.log('error');
+            hideLoading(); Alert.alert('Error', error.message);
         });
     }
 

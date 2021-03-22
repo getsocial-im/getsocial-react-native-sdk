@@ -15,8 +15,8 @@ export default class TopicsQuery {
    * @return {TopicsQuery} new instance.
    */
     static all(): TopicsQuery {
-      const instance = new TopicsQuery();
-      return instance;
+        const instance = new TopicsQuery();
+        return instance;
     }
 
     /**
@@ -26,9 +26,9 @@ export default class TopicsQuery {
    * @return {TopicsQuery} new instance.
    */
     static find(searchTerm: string): TopicsQuery {
-      const instance = new TopicsQuery();
-      instance.search = searchTerm;
-      return instance;
+        const instance = new TopicsQuery();
+        instance.search = searchTerm;
+        return instance;
     }
 
     /**
@@ -38,18 +38,15 @@ export default class TopicsQuery {
    * @return {TopicsQuery} new instance.
    */
     followedBy(userId: UserId): TopicsQuery {
-      this.userId = userId;
-      return this;
+        this.userId = userId;
+        return this;
     }
 
     /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-    toJSON(): string {
-      return '{' +
-            '"searchTerm": ' + (this.search == undefined ? 'null' : '"' + this.search + '"') + ',' +
-            '"followerId": ' + (this.userId == undefined ? 'null' : this.userId.toJSON()) +
-        '}';
+    toJSON() {
+        return {searchTerm: this.search, followerId: this.userId};
     }
 }

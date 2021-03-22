@@ -21,7 +21,7 @@ export default class CommunitiesEntity {
    * @return {boolean} true, if current user is allowed to perform action, false otherwise.
    */
   isActionAllowed(action: number): boolean {
-    return this.allowedActions[action] === true;
+      return this.allowedActions[action] === true;
   }
 
   /**
@@ -29,12 +29,12 @@ export default class CommunitiesEntity {
    * @param {any} entityMap entity parameters
    */
   constructor(entityMap: any) {
-    this.id = entityMap['id'];
-    this.type = entityMap['type'];
-    this.title = entityMap['title'];
-    this.avatarUrl = entityMap['avatarUrl'];
-    this.followersCount = entityMap['followersCount'];
-    this.isFollowedByMe = entityMap['isFollowedByMe'] === true;
-    Object.freeze(this);
+      this.id = entityMap['id'];
+      this.type = entityMap['type'];
+      this.title = entityMap['title'];
+      this.avatarUrl = entityMap['avatarUrl'];
+      this.followersCount = entityMap['followersCount'];
+      this.isFollowedByMe = entityMap['isFollower'] === true;
+      Object.freeze(this);
   }
 }

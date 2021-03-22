@@ -9,7 +9,7 @@ export default class ReferralUsersQuery {
 
     // eslint-disable-next-line require-jsdoc
     constructor(event: ?string) {
-      this.event = event;
+        this.event = event;
     }
 
     /**
@@ -18,7 +18,7 @@ export default class ReferralUsersQuery {
    * @return {ReferralUsersQuery} new ReferralUsersQuery instance.
    */
     static allUsers(): ReferralUsersQuery {
-      return new ReferralUsersQuery(null);
+        return new ReferralUsersQuery(null);
     }
 
     /**
@@ -28,16 +28,14 @@ export default class ReferralUsersQuery {
    * @return {ReferralUsersQuery} new ReferralUsersQuery instance.
    */
     static usersForEvent(event: string): ReferralUsersQuery {
-      return new ReferralUsersQuery(event);
+        return new ReferralUsersQuery(event);
     }
 
     /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-    toJSON(): string {
-      return '{ ' +
-      '"eventName": ' + (this.event == undefined ? '""' : '"' + this.event + '"') +
-    '}';
+    toJSON() {
+        return {eventName: (this.event == null ? '' : this.event)};
     }
 }

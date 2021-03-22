@@ -15,11 +15,11 @@ export default class NotificationsQuery {
    * @return {NotificationsQuery} new query instance.
    */
   static withStatus(status: [string]): NotificationsQuery {
-    const nc = new NotificationsQuery();
-    status.forEach((item) => {
-      nc.#status.push(item);
-    });
-    return nc;
+      const nc = new NotificationsQuery();
+      status.forEach((item) => {
+          nc.#status.push(item);
+      });
+      return nc;
   }
 
   /**
@@ -27,9 +27,9 @@ export default class NotificationsQuery {
    * @return {NotificationsCountQuery} new query instance.
    */
   static withAllStatus(): NotificationsQuery {
-    const nc = new NotificationsQuery();
-    nc.#status = [];
-    return nc;
+      const nc = new NotificationsQuery();
+      nc.#status = [];
+      return nc;
   }
 
   /**
@@ -38,10 +38,10 @@ export default class NotificationsQuery {
    * @return {NotificationsQuery} updated query instance.
    */
   withActions(newActions: [string]): NotificationsQuery {
-    newActions.forEach((item) => {
-      this.#actions.push(item);
-    });
-    return this;
+      newActions.forEach((item) => {
+          this.#actions.push(item);
+      });
+      return this;
   }
 
   /**
@@ -50,21 +50,17 @@ export default class NotificationsQuery {
    * @return {NotificationsQuery} updated query instance.
    */
   ofTypes(newTypes: [string]): NotificationsQuery {
-    newTypes.forEach((item) => {
-      this.#types.push(item);
-    });
-    return this;
+      newTypes.forEach((item) => {
+          this.#types.push(item);
+      });
+      return this;
   }
 
   /**
    * Generates JSON string.
    * @return {string} object as json.
    */
-  toJSON(): string {
-    return '{' +
-    '"statuses":' + JSON.stringify(this.#status) + ',' +
-    '"types": ' + (this.#types == undefined ? 'null' : JSON.stringify(this.#types)) + ',' +
-    '"actions": ' + (this.#actions == undefined ? 'null': JSON.stringify(this.#actions)) +
-  '}';
+  toJSON() {
+      return {statuses: this.#status, types: this.#types, actions: this.#actions};
   }
 }

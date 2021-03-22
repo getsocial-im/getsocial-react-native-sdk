@@ -27,71 +27,68 @@ export default class ActivitiesView {
      * @return {ActivitiesView} View instance.
      */
     static create(query: ActivitiesQuery): ActivitiesView {
-      const obj = new ActivitiesView();
-      obj.query = query;
-      return obj;
+        const obj = new ActivitiesView();
+        obj.query = query;
+        return obj;
     }
 
     /**
      * Shows the view.
      */
     show() {
-      const parameters = {
-        'windowTitle': (this.windowTitle == undefined ? '' : this.windowTitle),
-        'query': this.query.toJSON(),
-      };
-      if (this.onOpenListener != undefined) {
-        GetSocialEventEmitter.removeAllListeners('view_open');
-        GetSocialEventEmitter.addListener('view_open', (result) => {
-          if (this.onOpenListener != undefined) {
-            this.onOpenListener();
-          }
-        });
-      }
-      if (this.onCloseListener != undefined) {
-        GetSocialEventEmitter.removeAllListeners('view_close');
-        GetSocialEventEmitter.addListener('view_close', (result) => {
-          if (this.onCloseListener != undefined) {
-            this.onCloseListener();
-          }
-        });
-      }
-      if (this.onActionButtonClickListener != undefined) {
-        GetSocialEventEmitter.removeAllListeners('activityview_action');
-        GetSocialEventEmitter.addListener('activityview_action', (result) => {
-          if (this.onActionButtonClickListener != undefined) {
-            const action = new Action(JSON.parse(result));
-            if (action != null && this.onActionButtonClickListener != null) {
-              this.onActionButtonClickListener(action);
-            }
-          }
-        });
-      }
-      if (this.onMentionClickListener != undefined) {
-        GetSocialEventEmitter.removeAllListeners('activityview_mentionclick');
-        GetSocialEventEmitter.addListener('activityview_mentionclick', (result) => {
-          if (this.onMentionClickListener != undefined) {
-            this.onMentionClickListener(result);
-          }
-        });
-      }
-      if (this.onTagClickListener != undefined) {
-        GetSocialEventEmitter.removeAllListeners('activityview_tagclick');
-        GetSocialEventEmitter.addListener('activityview_tagclick', (result) => {
-          if (this.onTagClickListener != undefined) {
-            this.onTagClickListener(result);
-          }
-        });
-      }
-      if (this.onAvatarClickListener != undefined) {
-        GetSocialEventEmitter.removeAllListeners('activityview_avatarclick');
-        GetSocialEventEmitter.addListener('activityview_avatarclick', (result) => {
-          const user = new User(JSON.parse(result));
-          if (user != null && this.onAvatarClickListener != null) {
-            this.onAvatarClickListener(user);
-          }
-        });
-      }
-      RNGetSocial.showView('activitiesView', parameters);
+        const parameters = {windowTitle: (this.windowTitle == null ? null : this.windowTitle), query: JSON.stringify(this.query)};
+        if (this.onOpenListener != undefined) {
+            GetSocialEventEmitter.removeAllListeners('view_open');
+            GetSocialEventEmitter.addListener('view_open', (result) => {
+                if (this.onOpenListener != undefined) {
+                    this.onOpenListener();
+                }
+            });
+        }
+        if (this.onCloseListener != undefined) {
+            GetSocialEventEmitter.removeAllListeners('view_close');
+            GetSocialEventEmitter.addListener('view_close', (result) => {
+                if (this.onCloseListener != undefined) {
+                    this.onCloseListener();
+                }
+            });
+        }
+        if (this.onActionButtonClickListener != undefined) {
+            GetSocialEventEmitter.removeAllListeners('activityview_action');
+            GetSocialEventEmitter.addListener('activityview_action', (result) => {
+                if (this.onActionButtonClickListener != undefined) {
+                    const action = new Action(JSON.parse(result));
+                    if (action != null && this.onActionButtonClickListener != null) {
+                        this.onActionButtonClickListener(action);
+                    }
+                }
+            });
+        }
+        if (this.onMentionClickListener != undefined) {
+            GetSocialEventEmitter.removeAllListeners('activityview_mentionclick');
+            GetSocialEventEmitter.addListener('activityview_mentionclick', (result) => {
+                if (this.onMentionClickListener != undefined) {
+                    this.onMentionClickListener(result);
+                }
+            });
+        }
+        if (this.onTagClickListener != undefined) {
+            GetSocialEventEmitter.removeAllListeners('activityview_tagclick');
+            GetSocialEventEmitter.addListener('activityview_tagclick', (result) => {
+                if (this.onTagClickListener != undefined) {
+                    this.onTagClickListener(result);
+                }
+            });
+        }
+        if (this.onAvatarClickListener != undefined) {
+            GetSocialEventEmitter.removeAllListeners('activityview_avatarclick');
+            GetSocialEventEmitter.addListener('activityview_avatarclick', (result) => {
+                const user = new User(JSON.parse(result));
+                if (user != null && this.onAvatarClickListener != null) {
+                    this.onAvatarClickListener(user);
+                }
+            });
+        }
+        RNGetSocial.showView('activitiesView', parameters);
     }
 }

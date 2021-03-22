@@ -12,7 +12,7 @@ import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import ImagePicker from 'react-native-image-picker';
 // eslint-disable-next-line no-unused-vars
-import {CheckBox} from 'react-native-elements';
+import CheckBox from '@react-native-community/checkbox';
 
 type Props = {}
 
@@ -216,8 +216,10 @@ export default class SendNotification extends Component<Props, State> {
         const options = {mediaType: 'video'};
         ImagePicker.launchImageLibrary(options, (response) => {
             if (response.uri != undefined) {
-                this.setState({localVideoUri: response.uri, base64Video: response.data}, () => {
-                    this.updateButtonsState();
+                MediaAttachment.loadLocalResource(response.uri).then((videoData) => {
+                    this.setState({localVideoUri: response.uri, base64Video: videoData}, () => {
+                        this.updateButtonsState();
+                    });
                 });
             }
         });

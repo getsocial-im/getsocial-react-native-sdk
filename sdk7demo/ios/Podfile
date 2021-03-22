@@ -12,23 +12,16 @@ target 'sdk7demo' do
   target 'sdk7demoTests' do
     inherit! :complete
     # Pods for testing
+    pod 'RNGetSocial', :path => '../getsocial-react-native-sdk/RNGetSocial.podspec'
   end
 
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  use_flipper!
-  post_install do |installer|
-    flipper_post_install(installer)
-  end
+#  use_flipper!
+#  post_install do |installer|
+#    flipper_post_install(installer)
+#  end
 end
 
-target 'sdk7demo-tvOS' do
-  # Pods for sdk7demo-tvOS
-
-  target 'sdk7demo-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end

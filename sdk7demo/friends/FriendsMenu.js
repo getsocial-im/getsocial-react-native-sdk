@@ -43,7 +43,7 @@ export default class FriendsMenu extends Component<Props, State> {
             this.loadFriends();
         }, (error) => {
             hideLoading();
-            Alert.alert('Error', error.message);
+            Alert.alert('Error', 'Failed to add friend.');
         });
     }
 
@@ -55,7 +55,7 @@ export default class FriendsMenu extends Component<Props, State> {
             this.loadFriends();
         }, (error) => {
             hideLoading();
-            Alert.alert('Error', error.message);
+            Alert.alert('Error', 'Failed to remove friend');
         });
     }
 

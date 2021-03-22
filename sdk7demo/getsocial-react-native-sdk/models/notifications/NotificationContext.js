@@ -8,6 +8,6 @@ export default class NotificationContext {
 
     // eslint-disable-next-line require-jsdoc
     constructor(map: any) {
-      this.action = map['action'];
+        this.action = map['action'];
     }
 }

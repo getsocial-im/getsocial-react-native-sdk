@@ -5,7 +5,7 @@ import Notification from './Notification.js';
 import NotificationContext from './NotificationContext.js';
 import NotificationsQuery from './NotificationsQuery.js';
 import {GetSocialEventEmitter} from '../../GetSocialEventEmitter.js';
-import {NativeModules} from 'react-native';
+import {Platform, NativeModules} from 'react-native';
 const {RNGetSocial} = NativeModules;
 
 /**
@@ -24,9 +24,9 @@ export default class NotificationCenterView {
     * @return {NotificationCenterView} View instance.
     */
   static create(query: NotificationsQuery): NotificationCenterView {
-    const obj = new NotificationCenterView();
-    obj.query = query;
-    return obj;
+      const obj = new NotificationCenterView();
+      obj.query = query;
+      return obj;
   }
 
   /**
@@ -34,31 +34,41 @@ export default class NotificationCenterView {
    * @return {void} void.
    */
   show(): void {
-    const parameters = {
-      'windowTitle': (this.windowTitle == undefined ? '' : this.windowTitle),
-      'query': (this.query == undefined ? '' : this.query.toJSON()),
-    };
-    if (this.onOpenListener != undefined) {
-      GetSocialEventEmitter.removeAllListeners('view_open');
-      GetSocialEventEmitter.addListener('view_open', (result) => {
-        if (this.onOpenListener != undefined) {
-          this.onOpenListener();
-        }
-      });
-    }
-    if (this.onCloseListener != undefined) {
-      GetSocialEventEmitter.removeAllListeners('view_close');
-      GetSocialEventEmitter.addListener('view_close', (result) => {
-        if (this.onCloseListener != undefined) {
-          this.onCloseListener();
-        }
-      });
-    }
-    if (this.onNotificationClickListener != undefined) {
-      GetSocialEventEmitter.removeAllListeners('ncview_notificationclick');
-      GetSocialEventEmitter.addListener('ncview_notificationclick', (result) => {
-      });
-    }
-    RNGetSocial.showView('ncView', parameters);
+      const parameters = {windowTitle: (this.windowTitle == null ? null : this.windowTitle), query: JSON.stringify(this.query)};
+      if (this.onOpenListener != undefined) {
+          GetSocialEventEmitter.removeAllListeners('view_open');
+          GetSocialEventEmitter.addListener('view_open', (result) => {
+              if (this.onOpenListener != undefined) {
+                  this.onOpenListener();
+              }
+          });
+      }
+      if (this.onCloseListener != undefined) {
+          GetSocialEventEmitter.removeAllListeners('view_close');
+          GetSocialEventEmitter.addListener('view_close', (result) => {
+              if (this.onCloseListener != undefined) {
+                  this.onCloseListener();
+              }
+          });
+      }
+      if (this.onNotificationClickListener != undefined) {
+          GetSocialEventEmitter.removeAllListeners('ncview_notificationclick');
+          GetSocialEventEmitter.addListener('ncview_notificationclick', (result) => {
+              if (this.onNotificationClickListener != undefined) {
+                  if (Platform.OS === 'ios') {
+                      const notification = new Notification(JSON.parse(result['notification']));
+                      const context = new NotificationContext(JSON.parse(result['context']));
+                      this.onNotificationClickListener(notification, context);
+                  }
+                  if (Platform.OS === 'android') {
+                      const obj = JSON.parse(result);
+                      const notification = new Notification(obj['notification']);
+                      const context = new NotificationContext(obj['context']);
+                      this.onNotificationClickListener(notification, context);
+                  }
+              }
+          });
+      }
+      RNGetSocial.showView('ncView', parameters);
   }
 }

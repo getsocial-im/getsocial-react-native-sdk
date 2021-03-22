@@ -16,10 +16,10 @@ export default class Identity {
    * @return {Identity} New instance for Facebook user with specified access token.
   */
   static createFacebookIdentity(accessToken: string): Identity {
-    const ai = new Identity();
-    ai.#providerId = 'facebook';
-    ai.#accessToken = accessToken;
-    return ai;
+      const ai = new Identity();
+      ai.#providerId = 'facebook';
+      ai.#accessToken = accessToken;
+      return ai;
   }
 
   /**
@@ -34,22 +34,18 @@ export default class Identity {
    * @return {Identity} Instance for your custom provider.
   */
   static createCustomIdentity(customProviderName: string, userId: string, accessToken: string): Identity {
-    const ai = new Identity();
-    ai.#providerId = customProviderName;
-    ai.#providerUserId = userId;
-    ai.#accessToken = accessToken;
-    return ai;
+      const ai = new Identity();
+      ai.#providerId = customProviderName;
+      ai.#providerUserId = userId;
+      ai.#accessToken = accessToken;
+      return ai;
   }
 
   /**
    * Generates JSON string.
    * @return {string} object as json.
    */
-  toJSON(): string {
-    return JSON.stringify({
-      'provider': this.#providerId,
-      'userId': this.#providerUserId,
-      'accessToken': this.#accessToken,
-    });
+  toJSON() {
+      return {provider: this.#providerId, userId: this.#providerUserId, accessToken: this.#accessToken};
   }
 }

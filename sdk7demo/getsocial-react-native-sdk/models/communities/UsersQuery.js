@@ -11,8 +11,8 @@ export default class UsersQuery {
 
   // eslint-disable-next-line require-jsdoc
   constructor(searchTerm: string, userId: UserId) {
-    this.searchTerm = searchTerm;
-    this.userId = userId;
+      this.searchTerm = searchTerm;
+      this.userId = userId;
   }
 
   /**
@@ -22,7 +22,7 @@ export default class UsersQuery {
    * @return {UsersQuery} new instance.
    */
   static find(searchTerm: string): UsersQuery {
-    return new UsersQuery(searchTerm, null);
+      return new UsersQuery(searchTerm, null);
   }
 
   /**
@@ -32,17 +32,14 @@ export default class UsersQuery {
    * @return {UsersQuery} new instance.
    */
   static followedBy(id: UserId): UsersQuery {
-    return new UsersQuery('', id);
+      return new UsersQuery('', id);
   }
 
   /**
    * Generates JSON string.
    * @return {string} object as json.
    */
-  toJSON(): string {
-    return '{' +
-      '"query": ' + (this.searchTerm == undefined ? 'null' : '"' + this.searchTerm + '"') + ',' +
-      '"followedBy": ' + (this.userId == undefined ? 'null' : this.userId.toJSON()) +
-    '}';
+  toJSON() {
+      return {query: this.searchTerm, followedBy: this.userId};
   }
 }

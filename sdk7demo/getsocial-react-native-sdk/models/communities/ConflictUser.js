@@ -8,11 +8,11 @@ import User from './User.js';
  * to check the details of the conflict user to see which user you want to proceed with.
  */
 export default class ConflictUser extends User {
-  /**
+    /**
    * Creates a new ConflictUser instance from the provider parameters.
    * @param {any} conflictUserMap conflict user parameters
    */
-  constructor(conflictUserMap: any) {
-    super(conflictUserMap);
-  }
+    constructor(conflictUserMap: any) {
+        super(conflictUserMap);
+    }
 }

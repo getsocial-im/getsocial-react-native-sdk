@@ -16,12 +16,7 @@ export default class InviteContent {
    * Generates JSON string.
    * @return {string} object as json.
    */
-  toJSON(): string {
-    return '{' +
-      '"text":' + (this.text == undefined ? 'null' : '"' + this.text + '"') + ',' +
-      '"subject":' + (this.subject == undefined ? 'null' : '"' + this.subject + '"') + ',' +
-      '"mediaAttachment":' + (this.mediaAttachment == undefined ? 'null' : this.mediaAttachment.toJSON()) + ',' +
-      '"linkParams":' + (this.linkParams == undefined ? 'null' : JSON.stringify(this.linkParams)) +
-    '}';
+  toJSON() {
+      return {text: this.text, subject: this.subject, mediaAttachment: this.mediaAttachment, linkParams: this.linkParams};
   }
 }

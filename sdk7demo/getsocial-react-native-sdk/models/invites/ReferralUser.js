@@ -16,11 +16,11 @@ export default class ReferralUser extends User {
    * @param {any} referralUserMap public user parameters
    */
   constructor(referralUserMap: any) {
-    super(referralUserMap);
-    this.event = referralUserMap['event'];
-    this.eventDate = referralUserMap['eventDate'];
-    this.eventData = referralUserMap['eventData'];
+      super(referralUserMap);
+      this.event = referralUserMap['event'];
+      this.eventDate = referralUserMap['eventDate'];
+      this.eventData = referralUserMap['eventData'];
 
-    Object.freeze(this);
+      Object.freeze(this);
   }
 }

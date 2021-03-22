@@ -27,8 +27,8 @@ type State = {
     properties: Map<string, string>,
     isPrivate: boolean,
     isDiscoverable: boolean,
-    allowPost: string,
-    allowInteract: string,
+    allowPost: number,
+    allowInteract: number,
 }
 
 export default class CreateGroupView extends Component<Props, State> {
@@ -178,8 +178,8 @@ export default class CreateGroupView extends Component<Props, State> {
         content.isPrivate = this.state.isPrivate;
         content.isDiscoverable = this.state.isDiscoverable;
         const permissionsMap = {};
-        permissionsMap[CommunitiesAction.Post] = this.state.allowPost;
-        permissionsMap[CommunitiesAction.React] = this.state.allowInteract;
+        permissionsMap[CommunitiesAction.Post] = Number(this.state.allowPost);
+        permissionsMap[CommunitiesAction.React] = Number(this.state.allowInteract);
         content.permissions = permissionsMap;
 
         if (content.id == null || content.id.length == 0 || content.title == null || content.title.length == 0) {

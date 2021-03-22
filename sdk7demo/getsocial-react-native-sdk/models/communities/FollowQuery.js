@@ -10,7 +10,7 @@ export default class FollowQuery {
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
-    this.ids = ids;
+      this.ids = ids;
   }
 
   /**
@@ -20,7 +20,7 @@ export default class FollowQuery {
    * @return {FollowQuery} new query.
    */
   static topics(ids: string[]): FollowQuery {
-    return new FollowQuery(CommunitiesIds.topics(ids));
+      return new FollowQuery(CommunitiesIds.topics(ids));
   }
 
   /**
@@ -30,16 +30,24 @@ export default class FollowQuery {
    * @return {FollowQuery} new query.
    */
   static users(ids: UserIdList): FollowQuery {
-    return new FollowQuery(CommunitiesIds.users(ids));
+      return new FollowQuery(CommunitiesIds.users(ids));
+  }
+
+  /**
+   * Follow groups from list.
+   *
+   * @param {[string]} ids list of group IDs.
+   * @return {FollowQuery} new query.
+   */
+  static groups(ids: string[]): FollowQuery {
+      return new FollowQuery(CommunitiesIds.groups(ids));
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return '{' +
-      '"ids": ' + this.ids.toJSON() +
-    '}';
+  toJSON() {
+      return {ids: this.ids};
   }
 }

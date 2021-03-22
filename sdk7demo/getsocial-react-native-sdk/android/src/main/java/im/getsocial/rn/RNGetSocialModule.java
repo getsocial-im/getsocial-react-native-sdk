@@ -64,6 +64,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -153,6 +154,20 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
             } else {
                 callReject(promise, "Failed to load custom UI configuration, check logs for more information");
             }
+        }
+    }
+
+    @ReactMethod
+    public void registerListener(final String listener) {
+        // only Android to avoid lifecycle issues, and lost of data
+        if (listener.equalsIgnoreCase("onReferralDataReceived")) {
+            Invites.setReferralDataListener(new ReferralDataListener() {
+                @Override
+                public void onReferralDataReceived(ReferralData referralData) {
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("onReferralDataReceived", GetSocialJson.toJson(referralData));
+                }
+            });
         }
     }
 
@@ -327,10 +342,10 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                 builder.setNotificationClickListener(new NotificationCenterViewBuilder.NotificationClickListener() {
                     @Override
                     public void onNotificationClicked(Notification notification, NotificationContext notificationContext) {
-                        WritableMap map = new WritableNativeMap();
-                        map.putString("notification", GetSocialJson.toJson(notification));
-                        map.putString("context", GetSocialJson.toJson(notificationContext));
-                        fireEvent("ncview_notificationclick", map);
+                        Map map = new HashMap();
+                        map.put("notification", notification);
+                        map.put("context", notificationContext);
+                        fireEvent("ncview_notificationclick", GetSocialJson.toJson(map));
                     }
                 });
                 builder.setViewStateListener(new ViewStateListener() {
@@ -391,13 +406,6 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                         // so it can be cached there
                         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                                 .emit("onCurrentUserChanged", GetSocialJson.toJson(currentUser));
-                    }
-                });
-                Invites.setReferralDataListener(new ReferralDataListener() {
-                    @Override
-                    public void onReferralDataReceived(ReferralData referralData) {
-                        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit("onReferralDataReceived", GetSocialJson.toJson(referralData));
                     }
                 });
                 Notifications.setOnNotificationClickedListener(new OnNotificationClickedListener() {
@@ -496,6 +504,26 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                 }
             }
             return fileContent;
+        }
+        // check in assets folder
+        InputStream is = null;
+        byte fileContent[] = null;
+        try {
+            is = getReactApplicationContext().getAssets().open(localUri);
+            fileContent = new byte[(int)is.available()];
+            is.read(fileContent);
+            return fileContent;
+        } catch (Exception ioe) {
+            System.out.println("Exception while reading file " + ioe);
+        } finally {
+            // close the streams using close method
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException ioe) {
+                System.out.println("Error while closing stream: " + ioe);
+            }
         }
         return null;
     }

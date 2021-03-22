@@ -13,9 +13,9 @@ export default class NotificationBadge {
    * @return {NotificationBadge} New instance.
    */
   static increase(by: number): NotificationBadge {
-    const instance = new NotificationBadge();
-    instance.#increase = by;
-    return instance;
+      const instance = new NotificationBadge();
+      instance.#increase = by;
+      return instance;
   }
 
   /**
@@ -24,19 +24,16 @@ export default class NotificationBadge {
    * @return {NotificationBadge} New instance.
    */
   static set(to: number): NotificationBadge {
-    const instance = new NotificationBadge();
-    instance.#badge = to;
-    return instance;
+      const instance = new NotificationBadge();
+      instance.#badge = to;
+      return instance;
   }
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
-  toJSON(): string {
-    return JSON.stringify({
-      'increase': this.#increase,
-      'badge': this.#badge,
-    });
+  toJSON() {
+      return {increase: this.#increase, badge: this.#badge};
   }
 }

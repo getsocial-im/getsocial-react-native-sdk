@@ -9,5 +9,9 @@
 		<string>applinks:getsocialreactnativedemo.gsc.im</string>
 		<string>applinks:getsocialreactnativedemo-gsalt.gsc.im</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.im.getsocial.rn.demo.getsocial_extension</string>
+	</array>
 </dict>
 </plist>
