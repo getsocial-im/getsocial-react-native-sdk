@@ -1,3 +1,7 @@
+## v7.1.4 - Mar 25, 2021
+
++ Fix `providerId` casing issue when adding an identity.
+
 ## v7.1.3 - Mar 22, 2021
 
 + Added new method to refresh current user.

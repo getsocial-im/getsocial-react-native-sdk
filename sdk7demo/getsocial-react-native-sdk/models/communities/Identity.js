@@ -46,6 +46,6 @@ export default class Identity {
    * @return {string} object as json.
    */
   toJSON() {
-      return {provider: this.#providerId, userId: this.#providerUserId, accessToken: this.#accessToken};
+      return {provider: this.#providerId.toLowerCase(), userId: this.#providerUserId, accessToken: this.#accessToken};
   }
 }
