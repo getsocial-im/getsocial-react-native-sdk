@@ -1,3 +1,7 @@
+## v7.1.5 - May 18, 2021
+
++ Fix link parameters issue when creating invite URL on iOS.
+
 ## v7.1.4 - Mar 25, 2021
 
 + Fix `providerId` casing issue when adding an identity.

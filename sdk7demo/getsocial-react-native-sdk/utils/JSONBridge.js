@@ -380,9 +380,17 @@ export default class JSONBridge {
     }
 
     static createURL(linkParams: ?Map<string, string>): Promise<string> {
-        return RNGetSocial.callAsync('Invites.createLink', linkParams === undefined ? '' : JSON.stringify(linkParams)).then((result) => {
-            return JSON.parse(result)['result'];
-        });
+        if (Platform.OS === 'ios') {
+            const content = new InviteContent();
+            content.linkParams = linkParams;
+            return RNGetSocial.callAsync('Invites.createLink', JSON.stringify(content)).then((result) => {
+                return JSON.parse(result)['result'];
+            });
+        } else {
+            return RNGetSocial.callAsync('Invites.createLink', linkParams === undefined ? '' : JSON.stringify(linkParams)).then((result) => {
+                return JSON.parse(result)['result'];
+            });
+        }
     }
 
     static sendInvite(inviteContent: ?InviteContent, channelId: string,

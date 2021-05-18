@@ -67,8 +67,9 @@ export default class InvitesMenu extends Component<Props, State> {
 
     createInviteUrl = async () => {
         showLoading();
-        Invites.createURL(null).then((inviteUrl) => {
+        Invites.createURL({'hello': 'bello'}).then((inviteUrl) => {
             hideLoading();
+            console.log(inviteUrl);
             Alert.alert('URL', inviteUrl + '\n \n \n');
         }, (error) => {
             hideLoading();
