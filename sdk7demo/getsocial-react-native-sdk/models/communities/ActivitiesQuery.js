@@ -2,6 +2,7 @@
 // @flow
 import UserId from './../UserId.js';
 import CommunitiesIds from './CommunitiesIds.js';
+import PollStatus from './PollStatus.js';
 
 /**
  * ActivitiesQuery object.
@@ -10,6 +11,7 @@ export default class ActivitiesQuery {
   ids: CommunitiesIds;
   author: ?UserId;
   tag: ?string;
+  pollStatus: PollStatus = PollStatus.All;
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
@@ -106,10 +108,21 @@ export default class ActivitiesQuery {
   }
 
   /**
+   * Get activities with the specified poll status.
+   *
+   * @param {number} status Poll status value.
+   * @return {ActivitiesQuery} new query.
+   */
+  withPollStatus(status: number): ActivitiesQuery {
+      this.pollStatus = status;
+      return this;
+  }
+
+  /**
   * Generates JSON string.
   * @return {string} object as json.
   */
   toJSON() {
-      return {ids: this.ids, author: this.author, tag: this.tag};
+      return {ids: this.ids, author: this.author, tag: this.tag, pollStatus: this.pollStatus};
   }
 }

@@ -1,6 +1,5 @@
 package im.getsocial.rn;
 
-
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -26,6 +25,8 @@ import im.getsocial.sdk.communities.GroupsQuery;
 import im.getsocial.sdk.communities.Identity;
 import im.getsocial.sdk.communities.JoinGroupQuery;
 import im.getsocial.sdk.communities.MembersQuery;
+import im.getsocial.sdk.communities.PollContent;
+import im.getsocial.sdk.communities.PollOptionContent;
 import im.getsocial.sdk.communities.PostActivityTarget;
 import im.getsocial.sdk.communities.ReactionsQuery;
 import im.getsocial.sdk.communities.RemoveActivitiesQuery;
@@ -36,6 +37,7 @@ import im.getsocial.sdk.communities.UserId;
 import im.getsocial.sdk.communities.UserIdList;
 import im.getsocial.sdk.communities.UserUpdate;
 import im.getsocial.sdk.communities.UsersQuery;
+import im.getsocial.sdk.communities.VotesQuery;
 import im.getsocial.sdk.iap.PurchaseData;
 import im.getsocial.sdk.invites.InviteContent;
 import im.getsocial.sdk.invites.ReferralUsersQuery;
@@ -132,6 +134,17 @@ public class DecodingTests {
     public void test_MembersQuery() throws FileNotFoundException {
         assertTrue(execute("membersquery", MembersQuery.class));
     }
+
+    @Test
+    public void test_PollContent() throws FileNotFoundException {
+        assertTrue(execute("pollcontent", PollContent.class));
+    }
+
+    @Test
+    public void test_PollOptionContent() throws FileNotFoundException {
+        assertTrue(execute("polloptioncontent", PollOptionContent.class));
+    }
+
     @Test
     public void test_PostActivityTarget() throws FileNotFoundException {
         assertTrue(execute("postactivitytarget", PostActivityTarget.class));
@@ -204,6 +217,11 @@ public class DecodingTests {
     @Test
     public void test_PromoCodeContent() throws FileNotFoundException {
         assertTrue(execute("promocodecontent", PromoCodeContent.class));
+    }
+
+    @Test
+    public void test_VotesQuery() throws FileNotFoundException {
+        assertTrue(execute("votesquery", VotesQuery.class));
     }
 
     // region Private

@@ -35,6 +35,7 @@ export default class CommunitiesEntity {
       this.avatarUrl = entityMap['avatarUrl'];
       this.followersCount = entityMap['followersCount'];
       this.isFollowedByMe = entityMap['isFollower'] === true;
+      this.allowedActions = entityMap['availableActions'];
       Object.freeze(this);
   }
 }

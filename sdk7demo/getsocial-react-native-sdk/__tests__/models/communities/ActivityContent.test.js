@@ -3,6 +3,8 @@ import ActivityContent from './../../../models/communities/ActivityContent.js';
 import ActivityButton from './../../../models/communities/ActivityButton.js';
 import Action from './../../../models/actions/Action.js';
 import MediaAttachment from './../../../models/MediaAttachment.js';
+import PollContent from './../../../models/communities/PollContent.js';
+import PollOptionContent from './../../../models/communities/PollOptionContent.js';
 const {saveResult} = require('./../../utils/TestUtils.test.js');
 
 // Test text
@@ -61,3 +63,23 @@ test('content5.toJSON() result shall be', () => {
     expect(json5).toBe(jsonResult5);
     saveResult('activitycontent', 'activitycontent_complete.json', json5);
 });
+
+// Test poll
+const content6 = new ActivityContent();
+content6.text = 'hello';
+const pollContent = new PollContent();
+const option1 = new PollOptionContent();
+option1.text = 'option1';
+option1.attachment = MediaAttachment.withImageUrl('image1');
+const option2 = new PollOptionContent();
+option2.text = 'option2';
+option2.attachment = MediaAttachment.withImageUrl('image2');
+pollContent.options = [option1, option2];
+content6.poll = pollContent;
+const json6 = JSON.stringify(content6);
+const jsonResult6 = '{"attachments":[],"properties":{},"text":"hello","poll":{"allowMultipleVotes":false,"options":[{"text":"option1","attachment":{"imageUrl":"image1","image":null,"videoUrl":null,"video":null}},{"text":"option2","attachment":{"imageUrl":"image2","image":null,"videoUrl":null,"video":null}}]}}';
+test('content6.toJSON() result shall be', () => {
+    expect(json6).toBe(jsonResult6);
+    saveResult('activitycontent', 'activitycontent_poll.json', json6);
+});
+

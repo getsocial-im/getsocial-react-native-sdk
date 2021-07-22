@@ -39,6 +39,10 @@ import ChatMessagesListView from './communities/ChatMessagesList.js';
 import FollowersListView from './communities/FollowersList.js';
 import FollowingsListView from './communities/FollowingsList.js';
 import ActivitiesMenu from './communities/ActivitiesMenu.js';
+import PollsListView from './communities/PollsList.js';
+import VotesListView from './communities/VotesList.js';
+import VoteView from './communities/Vote.js';
+import CreatePollView from './communities/CreatePoll.js';
 
 // eslint-disable-next-line no-unused-vars
 import {View, Alert} from 'react-native';
@@ -90,6 +94,10 @@ const MainNavigator = createStackNavigator({
     CreateGroup: {screen: CreateGroupView},
     UpdateGroup: {screen: UpdateGroupView},
     AddGroupMember: {screen: AddGroupMemberView},
+    VotesList: {screen: VotesListView},
+    PollsList: {screen: PollsListView},
+    Vote: {screen: VoteView},
+    CreatePoll: {screen: CreatePollView},
 },
 {
     initialRouteName: 'MainMenu',

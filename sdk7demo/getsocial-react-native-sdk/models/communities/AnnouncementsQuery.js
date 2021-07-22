@@ -1,12 +1,14 @@
 // @flow
 import UserId from './../UserId.js';
 import CommunitiesIds from './CommunitiesIds.js';
+import PollStatus from './PollStatus.js';
 
 /**
  * AnnouncementsQuery object.
  */
 export default class AnnouncementsQuery {
   ids: CommunitiesIds
+  pollStatus: PollStatus = PollStatus.All;
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
@@ -53,10 +55,21 @@ export default class AnnouncementsQuery {
   }
 
   /**
+   * Get activities with the specified poll status.
+   *
+   * @param {number} status Poll status value.
+   * @return {AnnouncementsQuery} new query.
+   */
+  withPollStatus(status: number): AnnouncementsQuery {
+      this.pollStatus = status;
+      return this;
+  }
+
+  /**
   * Generates JSON string.
   * @return {string} object as json.
   */
   toJSON() {
-      return {ids: this.ids};
+      return {ids: this.ids, pollStatus: this.pollStatus};
   }
 }

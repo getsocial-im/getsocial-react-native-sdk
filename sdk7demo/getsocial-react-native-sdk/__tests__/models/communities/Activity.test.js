@@ -82,14 +82,6 @@ test('parsed Activity object properties must match', () => {
     expect(commenter1.publicProperties['publickey']).toBe('publicvalue');
     expect(commenter1.isVerified).toBe(true);
 
-    const commenter2 = commenters[1];
-    expect(commenter2.userId).toBe('userid');
-    expect(commenter2.avatarUrl).toBe('avatarurl');
-    expect(commenter2.displayName).toBe('testuser');
-    expect(commenter2.identities['fb']).toBe('token');
-    expect(commenter2.publicProperties['publickey']).toBe('publicvalue');
-    expect(commenter2.isVerified).toBe(true);
-
     const attachments = activity.mediaAttachments;
     const attachment1 = attachments[0];
     expect(attachment1.getImageUrl()).toBe('imageurl');
@@ -104,4 +96,44 @@ test('parsed Activity object properties must match', () => {
     expect(author.identities['fb']).toBe('token');
     expect(author.publicProperties['publickey']).toBe('publicvalue');
     expect(author.isVerified).toBe(true);
+
+    const poll = activity.poll;
+    expect(poll.allowMultipleVotes).toBe(true);
+    expect(poll.endDate).toBe(123);
+    expect(poll.totalVotes).toBe(555);
+
+    const voters = poll.voters;
+    const voter1 = voters[0];
+    expect(voter1.user.userId).toBe('userid');
+    expect(voter1.user.avatarUrl).toBe('avatarurl');
+    expect(voter1.user.displayName).toBe('testuser');
+    expect(voter1.user.identities['fb']).toBe('token');
+    expect(voter1.user.publicProperties['publickey']).toBe('publicvalue');
+    expect(voter1.user.isVerified).toBe(true);
+    expect(voter1.votes[0]).toBe('vote');
+
+    const voter2 = voters[1];
+    expect(voter2.user.userId).toBe('userid');
+    expect(voter2.user.avatarUrl).toBe('avatarurl');
+    expect(voter2.user.displayName).toBe('testuser');
+    expect(voter2.user.identities['fb']).toBe('token');
+    expect(voter2.user.publicProperties['publickey']).toBe('publicvalue');
+    expect(voter2.user.isVerified).toBe(true);
+    expect(voter2.votes[0]).toBe('vote1');
+    expect(voter2.votes[1]).toBe('vote2');
+
+    const pollOptions = poll.options;
+    const option1 = pollOptions[0];
+    expect(option1.optionId).toBe('id1');
+    expect(option1.text).toBe('hello1');
+    expect(option1.attachment.getImageUrl()).toBe('image1');
+    expect(option1.isVotedByMe).toBe(true);
+    expect(option1.voteCount).toBe(100);
+
+    const option2 = pollOptions[1];
+    expect(option2.optionId).toBe('id2');
+    expect(option2.text).toBe('hello2');
+    expect(option2.attachment.getVideoUrl()).toBe('video2');
+    expect(option2.isVotedByMe).toBe(false);
+    expect(option2.voteCount).toBe(200);
 });

@@ -3,6 +3,7 @@
 
 import MediaAttachment from './../MediaAttachment.js';
 import ActivityButton from './ActivityButton.js';
+import PollContent from './PollContent.js';
 
 /**
  * ActivityContent object.
@@ -12,4 +13,5 @@ export default class ActivityContent {
   attachments: Array<MediaAttachment> = [];
   button: ?ActivityButton;
   properties: {[key: string] : string} = {};
+  poll: ?PollContent;
 }

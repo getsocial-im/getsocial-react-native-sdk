@@ -148,13 +148,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getAnnouncements') {
-            if (body == '{"ids":{"ids":["topic"],"type":2}}') {
+            if (body == '{"ids":{"ids":["topic"],"type":2},"pollStatus":0}') {
                 return Promise.resolve('[' + readTestData('encodedobjects', 'activity.json') + ']');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getActivities') {
-            if (body == '{"query":{"ids":{"ids":["timeline"],"type":1}},"limit":20}') {
+            if (body == '{"query":{"ids":{"ids":["timeline"],"type":1},"pollStatus":0},"limit":20}') {
                 return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'activity.json')));
             }
             return Promise.reject(new Error());
@@ -183,6 +183,12 @@ NativeModules.RNGetSocial = {
             }
             return Promise.reject(new Error());
         }
+        if (method == 'Communities.setReaction') {
+            if (body == '{"activityId":"activityId","reaction":"love"}') {
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error());
+        }
         if (method == 'Communities.removeReaction') {
             if (body == '{"activityId":"activityId","reaction":"hate"}') {
                 return Promise.resolve();
@@ -192,6 +198,30 @@ NativeModules.RNGetSocial = {
         if (method == 'Communities.getReactions') {
             if (body == '{"query":{"ids":{"ids":["activity"],"type":6}},"limit":20}') {
                 return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'userreactions.json')));
+            }
+            return Promise.reject(new Error());
+        }
+        if (method == 'Communities.addVotes') {
+            if (body == '{"activityId":"activityId","pollOptionIds":["love","hate"]}') {
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error());
+        }
+        if (method == 'Communities.setVotes') {
+            if (body == '{"activityId":"activityId","pollOptionIds":["love","hate"]}') {
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error());
+        }
+        if (method == 'Communities.removeVotes') {
+            if (body == '{"activityId":"activityId","pollOptionIds":["love","hate"]}') {
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error());
+        }
+        if (method == 'Communities.getVotes') {
+            if (body == '{"query":{"ids":{"ids":["activity"],"type":6}},"limit":20}') {
+                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'uservotes.json')));
             }
             return Promise.reject(new Error());
         }
@@ -238,7 +268,7 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Invites.createLink') {
-            if (body == '{"link":"param"}') {
+            if (body == '{"linkParams":{"link":"param"}}') {
                 return Promise.resolve('{"result": "https://google.com"}');
             }
             return Promise.reject(new Error());

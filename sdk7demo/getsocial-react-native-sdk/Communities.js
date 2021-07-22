@@ -33,13 +33,14 @@ import MembersQuery from './models/communities/MembersQuery.js';
 import Membership from './models/communities/Membership.js';
 import RemoveGroupMembersQuery from './models/communities/RemoveGroupMembersQuery.js';
 import UpdateGroupMembersQuery from './models/communities/UpdateGroupMembersQuery.js';
-
 import Chat from './models/communities/Chat.js';
 import ChatId from './models/communities/ChatId.js';
 import ChatMessage from './models/communities/ChatMessage.js';
 import ChatMessagesPagingQuery from './models/communities/ChatMessagesPagingQuery.js';
 import ChatMessagesPagingResult from './models/communities/ChatMessagesPagingResult.js';
 import ChatMessageContent from './models/communities/ChatMessageContent.js';
+import VotesQuery from './models/communities/VotesQuery.js';
+import UserVotes from './models/communities/UserVotes.js';
 
 /**
  * Analytics interface of GetSocial plugin.
@@ -280,7 +281,20 @@ export default class Communities {
     }
 
     /**
+     * Set reaction to the activity. If this reaction was already added, success is called.
+     * Existing reactions will be removed.
+     *
+     * @param {string} reaction   Type of reaction.
+     * @param {string} activityId Id of activity you want to react to.
+     * @return {void} Called if operation was successful.
+     */
+    static setReaction(reaction: string, activityId: string): Promise<void> {
+        return JSONBridge.setReaction(reaction, activityId);
+    }
+
+    /**
      * Add reaction to the activity. If this reaction was already added, success is called.
+     * Existing reactions will be kept.
      *
      * @param {string} reaction   Type of reaction.
      * @param {string} activityId Id of activity you want to react to.
@@ -310,6 +324,52 @@ export default class Communities {
      */
     static getReactions(query: PagingQuery<ReactionsQuery>): Promise<PagingResult<UserReactions>> {
         return JSONBridge.getReactions(query);
+    }
+
+    /**
+     * Set votes to the activity.
+     * Existing votes will be removed.
+     *
+     * @param {[string]} pollOptionIds   Poll option ids.
+     * @param {string} activityId Id of activity you want to add set to.
+     * @return {void} Called if operation was successful.
+     */
+    static setVotes(pollOptionIds: [string], activityId: string): Promise<void> {
+        return JSONBridge.setVotes(pollOptionIds, activityId);
+    }
+
+    /**
+     * Add votes to the activity.
+     * Existing votes will be kept.
+     *
+     * @param {[string]} pollOptionIds   Poll option ids.
+     * @param {string} activityId Id of activity you want to add vote to.
+     * @return {void} Called if operation was successful.
+     */
+    static addVotes(pollOptionIds: [string], activityId: string): Promise<void> {
+        return JSONBridge.addVotes(pollOptionIds, activityId);
+    }
+
+    /**
+     * Remove votes from the activity.
+     *
+     * @param {[string]} pollOptionIds   Poll option ids.
+     * @param {string} activityId Id of activity you want to remove votes from.
+     * @return {void} Called if operation was successful.
+     */
+    static removeVotes(pollOptionIds: [string], activityId: string): Promise<void> {
+        return JSONBridge.removeVotes(pollOptionIds, activityId);
+    }
+
+    /**
+     * Get votes matching query. Returns a list of votes and a cursor for a next query.
+     * If cursor is empty string, or {@link PagingResult#isLastPage()} is true, this is a last page.
+     *
+     * @param {PagingQuery<VotesQuery>} query   Votes query and pagination details.
+     * @return {PagingResult<UserVotes>} Called with list of votes and a cursor for a next query.
+     */
+    static getVotes(query: PagingQuery<VotesQuery>): Promise<PagingResult<UserVotes>> {
+        return JSONBridge.getVotes(query);
     }
 
     /**

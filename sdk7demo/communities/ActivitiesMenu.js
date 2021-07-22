@@ -10,7 +10,7 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, View, FlatList, TouchableWithoutFeedback, Text} from 'react-native';
-import {PagingQuery, Action, ActivitiesView, ActivitiesQuery, UserId, User} from './../getsocial-react-native-sdk';
+import {PagingQuery, PollStatus, Action, ActivitiesView, ActivitiesQuery, UserId, User} from './../getsocial-react-native-sdk';
 import Communities from '../getsocial-react-native-sdk/Communities';
 import CreateActivityPost from './CreateActivityPost';
 import UpdateActivityPost from './UpdateActivityPost';
@@ -25,7 +25,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
     static navigationOptions = {title: 'Activities'};
 
     loadLastPost = async () => {
-        const query = ActivitiesQuery.everywhere().byUser(UserId.currentUser());
+        const query = ActivitiesQuery.everywhere().byUser(UserId.currentUser()).withPollStatus(PollStatus.WithoutPoll);
         Communities.getActivities(new PagingQuery(query)).then((result) => {
             hideLoading();
             if (result.entries === undefined || result.entries.length == 0) {

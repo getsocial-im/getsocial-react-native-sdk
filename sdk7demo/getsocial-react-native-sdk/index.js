@@ -73,6 +73,13 @@ import ChatMessagesQuery from './models/communities/ChatMessagesQuery.js';
 import CommunitiesAction from './models/communities/CommunitiesAction.js';
 import ChatMessagesPagingQuery from './models/communities/ChatMessagesPagingQuery.js';
 import ChatMessagesPagingResult from './models/communities/ChatMessagesPagingResult.js';
+import Poll from './models/communities/Poll.js';
+import PollOption from './models/communities/PollOption.js';
+import PollContent from './models/communities/PollContent.js';
+import PollOptionContent from './models/communities/PollOptionContent.js';
+import PollStatus from './models/communities/PollStatus.js';
+import UserVotes from './models/communities/UserVotes.js';
+import VotesQuery from './models/communities/VotesQuery.js';
 
 module.exports = {GetSocial, GetSocialUI, CurrentUser,
     Action, Analytics, Communities, FriendsQuery, Identity, ConflictUser, InviteContent, InviteChannel, InvitesView,
@@ -86,4 +93,5 @@ module.exports = {GetSocial, GetSocialUI, CurrentUser,
     AddGroupMembersQuery, UpdateGroupMembersQuery, JoinGroupQuery, RemoveGroupMembersQuery,
     Chat, ChatId, ChatMessage, ChatMessageContent, ChatMessagesQuery,
     ChatMessagesPagingQuery, ChatMessagesPagingResult, CommunitiesAction,
+    Poll, PollOption, PollContent, PollOptionContent, UserVotes, VotesQuery, PollStatus,
 };

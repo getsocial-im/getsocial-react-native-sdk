@@ -35,40 +35,34 @@ export default class NotificationCenterView {
    */
   show(): void {
       const parameters = {windowTitle: (this.windowTitle == null ? null : this.windowTitle), query: JSON.stringify(this.query)};
-      if (this.onOpenListener != undefined) {
-          GetSocialEventEmitter.removeAllListeners('view_open');
-          GetSocialEventEmitter.addListener('view_open', (result) => {
-              if (this.onOpenListener != undefined) {
-                  this.onOpenListener();
+      GetSocialEventEmitter.removeAllListeners('view_open');
+      GetSocialEventEmitter.addListener('view_open', (result) => {
+          if (this.onOpenListener != undefined) {
+              this.onOpenListener();
+          }
+      });
+      GetSocialEventEmitter.removeAllListeners('view_close');
+      GetSocialEventEmitter.addListener('view_close', (result) => {
+          if (this.onCloseListener != undefined) {
+              this.onCloseListener();
+          }
+      });
+      GetSocialEventEmitter.removeAllListeners('ncview_notificationclick');
+      GetSocialEventEmitter.addListener('ncview_notificationclick', (result) => {
+          if (this.onNotificationClickListener != undefined) {
+              if (Platform.OS === 'ios') {
+                  const notification = new Notification(JSON.parse(result['notification']));
+                  const context = new NotificationContext(JSON.parse(result['context']));
+                  this.onNotificationClickListener(notification, context);
               }
-          });
-      }
-      if (this.onCloseListener != undefined) {
-          GetSocialEventEmitter.removeAllListeners('view_close');
-          GetSocialEventEmitter.addListener('view_close', (result) => {
-              if (this.onCloseListener != undefined) {
-                  this.onCloseListener();
+              if (Platform.OS === 'android') {
+                  const obj = JSON.parse(result);
+                  const notification = new Notification(obj['notification']);
+                  const context = new NotificationContext(obj['context']);
+                  this.onNotificationClickListener(notification, context);
               }
-          });
-      }
-      if (this.onNotificationClickListener != undefined) {
-          GetSocialEventEmitter.removeAllListeners('ncview_notificationclick');
-          GetSocialEventEmitter.addListener('ncview_notificationclick', (result) => {
-              if (this.onNotificationClickListener != undefined) {
-                  if (Platform.OS === 'ios') {
-                      const notification = new Notification(JSON.parse(result['notification']));
-                      const context = new NotificationContext(JSON.parse(result['context']));
-                      this.onNotificationClickListener(notification, context);
-                  }
-                  if (Platform.OS === 'android') {
-                      const obj = JSON.parse(result);
-                      const notification = new Notification(obj['notification']);
-                      const context = new NotificationContext(obj['context']);
-                      this.onNotificationClickListener(notification, context);
-                  }
-              }
-          });
-      }
+          }
+      });
       RNGetSocial.showView('ncView', parameters);
   }
 }

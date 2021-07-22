@@ -124,6 +124,18 @@ class DecodingTests: XCTestCase {
     })
   }
 
+  func test_polloptioncontent() {
+    self.execute(folder: "polloptioncontent", onDecode: { (result: PollOptionContent?) in
+      XCTAssertNotNil(result)
+    })
+  }
+
+  func test_pollcontent() {
+    self.execute(folder: "pollcontent", onDecode: { (result: PollContent?) in
+      XCTAssertNotNil(result)
+    })
+  }
+
   func test_postactivitytarget() {
     self.execute(folder: "postactivitytarget", onDecode: { (result: PostActivityTarget?) in
       XCTAssertNotNil(result)
@@ -169,6 +181,12 @@ class DecodingTests: XCTestCase {
 
   func test_usersquery() {
     self.execute(folder: "usersquery", onDecode: { (result: UsersQuery?) in
+      XCTAssertNotNil(result)
+    })
+  }
+
+  func test_votesquery() {
+    self.execute(folder: "votesquery", onDecode: { (result: VotesQuery?) in
       XCTAssertNotNil(result)
     })
   }

@@ -1,3 +1,7 @@
+## v7.2.0 - Jul 21, 2021
+
++ Polls feature: [read more](https://docs.getsocial.im/guides/communities/feeds/polls/).
+
 ## v7.1.5 - May 18, 2021
 
 + Fix link parameters issue when creating invite URL on iOS.

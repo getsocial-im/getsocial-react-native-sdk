@@ -8,12 +8,14 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, FlatList, Text, TextInput, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
-import {Communities, User, Action, TopicsQuery, Topic, PagingQuery, ActivitiesQuery, ActivitiesView} from './../getsocial-react-native-sdk';
+import {Communities, User, Action, TopicsQuery, Topic, PagingQuery, PollStatus, ActivitiesQuery, AnnouncementsQuery, ActivitiesView} from './../getsocial-react-native-sdk';
 import FollowQuery from '../getsocial-react-native-sdk/models/communities/FollowQuery';
 import FollowersQuery from '../getsocial-react-native-sdk/models/communities/FollowersQuery';
 import FollowersListView from './FollowersList';
+import PollsListView from './PollsList';
 import CommunitiesAction from '../getsocial-react-native-sdk/models/communities/CommunitiesAction';
 import CreateActivityPost from './CreateActivityPost';
+import CreatePollView from './CreatePoll';
 import PostActivityTarget from '../getsocial-react-native-sdk/models/communities/PostActivityTarget';
 import moment from 'moment';
 import {globalActionProcessor} from './../common/CommonMethods.js';
@@ -41,12 +43,15 @@ export default class TopicsListView extends Component<Props, State> {
         const options = [];
         options.push('Details');
         options.push('Show Feed');
+        options.push('Activities with Polls');
+        options.push('Announcements with Polls');
         const isFollowed = this.state.selectedTopic != undefined && (this.state.selectedTopic.isFollowedByMe === true || this.state.followStatus[this.state.selectedTopic.id] === true);
         options.push(isFollowed === true ? 'Unfollow' : 'Follow');
         options.push('Show Followers');
         const canPost = this.state.selectedTopic != undefined && this.state.selectedTopic.settings.isActionAllowed(CommunitiesAction.Post) == true;
         if (canPost) {
             options.push('Post');
+            options.push('Create Poll');
         }
         options.push('Cancel');
         return options;
@@ -78,6 +83,18 @@ export default class TopicsListView extends Component<Props, State> {
         view.show();
     }
 
+    showPollsActivities = async () => {
+        PollsListView.activitiesQuery = ActivitiesQuery.inTopic(this.state.selectedTopic.id).withPollStatus(PollStatus.WithPoll);
+        PollsListView.announcementsQuery = null;
+        this.props.navigation.navigate('PollsList');
+    }
+
+    showPollsAnnouncements = async () => {
+        PollsListView.announcementsQuery = AnnouncementsQuery.inTopic(this.state.selectedTopic.id).withPollStatus(PollStatus.WithPoll);
+        PollsListView.activitiesQuery = null;
+        this.props.navigation.navigate('PollsList');
+    }
+
     showFollowers = async () => {
         const query = FollowersQuery.ofTopic(this.state.selectedTopic.id);
         FollowersListView.query = query;
@@ -88,6 +105,11 @@ export default class TopicsListView extends Component<Props, State> {
         CreateActivityPost.activityTarget = PostActivityTarget.topic(this.state.selectedTopic.id);
         CreateActivityPost.query = ActivitiesQuery.inTopic(this.state.selectedTopic.id);
         this.props.navigation.navigate('CreateActivityPost');
+    }
+
+    showCreatePoll = async () => {
+        CreatePollView.target = PostActivityTarget.topic(this.state.selectedTopic.id);
+        this.props.navigation.navigate('CreatePoll');
     }
 
     updateFollowStatus = async () => {
@@ -134,6 +156,12 @@ export default class TopicsListView extends Component<Props, State> {
         case 'Show Feed':
             this.showFeed();
             break;
+        case 'Activities with Polls':
+            this.showPollsActivities();
+            break;
+        case 'Announcements with Polls':
+            this.showPollsAnnouncements();
+            break;
         case 'Follow':
             this.updateFollowStatus();
             break;
@@ -145,6 +173,9 @@ export default class TopicsListView extends Component<Props, State> {
             break;
         case 'Post':
             this.showCreatePost();
+            break;
+        case 'Create Poll':
+            this.showCreatePoll();
             break;
         }
     }

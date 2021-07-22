@@ -8,7 +8,7 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, FlatList, Text, TextInput, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
-import {GetSocial, ActivitiesQuery, Action, FollowQuery, User, ActivitiesView, Communities, RemoveGroupMembersQuery, UserIdList, JoinGroupQuery, GroupsQuery, Group, PagingQuery, MemberStatus, Role, CommunitiesAction} from './../getsocial-react-native-sdk';
+import {GetSocial, ActivitiesQuery, Action, FollowQuery, User, PollStatus, AnnouncementsQuery, ActivitiesView, Communities, RemoveGroupMembersQuery, UserIdList, JoinGroupQuery, GroupsQuery, Group, PagingQuery, MemberStatus, Role, CommunitiesAction} from './../getsocial-react-native-sdk';
 // eslint-disable-next-line no-unused-vars
 import ActionSheet from 'react-native-actionsheet';
 import moment from 'moment';
@@ -16,8 +16,10 @@ import moment from 'moment';
 import SearchBar from 'react-native-search-bar';
 import GroupMembersListView from './GroupMembersList.js';
 import CreateActivityPost from './CreateActivityPost';
+import CreatePollView from './CreatePoll';
 import AddGroupMemberView from './AddGroupMember.js';
 import UpdateGroupView from './UpdateGroup.js';
+import PollsListView from './PollsList';
 import PostActivityTarget from '../getsocial-react-native-sdk/models/communities/PostActivityTarget';
 import {globalActionProcessor} from './../common/CommonMethods.js';
 
@@ -56,6 +58,8 @@ export default class GroupsListView extends Component<Props, State> {
         options.push('Details');
         if ((settings != null && !settings.isPrivate) || status == MemberStatus.Member) {
             options.push('Show Feed');
+            options.push('Activities with Polls');
+            options.push('Announcements with Polls');
         }
         if (status == MemberStatus.Member) {
             if (role != null) {
@@ -63,6 +67,7 @@ export default class GroupsListView extends Component<Props, State> {
             }
             if (settings != null && settings.isActionAllowed(CommunitiesAction.Post)) {
                 options.push('Post');
+                options.push('Create Poll');
             }
             if (role == Role.Admin || role == Role.Owner) {
                 options.push('Add member');
@@ -198,6 +203,11 @@ export default class GroupsListView extends Component<Props, State> {
         this.props.navigation.navigate('CreateActivityPost');
     }
 
+    showCreatePoll = async () => {
+        CreatePollView.target = PostActivityTarget.group(this.state.selectedGroup.id);
+        this.props.navigation.navigate('CreatePoll');
+    }
+
     showAddMember = async () => {
         AddGroupMemberView.groupId = this.state.selectedGroup.id;
         this.props.navigation.navigate('AddGroupMember');
@@ -226,6 +236,35 @@ export default class GroupsListView extends Component<Props, State> {
         view.show();
     }
 
+    isVoteAllowed(): boolean {
+        let status = null;
+        let settings = null;
+        if (this.state.selectedGroup != undefined && this.state.selectedGroup.settings != null) {
+            settings = this.state.selectedGroup.settings;
+        }
+        if (this.state.selectedGroup != undefined && this.state.selectedGroup.membership != null) {
+            status = this.state.selectedGroup.membership.status;
+        }
+        if (status == MemberStatus.Member) {
+            if (settings != null && settings.isActionAllowed(CommunitiesAction.React)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    showPollsActivities = async () => {
+        PollsListView.activitiesQuery = ActivitiesQuery.inGroup(this.state.selectedGroup.id).withPollStatus(PollStatus.WithPoll);
+        PollsListView.announcementsQuery = null;
+        this.props.navigation.navigate('PollsList');
+    }
+
+    showPollsAnnouncements = async () => {
+        PollsListView.announcementsQuery = AnnouncementsQuery.inGroup(this.state.selectedGroup.id).withPollStatus(PollStatus.WithPoll);
+        PollsListView.activitiesQuery = null;
+        this.props.navigation.navigate('PollsList');
+    }
+
     handleActionSheetSelection = async (selected: string, selectedIndex: number) => {
         if (selectedIndex == this.generateOptions().length - 1) {
             return;
@@ -236,6 +275,12 @@ export default class GroupsListView extends Component<Props, State> {
             break;
         case 'Show Feed':
             this.showFeed();
+            break;
+        case 'Activities with Polls':
+            this.showPollsActivities();
+            break;
+        case 'Announcements with Polls':
+            this.showPollsAnnouncements();
             break;
         case 'Join':
             this.joinGroup();
@@ -248,6 +293,9 @@ export default class GroupsListView extends Component<Props, State> {
             break;
         case 'Post':
             this.showCreatePost();
+            break;
+        case 'Create Poll':
+            this.showCreatePoll();
             break;
         case 'Delete':
             this.deleteGroup();

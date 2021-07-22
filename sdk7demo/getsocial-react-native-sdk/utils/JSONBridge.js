@@ -23,8 +23,10 @@ import AnnouncementsQuery from './../models/communities/AnnouncementsQuery.js';
 import ActivitiesQuery from './../models/communities/ActivitiesQuery.js';
 import PostActivityTarget from './../models/communities/PostActivityTarget.js';
 import ReactionsQuery from './../models/communities/ReactionsQuery.js';
+import VotesQuery from './../models/communities/VotesQuery.js';
 import TagsQuery from './../models/communities/TagsQuery.js';
 import UserReactions from './../models/communities/UserReactions.js';
+import UserVotes from './../models/communities/UserVotes.js';
 import RemoveActivitiesQuery from './../models/communities/RemoveActivitiesQuery.js';
 import Invite from './../models/invites/Invite.js';
 import InviteChannel from './../models/invites/InviteChannel.js';
@@ -318,6 +320,11 @@ export default class JSONBridge {
         return RNGetSocial.callAsync('Communities.addReaction', JSON.stringify(addReactionBody));
     }
 
+    static setReaction(reaction: string, activityId: string): Promise<void> {
+        const addReactionBody = {activityId: activityId, reaction: reaction};
+        return RNGetSocial.callAsync('Communities.setReaction', JSON.stringify(addReactionBody));
+    }
+
     static removeReaction(reaction: string, activityId: string): Promise<void> {
         const removeReactionBody = {activityId: activityId, reaction: reaction};
         return RNGetSocial.callAsync('Communities.removeReaction', JSON.stringify(removeReactionBody));
@@ -327,6 +334,29 @@ export default class JSONBridge {
         return RNGetSocial.callAsync('Communities.getReactions', JSON.stringify(query)).then((result) => {
             return new PagingResult<UserReactions>(result, (reactionJson) => {
                 return new UserReactions(reactionJson);
+            });
+        });
+    }
+
+    static addVotes(votes: Array<string>, activityId: string): Promise<void> {
+        const addVotesBody = {activityId: activityId, pollOptionIds: votes};
+        return RNGetSocial.callAsync('Communities.addVotes', JSON.stringify(addVotesBody));
+    }
+
+    static setVotes(votes: Array<string>, activityId: string): Promise<void> {
+        const addVotesBody = {activityId: activityId, pollOptionIds: votes};
+        return RNGetSocial.callAsync('Communities.setVotes', JSON.stringify(addVotesBody));
+    }
+
+    static removeVotes(votes: Array<string>, activityId: string): Promise<void> {
+        const addVotesBody = {activityId: activityId, pollOptionIds: votes};
+        return RNGetSocial.callAsync('Communities.removeVotes', JSON.stringify(addVotesBody));
+    }
+
+    static getVotes(query: PagingQuery<VotesQuery>): Promise<PagingResult<UserVotes>> {
+        return RNGetSocial.callAsync('Communities.getVotes', JSON.stringify(query)).then((result) => {
+            return new PagingResult<UserVotes>(result, (voteJson) => {
+                return new UserVotes(voteJson);
             });
         });
     }

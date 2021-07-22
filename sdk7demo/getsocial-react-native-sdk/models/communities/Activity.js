@@ -5,6 +5,7 @@ import ActivityButton from './ActivityButton.js';
 import UserReactions from './UserReactions.js';
 import Mention from './Mention.js';
 import CommunitiesEntity from './CommunitiesEntity.js';
+import Poll from './Poll.js';
 
 /**
  * Activity object.
@@ -27,6 +28,7 @@ export default class Activity {
     mentions: Array<Mention> = [];
     source: ?CommunitiesEntity;
     status: string;
+    poll: ?Poll;
 
     /**
     * Creates a new Activity instance from the provider parameters.
@@ -82,6 +84,10 @@ export default class Activity {
         const rawSource = activityMap['source'];
         if (rawSource !== undefined && rawSource != null) {
             this.source = new CommunitiesEntity(rawSource);
+        }
+        const rawPoll = activityMap['poll'];
+        if (rawPoll !== undefined && rawPoll != null) {
+            this.poll = new Poll(rawPoll);
         }
         Object.freeze(this);
     }

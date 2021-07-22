@@ -4,6 +4,7 @@
 import ActivitiesQuery from './ActivitiesQuery';
 import Action from '../actions/Action.js';
 import User from './User.js';
+import GetSocial from '../../GetSocial.js';
 import {GetSocialEventEmitter} from '../../GetSocialEventEmitter.js';
 import {NativeModules} from 'react-native';
 const {RNGetSocial} = NativeModules;
@@ -37,58 +38,48 @@ export default class ActivitiesView {
      */
     show() {
         const parameters = {windowTitle: (this.windowTitle == null ? null : this.windowTitle), query: JSON.stringify(this.query)};
-        if (this.onOpenListener != undefined) {
-            GetSocialEventEmitter.removeAllListeners('view_open');
-            GetSocialEventEmitter.addListener('view_open', (result) => {
-                if (this.onOpenListener != undefined) {
-                    this.onOpenListener();
+        GetSocialEventEmitter.removeAllListeners('view_open');
+        GetSocialEventEmitter.addListener('view_open', (result) => {
+            if (this.onOpenListener != undefined) {
+                this.onOpenListener();
+            }
+        });
+        GetSocialEventEmitter.removeAllListeners('view_close');
+        GetSocialEventEmitter.addListener('view_close', (result) => {
+            if (this.onCloseListener != undefined) {
+                this.onCloseListener();
+            }
+        });
+        GetSocialEventEmitter.removeAllListeners('activityview_action');
+        GetSocialEventEmitter.addListener('activityview_action', (result) => {
+            const action = new Action(JSON.parse(result));
+            if (this.onActionButtonClickListener != undefined) {
+                if (action != null && this.onActionButtonClickListener != null) {
+                    this.onActionButtonClickListener(action);
                 }
-            });
-        }
-        if (this.onCloseListener != undefined) {
-            GetSocialEventEmitter.removeAllListeners('view_close');
-            GetSocialEventEmitter.addListener('view_close', (result) => {
-                if (this.onCloseListener != undefined) {
-                    this.onCloseListener();
-                }
-            });
-        }
-        if (this.onActionButtonClickListener != undefined) {
-            GetSocialEventEmitter.removeAllListeners('activityview_action');
-            GetSocialEventEmitter.addListener('activityview_action', (result) => {
-                if (this.onActionButtonClickListener != undefined) {
-                    const action = new Action(JSON.parse(result));
-                    if (action != null && this.onActionButtonClickListener != null) {
-                        this.onActionButtonClickListener(action);
-                    }
-                }
-            });
-        }
-        if (this.onMentionClickListener != undefined) {
-            GetSocialEventEmitter.removeAllListeners('activityview_mentionclick');
-            GetSocialEventEmitter.addListener('activityview_mentionclick', (result) => {
-                if (this.onMentionClickListener != undefined) {
-                    this.onMentionClickListener(result);
-                }
-            });
-        }
-        if (this.onTagClickListener != undefined) {
-            GetSocialEventEmitter.removeAllListeners('activityview_tagclick');
-            GetSocialEventEmitter.addListener('activityview_tagclick', (result) => {
-                if (this.onTagClickListener != undefined) {
-                    this.onTagClickListener(result);
-                }
-            });
-        }
-        if (this.onAvatarClickListener != undefined) {
-            GetSocialEventEmitter.removeAllListeners('activityview_avatarclick');
-            GetSocialEventEmitter.addListener('activityview_avatarclick', (result) => {
-                const user = new User(JSON.parse(result));
-                if (user != null && this.onAvatarClickListener != null) {
-                    this.onAvatarClickListener(user);
-                }
-            });
-        }
+            } else {
+                GetSocial.handleAction(action);
+            }
+        });
+        GetSocialEventEmitter.removeAllListeners('activityview_mentionclick');
+        GetSocialEventEmitter.addListener('activityview_mentionclick', (result) => {
+            if (this.onMentionClickListener != undefined) {
+                this.onMentionClickListener(result);
+            }
+        });
+        GetSocialEventEmitter.removeAllListeners('activityview_tagclick');
+        GetSocialEventEmitter.addListener('activityview_tagclick', (result) => {
+            if (this.onTagClickListener != undefined) {
+                this.onTagClickListener(result);
+            }
+        });
+        GetSocialEventEmitter.removeAllListeners('activityview_avatarclick');
+        GetSocialEventEmitter.addListener('activityview_avatarclick', (result) => {
+            const user = new User(JSON.parse(result));
+            if (user != null && this.onAvatarClickListener != null) {
+                this.onAvatarClickListener(user);
+            }
+        });
         RNGetSocial.showView('activitiesView', parameters);
     }
 }

@@ -35,6 +35,7 @@ import ChatMessageContent from './../../models/communities/ChatMessageContent.js
 import Membership from './../../models/communities/Membership.js';
 import ChatMessagesQuery from './../../models/communities/ChatMessagesQuery.js';
 import ChatId from './../../models/communities/ChatId.js';
+import VotesQuery from './../../models/communities/VotesQuery.js';
 
 
 import JSONBridge from './../../utils/JSONBridge.js';
@@ -318,6 +319,13 @@ it('addReaction', () => {
     });
 });
 
+it('setReaction', () => {
+    expect.assertions(1);
+    return JSONBridge.setReaction('love', 'activityId').then((result) => {
+        expect(result).toBe(undefined);
+    });
+});
+
 it('removeReaction', () => {
     expect.assertions(1);
     return JSONBridge.removeReaction('hate', 'activityId').then((result) => {
@@ -336,6 +344,41 @@ it('getReactions', () => {
         expect(user.userId).toBe('userId');
         expect(reactions[0]).toBe('like');
         expect(reactions[1]).toBe('wow');
+    });
+});
+
+it('addVotes', () => {
+    expect.assertions(1);
+    return JSONBridge.addVotes(['love', 'hate'], 'activityId').then((result) => {
+        expect(result).toBe(undefined);
+    });
+});
+
+it('setVotes', () => {
+    expect.assertions(1);
+    return JSONBridge.setVotes(['love', 'hate'], 'activityId').then((result) => {
+        expect(result).toBe(undefined);
+    });
+});
+
+it('removeVotes', () => {
+    expect.assertions(1);
+    return JSONBridge.removeVotes(['love', 'hate'], 'activityId').then((result) => {
+        expect(result).toBe(undefined);
+    });
+});
+
+it('getVotes', () => {
+    expect.assertions(4);
+    const query = VotesQuery.forActivity('activity');
+    return JSONBridge.getVotes(new PagingQuery(query)).then((result) => {
+        expect(result.next).toBe('123');
+        const vote = result.entries[0];
+        const user = vote.user;
+        const votes = vote.votes;
+        expect(user.userId).toBe('userId');
+        expect(votes[0]).toBe('option1');
+        expect(votes[1]).toBe('option2');
     });
 });
 
