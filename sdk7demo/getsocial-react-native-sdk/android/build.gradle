@@ -32,8 +32,8 @@ dependencies {
   compileOnly "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
 
   //these classes need to be accessible in the :app project
-  api "im.getsocial:getsocial-core:7.5.0@aar"
-  api "im.getsocial:getsocial-ui:7.5.0@aar"
+  api "im.getsocial:getsocial-core:7.5.4@aar"
+  api "im.getsocial:getsocial-ui:7.5.4@aar"
 
   // Optional. GetSocial is using it to obtain more accurate data about installs and make attribution more reliable
   implementation 'com.android.installreferrer:installreferrer:2.1'

@@ -1,3 +1,7 @@
+## v7.2.1 - Aug 12, 2021
+
++ Fix issue with incorrect Android SDK version.
+
 ## v7.2.0 - Jul 21, 2021
 
 + Polls feature: [read more](https://docs.getsocial.im/guides/communities/feeds/polls/).
