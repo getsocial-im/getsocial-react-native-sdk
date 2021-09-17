@@ -1,3 +1,7 @@
+## v7.2.2 - Sep 17, 2021
+
++ Fix issue with limit parameter when fetching chat objects.
+
 ## v7.2.1 - Aug 12, 2021
 
 + Fix issue with incorrect Android SDK version.

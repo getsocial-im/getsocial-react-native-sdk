@@ -1,7 +1,7 @@
 {
   "name": "getsocial-react-native-sdk",
   "title": "GetSocial React Native SDK",
-  "version": "7.2.1",
+  "version": "7.2.2",
   "description": "React Native wrapper for GetSocial iOS and Android SDK",
   "repository": {
     "type": "git",
