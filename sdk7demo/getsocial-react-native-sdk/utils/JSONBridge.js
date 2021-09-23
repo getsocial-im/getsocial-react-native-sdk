@@ -498,6 +498,9 @@ export default class JSONBridge {
                 onNotificationClicked(notification, context);
             }
         });
+        if (Platform.OS === 'android') {
+            RNGetSocial.registerListener('onNotificationClicked');
+        }
     }
 
 

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -69,6 +70,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class RNGetSocialModule extends ReactContextBaseJavaModule {
+    private static final String TAG = "RNGetSocialModule";
+
     private final ReactApplicationContext reactContext;
 
     //region setup
@@ -102,15 +105,15 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
     //region GetSocial
     @ReactMethod
     public void callAsync(final String method, final String parameters, final Promise promise) {
+        Log.d(TAG, "Call Async [" + method + "] with [" + parameters + "]");
         String modifiedParameters = parameters;
         if (modifiedParameters != null && GetSocial.isInitialized()) {
             modifiedParameters = modifiedParameters.replaceAll("GETSOCIAL_CURRENT_USER_PLACEHOLDER_42_42", GetSocial.getCurrentUser().getId());
         }
-        System.out.println("Calling " + method + " with [" + modifiedParameters + "]");
         GetSocialJson.callAsync(method, modifiedParameters, new Callback<String>() {
             @Override
             public void onSuccess(String result) {
-                System.out.println("Finished, result [" + result + "]");
+                Log.d(TAG, "Call [" + method + "], result [" + result + "]");
                 promise.resolve(result);
             }
         }, new Callback<String>() {
@@ -123,18 +126,19 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void callSync(final String method, final String parameters, final Promise promise) {
+        Log.d(TAG,"Call Sync [" + method + "] with [" + parameters + "]");
         String modifiedParameters = parameters;
         if (modifiedParameters != null && GetSocial.isInitialized()) {
             modifiedParameters = parameters.replaceAll("GETSOCIAL_CURRENT_USER_PLACEHOLDER_42_42", GetSocial.getCurrentUser().getId());
         }
-        System.out.println("Calling " + method + " with [" + modifiedParameters + "]");
         String result = GetSocialJson.callSync(method, parameters);
-        System.out.println("Finished, result [" + result + "]");
+        Log.d(TAG,"Call [" + method + "] finished, result [" + result + "]");
         promise.resolve(result);
     }
 
     @ReactMethod
     public void callAsyncUI(final String method, final String parameter, final Promise promise) {
+        Log.d(TAG, "Call AsyncUI [" + method + "] with parameters: [" + parameter + "]");
         if (method.equals("closeView")) {
             GetSocialUi.closeView(Boolean.parseBoolean(parameter));
         }
@@ -159,6 +163,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void registerListener(final String listener) {
+        Log.d(TAG,"Call RegisterListener: [" + listener + "]");
         // only Android to avoid lifecycle issues, and lost of data
         if (listener.equalsIgnoreCase("onReferralDataReceived")) {
             Invites.setReferralDataListener(new ReferralDataListener() {
@@ -168,11 +173,23 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                             .emit("onReferralDataReceived", GetSocialJson.toJson(referralData));
                 }
             });
+        } else if (listener.equalsIgnoreCase("onNotificationClicked")) {
+            Notifications.setOnNotificationClickedListener(new OnNotificationClickedListener() {
+                @Override
+                public void onNotificationClicked(Notification notification, NotificationContext notificationContext) {
+                    Map map = new HashMap();
+                    map.put("notification", notification);
+                    map.put("context", notificationContext);
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("onNotificationClicked", GetSocialJson.toJson(map));
+                }
+            });
         }
     }
 
     @ReactMethod
     public void showView(final String method, final ReadableMap parameters, final Promise promise) {
+        Log.d(TAG, "Call ShowView [" + method + "] with parameters: [" + parameters + "]");
         if (method.equalsIgnoreCase("activitiesView")) {
             showActivitiesView(parameters, promise);
         }
@@ -408,16 +425,6 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                                 .emit("onCurrentUserChanged", GetSocialJson.toJson(currentUser));
                     }
                 });
-                Notifications.setOnNotificationClickedListener(new OnNotificationClickedListener() {
-                    @Override
-                    public void onNotificationClicked(Notification notification, NotificationContext notificationContext) {
-                        Map map = new HashMap();
-                        map.put("notification", notification);
-                        map.put("context", notificationContext);
-                        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit("onNotificationClicked", GetSocialJson.toJson(map));
-                    }
-                });
                 Notifications.setOnTokenReceivedListener(new OnTokenReceivedListener() {
                     @Override
                     public void onTokenReady(String token) {
@@ -492,7 +499,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                 fileContent = new byte[(int)file.length()];
                 fin.read(fileContent);
             } catch (Exception ioe) {
-                System.out.println("Exception while reading file " + ioe);
+                Log.e(TAG,"Exception while reading file " + ioe);
             } finally {
                 // close the streams using close method
                 try {
@@ -500,7 +507,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                         fin.close();
                     }
                 } catch (IOException ioe) {
-                    System.out.println("Error while closing stream: " + ioe);
+                    Log.e(TAG,"Error while closing stream: " + ioe);
                 }
             }
             return fileContent;
@@ -514,7 +521,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
             is.read(fileContent);
             return fileContent;
         } catch (Exception ioe) {
-            System.out.println("Exception while reading file " + ioe);
+            Log.e(TAG,"Exception while reading file " + ioe);
         } finally {
             // close the streams using close method
             try {
@@ -522,7 +529,7 @@ public class RNGetSocialModule extends ReactContextBaseJavaModule {
                     is.close();
                 }
             } catch (IOException ioe) {
-                System.out.println("Error while closing stream: " + ioe);
+                Log.e(TAG,"Error while closing stream: " + ioe);
             }
         }
         return null;

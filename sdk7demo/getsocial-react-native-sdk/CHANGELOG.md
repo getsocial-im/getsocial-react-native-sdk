@@ -1,3 +1,7 @@
+## v7.2.3 - Sep 23, 2021
+
++ Fix issue with not invoked Push Notification listener.
+
 ## v7.2.2 - Sep 17, 2021
 
 + Fix issue with limit parameter when fetching chat objects.
