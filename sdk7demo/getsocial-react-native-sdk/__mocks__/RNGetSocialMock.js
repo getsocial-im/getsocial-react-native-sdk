@@ -154,7 +154,7 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getActivities') {
-            if (body == '{"query":{"ids":{"ids":["timeline"],"type":1},"pollStatus":0},"limit":20}') {
+            if (body == '{"query":{"ids":{"ids":["timeline"],"type":1},"pollStatus":0,"trending":false},"limit":20}') {
                 return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'activity.json')));
             }
             return Promise.reject(new Error());
@@ -238,7 +238,7 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTags') {
-            if (body == '{"query":"hell"}') {
+            if (body == '{"query":"hell","trending":false}') {
                 return Promise.resolve('["hello", "hell!"]');
             }
             return Promise.reject(new Error());
@@ -250,13 +250,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopics') {
-            if (body == '{"query":{},"limit":20}') {
+            if (body == '{"query":{"trending":false},"limit":20}') {
                 return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'topic.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopicsCount') {
-            if (body == '{"searchTerm":"rn"}') {
+            if (body == '{"searchTerm":"rn","trending":false}') {
                 return Promise.resolve('{"result": 0}');
             }
             return Promise.reject(new Error());
@@ -385,13 +385,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroups') {
-            if (body == '{"query":{"searchTerm":"searchTerm"},"limit":40}') {
+            if (body == '{"query":{"searchTerm":"searchTerm","trending":false},"limit":40}') {
                 return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'group.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroupsCount') {
-            if (body == '{"searchTerm":"searchTerm"}') {
+            if (body == '{"searchTerm":"searchTerm","trending":false}') {
                 return Promise.resolve('{"result": 40}');
             }
             return Promise.reject(new Error());

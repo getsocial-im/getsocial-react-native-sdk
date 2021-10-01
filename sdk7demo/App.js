@@ -53,8 +53,14 @@ import SetReferrer from './invites/SetReferrer';
 import CreatePromoCode from './promocodes/CreatePromoCode';
 import ClaimPromoCode from './promocodes/ClaimPromoCode';
 import PromoCodeInfo from './promocodes/PromoCodeInfo';
-import AddIdentity from './usermanagement/AddIdentity';
+import AddCustomIdentity from './usermanagement/AddCustomIdentity';
+import AddTrustedIdentity from './usermanagement/AddTrustedIdentity';
+import InitWithCustomIdentity from './usermanagement/InitWithCustomIdentity';
+import InitWithTrustedIdentity from './usermanagement/InitWithTrustedIdentity';
+import RemoveTrustedIdentity from './usermanagement/RemoveTrustedIdentity';
+import ActivitiesListView from './communities/ActivitiesList';
 import {globalActionProcessor} from './common/CommonMethods.js';
+
 
 const MainNavigator = createStackNavigator({
     MainMenu: {screen: MainMenu},
@@ -84,7 +90,11 @@ const MainNavigator = createStackNavigator({
     ClaimPromoCode: {screen: ClaimPromoCode},
     SetReferrer: {screen: SetReferrer},
     PromoCodeInfo: {screen: PromoCodeInfo},
-    AddIdentity: {screen: AddIdentity},
+    AddCustomIdentity: {screen: AddCustomIdentity},
+    AddTrustedIdentity: {screen: AddTrustedIdentity},
+    InitWithTrustedIdentity: {screen: InitWithTrustedIdentity},
+    InitWithCustomIdentity: {screen: InitWithCustomIdentity},
+    RemoveTrustedIdentity: {screen: RemoveTrustedIdentity},
     TopicsMenu: {screen: TopicsMenu},
     GroupsMenu: {screen: GroupsMenu},
     GroupsList: {screen: GroupsListView},
@@ -98,6 +108,7 @@ const MainNavigator = createStackNavigator({
     PollsList: {screen: PollsListView},
     Vote: {screen: VoteView},
     CreatePoll: {screen: CreatePollView},
+    ActivitiesList: {screen: ActivitiesListView},
 },
 {
     initialRouteName: 'MainMenu',

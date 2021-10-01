@@ -12,6 +12,7 @@ export default class ActivitiesQuery {
   author: ?UserId;
   tag: ?string;
   pollStatus: PollStatus = PollStatus.All;
+  trending: boolean = false;
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
@@ -119,10 +120,21 @@ export default class ActivitiesQuery {
   }
 
   /**
+   * Get only trending activities.
+   *
+   * @param {boolean} trending Only trending activities or all.
+   * @return {ActivitiesQuery} new query.
+   */
+  onlyTrending(trending: boolean): ActivitiesQuery {
+      this.trending = trending;
+      return this;
+  }
+
+  /**
   * Generates JSON string.
   * @return {string} object as json.
   */
   toJSON() {
-      return {ids: this.ids, author: this.author, tag: this.tag, pollStatus: this.pollStatus};
+      return {ids: this.ids, author: this.author, tag: this.tag, pollStatus: this.pollStatus, trending: this.trending};
   }
 }

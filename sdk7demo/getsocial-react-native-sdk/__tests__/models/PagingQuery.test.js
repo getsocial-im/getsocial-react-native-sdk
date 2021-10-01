@@ -21,7 +21,7 @@ const pagingQuery = new PagingQuery(query2);
 pagingQuery.limit = 5;
 pagingQuery.next = 'nc';
 const json2 = JSON.stringify(pagingQuery);
-const jsonResult2 = '{"query":{"ids":{"ids":["timeline"],"type":1},"pollStatus":0},"next":"nc","limit":5}';
+const jsonResult2 = '{"query":{"ids":{"ids":["timeline"],"type":1},"pollStatus":0,"trending":false},"next":"nc","limit":5}';
 test('pagingQuery.toJSON() result shall be', () => {
     expect(json2).toBe(jsonResult2);
     saveResult('pagingquery', 'pagingquery_activitiesquery.json', json);

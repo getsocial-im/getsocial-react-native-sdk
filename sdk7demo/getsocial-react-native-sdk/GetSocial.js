@@ -30,6 +30,15 @@ export default class GetSocial {
     }
 
     /**
+     * Initialize the SDK with a specific user. SDK must be uninitialized.
+     * @param {Identity} identity Identity to initialize the SDK with.
+     * @return {void} true, if initialized, otherwise false.
+     */
+    static initWithIdentity(identity: Identity): Promise<void> {
+        return JSONBridge.initWithIdentity(identity);
+    }
+
+    /**
      * Notifies callers when SDK finished initialization.
      * @param {function} onInit function to be invoked.
      */
@@ -128,6 +137,16 @@ export default class GetSocial {
      */
     static resetUser(): Promise<void> {
         return JSONBridge.resetUser();
+    }
+
+    /**
+     * Reset current user and without creating a new user.
+     * SDK will be uninitialized.
+     *
+     * @return {void} Called if successfully reset.
+     */
+    static reset(): Promise<void> {
+        return JSONBridge.reset();
     }
 
     /**

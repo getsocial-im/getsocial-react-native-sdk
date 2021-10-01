@@ -34,6 +34,23 @@ export default class UserManagementMenu extends Component<Props, State> {
         return this.currentTimestamp()%4;
     }
 
+    fbLoginAndInit = async () => {
+        // Attempt a login using the Facebook login dialog asking for default permissions.
+        LoginManager.logInWithPermissions(['email', 'user_friends', 'public_profile']).then((result) => {
+            if (result.isCancelled) {
+                console.log('FB Login cancelled');
+            } else {
+                const permissions = result.grantedPermissions;
+                if (permissions != null) {
+                    console.log('FB Login success with permissions: ' + JSON.stringify(permissions));
+                    this.internalInitWithFBIdentity();
+                }
+            }
+        }, (error) => {
+            console.log('FB login failed with error: ' + error);
+        });
+    }
+
     fbLogin = async () => {
         // Attempt a login using the Facebook login dialog asking for default permissions.
         LoginManager.logInWithPermissions(['email', 'user_friends', 'public_profile']).then((result) => {
@@ -160,6 +177,23 @@ export default class UserManagementMenu extends Component<Props, State> {
         new GraphRequestManager().addRequest(fetchProfileRequest).start();
     }
 
+    internalInitWithFBIdentity = async () => {
+        AccessToken.getCurrentAccessToken().then((token) => {
+            if (token != null) {
+                console.log('FB Token is: ' + token.accessToken);
+                const fbIdentity = Identity.createFacebookIdentity(token.accessToken);
+                GetSocial.initWithIdentity(fbIdentity).then(() => {
+                    Alert.alert('SDK initialized with FB Identity');
+                }, (error) => {
+                    hideLoading();
+                    Alert.alert('Failed to initialize with FB Identity, error: ', error.message);
+                });
+            }
+        }, (error) => {
+            Alert.alert('FB Error', error['code']);
+        });
+    }
+
     addFBIdentity = async () => {
         AccessToken.getCurrentAccessToken().then((token) => {
             if (token != null) {
@@ -266,6 +300,24 @@ export default class UserManagementMenu extends Component<Props, State> {
         });
     }
 
+    resetWOInit = async () => {
+        showLoading();
+        GetSocial.reset().then(()=> {
+            hideLoading();
+            Alert.alert('Reset', 'SDK was reset.');
+            global.userInfoComponentRef.current.setState(
+                {
+                    userDisplayName: 'N/A',
+                    userAvatarUrl: undefined,
+                    userIdentities: 'Offline',
+                },
+            );
+        }, (error) => {
+            hideLoading();
+            Alert.alert('Error', error.message);
+        });
+    }
+
     logout = async () => {
         showLoading();
         GetSocial.resetUser().then(()=> {
@@ -287,6 +339,36 @@ export default class UserManagementMenu extends Component<Props, State> {
                 hideLoading();
                 Alert.alert('Refresh', 'Failed to refresh user, error: ' + error.message);
             });
+        });
+    }
+
+    initWithCustomIdentity = async () => {
+        GetSocial.isInitialized().then((isInitialized) => {
+            if (isInitialized) {
+                Alert.alert('Call GetSocial.reset first to deinitialize the SDK.');
+            } else {
+                this.props.navigation.navigate('InitWithCustomIdentity');
+            }
+        });
+    }
+
+    initWithTrustedIdentity = async () => {
+        GetSocial.isInitialized().then((isInitialized) => {
+            if (isInitialized) {
+                Alert.alert('Call GetSocial.reset first to deinitialize the SDK.');
+            } else {
+                this.props.navigation.navigate('InitWithTrustedIdentity');
+            }
+        });
+    }
+
+    initWithFBIdentity = async () => {
+        GetSocial.isInitialized().then((isInitialized) => {
+            if (isInitialized) {
+                Alert.alert('Call GetSocial.reset first to deinitialize the SDK.');
+            } else {
+                this.fbLoginAndInit();
+            }
         });
     }
 
@@ -326,7 +408,12 @@ export default class UserManagementMenu extends Component<Props, State> {
         const addCustomIdentity = new MenuItem();
         addCustomIdentity.key = 'addCustomIdentity';
         addCustomIdentity.title = 'Add Custom Identity';
-        addCustomIdentity.navigateTo = 'AddIdentity';
+        addCustomIdentity.navigateTo = 'AddCustomIdentity';
+
+        const addTrustedIdentity = new MenuItem();
+        addTrustedIdentity.key = 'addTrustedIdentity';
+        addTrustedIdentity.title = 'Add Trusted Identity';
+        addTrustedIdentity.navigateTo = 'AddTrustedIdentity';
 
         const removeFBIdentity = new MenuItem();
         removeFBIdentity.key = 'removeFBIdentity';
@@ -338,14 +425,39 @@ export default class UserManagementMenu extends Component<Props, State> {
         removeCustomIdentity.title = 'Remove Custom Identity';
         removeCustomIdentity.action = () => this.removeCustomIdentity();
 
+        const removeTrustedIdentity = new MenuItem();
+        removeTrustedIdentity.key = 'removeTrustedIdentity';
+        removeTrustedIdentity.title = 'Remove Trusted Identity';
+        removeTrustedIdentity.navigateTo = 'RemoveTrustedIdentity';
+
         const logout = new MenuItem();
         logout.key = 'logout';
         logout.title = 'Logout';
         logout.action = () => this.logout();
 
-        const mainMenu = [changeDisplayName, changeUserAvatar, setUserProperty, getUserProperty, refresh,
-            addCustomIdentity, removeCustomIdentity, addFBIdentity, removeFBIdentity, logout];
+        const initWithFBIdentity = new MenuItem();
+        initWithFBIdentity.key = 'initWithFBIdentity';
+        initWithFBIdentity.title = 'Init with Facebook Identity';
+        initWithFBIdentity.action = () => this.initWithFBIdentity();
 
+        const initWithCustomIdentity = new MenuItem();
+        initWithCustomIdentity.key = 'initWithCustomIdentity';
+        initWithCustomIdentity.title = 'Init with Custom Identity';
+        initWithCustomIdentity.action = () => this.initWithCustomIdentity();
+
+        const initWithTrustedIdentity = new MenuItem();
+        initWithTrustedIdentity.key = 'initWithTrustedIdentity';
+        initWithTrustedIdentity.title = 'Init with Trusted Identity';
+        initWithTrustedIdentity.action = () => this.initWithTrustedIdentity();
+
+        const resetWOInit = new MenuItem();
+        resetWOInit.key = 'resetWOInit';
+        resetWOInit.title = 'Reset without Init';
+        resetWOInit.action = () => this.resetWOInit();
+
+        const mainMenu = [changeDisplayName, changeUserAvatar, setUserProperty, getUserProperty, refresh,
+            addCustomIdentity, removeCustomIdentity, addTrustedIdentity, removeTrustedIdentity, addFBIdentity, removeFBIdentity,
+            logout, resetWOInit, initWithFBIdentity, initWithTrustedIdentity, initWithCustomIdentity];
         this.state = {
             menu: mainMenu,
         };

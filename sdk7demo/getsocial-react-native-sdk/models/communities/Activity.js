@@ -29,6 +29,7 @@ export default class Activity {
     source: ?CommunitiesEntity;
     status: string;
     poll: ?Poll;
+    popularity: number;
 
     /**
     * Creates a new Activity instance from the provider parameters.
@@ -88,6 +89,12 @@ export default class Activity {
         const rawPoll = activityMap['poll'];
         if (rawPoll !== undefined && rawPoll != null) {
             this.poll = new Poll(rawPoll);
+        }
+        const rawPopularity = activityMap['popularity'];
+        if (rawPopularity !== undefined && rawPopularity != null) {
+            this.popularity = rawPopularity;
+        } else {
+            this.popularity = 0.0;
         }
         Object.freeze(this);
     }

@@ -13,6 +13,7 @@ import FollowQuery from '../getsocial-react-native-sdk/models/communities/Follow
 import FollowersQuery from '../getsocial-react-native-sdk/models/communities/FollowersQuery';
 import FollowersListView from './FollowersList';
 import PollsListView from './PollsList';
+import ActivitiesListView from './ActivitiesList';
 import CommunitiesAction from '../getsocial-react-native-sdk/models/communities/CommunitiesAction';
 import CreateActivityPost from './CreateActivityPost';
 import CreatePollView from './CreatePoll';
@@ -28,6 +29,7 @@ type State = {
     selectedTopic: ?Topic,
     searchText: string,
     followStatus: ?Map<string, boolean>,
+    showOnlyTrending: boolean,
 }
 
 export default class TopicsListView extends Component<Props, State> {
@@ -43,6 +45,7 @@ export default class TopicsListView extends Component<Props, State> {
         const options = [];
         options.push('Details');
         options.push('Show Feed');
+        options.push('Activities');
         options.push('Activities with Polls');
         options.push('Announcements with Polls');
         const isFollowed = this.state.selectedTopic != undefined && (this.state.selectedTopic.isFollowedByMe === true || this.state.followStatus[this.state.selectedTopic.id] === true);
@@ -81,6 +84,11 @@ export default class TopicsListView extends Component<Props, State> {
             globalActionProcessor(action);
         };
         view.show();
+    }
+
+    showActivities = async () => {
+        ActivitiesListView.activitiesQuery = ActivitiesQuery.inTopic(this.state.selectedTopic.id);
+        this.props.navigation.navigate('ActivitiesList');
     }
 
     showPollsActivities = async () => {
@@ -159,6 +167,9 @@ export default class TopicsListView extends Component<Props, State> {
         case 'Activities with Polls':
             this.showPollsActivities();
             break;
+        case 'Activities':
+            this.showActivities();
+            break;
         case 'Announcements with Polls':
             this.showPollsAnnouncements();
             break;
@@ -182,7 +193,8 @@ export default class TopicsListView extends Component<Props, State> {
 
     loadTopics = async () => {
         showLoading();
-        const query = TopicsListView.query == null ? (this.state.searchText == null ? TopicsQuery.all() : TopicsQuery.find(this.state.searchText)) : TopicsListView.query;
+        let query = TopicsListView.query == null ? (this.state.searchText == null ? TopicsQuery.all() : TopicsQuery.find(this.state.searchText)) : TopicsListView.query;
+        query = query.onlyTrending(this.state.showOnlyTrending);
         Communities.getTopics(new PagingQuery(query)).then((result) => {
             hideLoading();
             this.setState({topics: result.entries});
@@ -202,6 +214,7 @@ export default class TopicsListView extends Component<Props, State> {
             selectedTopic: undefined,
             searchText: null,
             followStatus: {},
+            showOnlyTrending: false,
         };
     }
 
@@ -231,18 +244,31 @@ export default class TopicsListView extends Component<Props, State> {
         return null;
     }
 
+    updateFilterButton = async () => {
+        const currentValue = this.state.showOnlyTrending;
+        this.setState({showOnlyTrending: !currentValue}, () => {
+            this.loadTopics();
+        } );
+    }
+
     render() {
         return (
             <View style={MenuStyle.container}>
                 {this.renderSearchBar()}
+                <View style={MenuStyle.menuitem}>
+                    <Button title={this.state.showOnlyTrending ? 'All': 'Only Trending'} onPress={ this.updateFilterButton }/>
+                </View>
                 <View style={MenuStyle.menuContainer}>
                     <FlatList style={{flex: 1}}
                         data={this.state.topics}
                         renderItem={({item}) => (
                             <TouchableWithoutFeedback>
                                 <View style={MenuStyle.listitem}>
-                                    <Text style={MenuStyle.menuitem}>{item.title}</Text>
-                                    <View style={MenuStyle.rowEndContainer}>
+                                    <View style={{flex: 1, flexDirection: 'column', width: '80%'}}>
+                                        <Text style={MenuStyle.menuitem14}>Title: {item.title}</Text>
+                                        <Text style={MenuStyle.menuitem14}>Popularity: {item.popularity}</Text>
+                                    </View>
+                                    <View>
                                         <Button title='Actions' onPress={ () => {
                                             this.showActionSheet(item);
                                         }}/>

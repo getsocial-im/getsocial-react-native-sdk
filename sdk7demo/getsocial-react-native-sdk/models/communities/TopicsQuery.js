@@ -8,6 +8,7 @@ import UserId from './../UserId.js';
 export default class TopicsQuery {
     search: ?string;
     userId: ?UserId;
+    trending: boolean = false;
 
     /**
    * Get all topics.
@@ -43,10 +44,21 @@ export default class TopicsQuery {
     }
 
     /**
+    * Get only trending topics.
+    *
+    * @param {boolean} trending Only trending topics or all.
+    * @return {TopicsQuery} new query.
+    */
+    onlyTrending(trending: boolean): TopicsQuery {
+        this.trending = trending;
+        return this;
+    }
+
+    /**
   * Generates JSON string.
   * @return {string} object as json.
   */
     toJSON() {
-        return {searchTerm: this.search, followerId: this.userId};
+        return {searchTerm: this.search, followerId: this.userId, trending: this.trending};
     }
 }

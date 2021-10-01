@@ -6,7 +6,7 @@
 import React, {Component} from 'react';
 // eslint-disable-next-line no-unused-vars
 import {Alert, Image, View, Text, TextInput, Button, ScrollView} from 'react-native';
-import {AddIdentityStyle} from './AddIdentityStyle';
+import {IdentityStyle} from './IdentityStyle';
 import GetSocial from '../getsocial-react-native-sdk/GetSocial';
 import {Identity} from './../getsocial-react-native-sdk';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
@@ -14,17 +14,17 @@ import {showLoading, hideLoading} from './../common/LoadingIndicator';
 type Props = {}
 
 type State = {
-    userId : ?string,
+    providerId : ?string,
     token : ?string,
 }
 
-export default class AddIdentity extends Component<Props, State> {
-    static navigationOptions = {title: 'Add Identity'};
+export default class AddTrustedIdentity extends Component<Props, State> {
+    static navigationOptions = {title: 'Add Trusted Identity'};
 
     constructor(props: any) {
         super(props);
         this.state = {
-            userId: null,
+            providerId: null,
             token: null,
         };
     }
@@ -46,9 +46,9 @@ export default class AddIdentity extends Component<Props, State> {
         });
     }
 
-    switchUser = async (customIdentity: Identity, fetchFBDetails: boolean) => {
+    switchUser = async (identity: Identity, fetchFBDetails: boolean) => {
         showLoading();
-        GetSocial.switchUser(customIdentity).then(() => {
+        GetSocial.switchUser(identity).then(() => {
             hideLoading();
             Alert.alert('Switch User', 'Successfully switched user.');
             if (fetchFBDetails) {
@@ -63,19 +63,27 @@ export default class AddIdentity extends Component<Props, State> {
     }
 
     callAddIdentity = async () => {
-        const customIdentity = Identity.createCustomIdentity('rncustomproviderid', this.state.userId, this.state.token);
+        if (this.state.providerId == null || this.state.providerId.length == 0) {
+            Alert.alert('Error', 'ProviderId cannot be null or empty');
+            return;
+        }
+        if (this.state.token == null || this.state.token.length == 0) {
+            Alert.alert('Error', 'Token cannot be null or empty');
+            return;
+        }
+        const trustedIdentity = Identity.createTrustedIdentity(this.state.providerId, this.state.token);
         GetSocial.getCurrentUser().then((currentUser) => {
-            currentUser.addIdentity(customIdentity,
+            currentUser.addIdentity(trustedIdentity,
                 () => {
                     hideLoading();
-                    Alert.alert('Custom Identity', 'Custom Identity successfully added.');
+                    Alert.alert('Trusted Identity', 'Trusted Identity successfully added.');
                     this.updateUserDetails();
                 },
                 (conflictUser) => {
                     hideLoading();
-                    Alert.alert('Custom Identity', 'User conflict with remote user', [
+                    Alert.alert('Trusted Identity', 'User conflict with remote user', [
                         {text: 'Use Remote (' + conflictUser.displayName + ')', onPress: () => {
-                            this.switchUser(customIdentity, false);
+                            this.switchUser(trustedIdentity, false);
                         }},
                         {text: 'Use Current', onPress: () => {/* use current user */}},
                         {text: 'Cancel', onPress: () => {/* do nothing */}},
@@ -91,28 +99,28 @@ export default class AddIdentity extends Component<Props, State> {
     render() {
         return (
             <ScrollView style={{flex: 1, padding: 10}}>
-                <View style={AddIdentityStyle.formEntryRow}>
-                    <View style={AddIdentityStyle.formEntryTitleContainer}>
-                        <Text style={AddIdentityStyle.formEntryTitle} >UserId</Text>
+                <View style={IdentityStyle.formEntryRow}>
+                    <View style={IdentityStyle.formEntryTitleContainer}>
+                        <Text style={IdentityStyle.formEntryTitle} >ProviderId</Text>
                     </View>
-                    <View style={AddIdentityStyle.formEntryInputContainer}>
-                        <TextInput style={AddIdentityStyle.formEntryInput} value={this.state.userId} onChangeText={(text) => this.setState({userId: text})} placeholder='UserId'/>
-                    </View>
-                </View>
-                <View style={AddIdentityStyle.formEntryRow}>
-                    <View style={AddIdentityStyle.formEntryTitleContainer}>
-                        <Text style={AddIdentityStyle.formEntryTitle} >Token</Text>
-                    </View>
-                    <View style={AddIdentityStyle.formEntryInputContainer}>
-                        <TextInput style={AddIdentityStyle.formEntryInput} value={this.state.token} onChangeText={(text) => this.setState({token: text})} placeholder='Token'/>
+                    <View style={IdentityStyle.formEntryInputContainer}>
+                        <TextInput style={IdentityStyle.formEntryInput} value={this.state.providerId} onChangeText={(text) => this.setState({providerId: text})} placeholder='ProviderId'/>
                     </View>
                 </View>
-                <View style={AddIdentityStyle.sectionTitleRow}>
+                <View style={IdentityStyle.formEntryRow}>
+                    <View style={IdentityStyle.formEntryTitleContainer}>
+                        <Text style={IdentityStyle.formEntryTitle} >Token</Text>
+                    </View>
+                    <View style={IdentityStyle.formEntryInputContainer}>
+                        <TextInput style={IdentityStyle.formEntryInput} value={this.state.token} onChangeText={(text) => this.setState({token: text})} placeholder='Token'/>
+                    </View>
+                </View>
+                <View style={IdentityStyle.sectionTitleRow}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
                         <Button title='Add' onPress={ () => this.callAddIdentity() }/>
                     </View>
                 </View>
-                <View style={AddIdentityStyle.sectionTitleRow}>
+                <View style={IdentityStyle.sectionTitleRow}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
                     </View>
                 </View>

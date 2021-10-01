@@ -71,6 +71,10 @@ export default class JSONBridge {
         RNGetSocial.callSync('GetSocial.init', appid);
     }
 
+    static initWithIdentity(identity: Identity): Promise<void> {
+        return RNGetSocial.callAsync('GetSocial.initWithIdentity', JSON.stringify(identity));
+    }
+
     static addOnInitializedListener(onInit: () => void) {
         JSONBridge.isInitialized().then((initialized) => {
             if (initialized) {
@@ -133,6 +137,10 @@ export default class JSONBridge {
 
     static resetUser(): Promise<void> {
         return RNGetSocial.callAsync('GetSocial.resetUser', '');
+    }
+
+    static reset(): Promise<void> {
+        return RNGetSocial.callAsync('GetSocial.resetUserWithoutInit', '');
     }
 
     static switchUser(identity: Identity) {

@@ -1,3 +1,8 @@
+## v7.3.0 - Oct 1, 2021
+
++ New: added support for trusted identities. [read more](https://docs.getsocial.im/guides/user-management/identify-users/#add-trusted-identity).
++ New: added possibility to filter for trending activities, topics and groups.
+
 ## v7.2.3 - Sep 23, 2021
 
 + Fix issue with not invoked Push Notification listener.

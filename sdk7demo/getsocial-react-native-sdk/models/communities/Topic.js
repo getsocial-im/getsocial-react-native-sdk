@@ -13,6 +13,7 @@ export default class Topic {
   settings: CommunitiesSettings;
   followersCount: number;
   isFollowedByMe: boolean;
+  popularity: number;
 
   /**
    * Creates a new Topic instance from the provider parameters.
@@ -28,7 +29,12 @@ export default class Topic {
       this.settings = new CommunitiesSettings(topicMap['settings']);
       this.followersCount = topicMap['followersCount'];
       this.isFollowedByMe = topicMap['isFollowedByMe'] === true;
-
+      const rawPopularity = topicMap['popularity'];
+      if (rawPopularity !== undefined && rawPopularity != null) {
+          this.popularity = rawPopularity;
+      } else {
+          this.popularity = 0.0;
+      }
       Object.freeze(this);
   }
 }

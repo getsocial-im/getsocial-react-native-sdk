@@ -8,6 +8,7 @@ import PostActivityTarget from './PostActivityTarget.js';
 export default class TagsQuery {
     search: string
     target: ?PostActivityTarget;
+    trending: boolean = false;
 
     // eslint-disable-next-line require-jsdoc
     constructor(search: string) {
@@ -34,10 +35,21 @@ export default class TagsQuery {
     }
 
     /**
+    * Get only trending tags.
+    *
+    * @param {boolean} trending Only trending tags or all.
+    * @return {TagsQuery} new query.
+    */
+    onlyTrending(trending: boolean): TagsQuery {
+        this.trending = trending;
+        return this;
+    }
+
+    /**
   * Generates JSON string.
   * @return {string} object as json.
   */
     toJSON() {
-        return {query: this.search, target: this.target};
+        return {query: this.search, target: this.target, trending: this.trending};
     }
 }

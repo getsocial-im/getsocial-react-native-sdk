@@ -5,7 +5,8 @@ This is the demo application for GetSocial React Native SDK. Learn more about th
 ## Running Demo
 
 1. Clone repository: `git clone git@github.com:getsocial-im/getsocial-react-native-sdk.git`
-1. `cd sdk7demo && npm install`
+1. `cd getsocial && npm install`
+1. `cd demo && npm install`
 1. Open `demo` project in Android Studio or in Xcode.
 1. Build and run.
 

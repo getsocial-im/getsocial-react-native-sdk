@@ -9,6 +9,7 @@ export default class GroupsQuery {
     search: ?string;
     followerId: ?UserId;
     memberId: ?UserId;
+    trending: boolean = false;
 
     /**
     * Get all groups.
@@ -55,10 +56,21 @@ export default class GroupsQuery {
     }
 
     /**
+    * Get only trending groups.
+    *
+    * @param {boolean} trending Only trending groups or all.
+    * @return {GroupsQuery} new query.
+    */
+    onlyTrending(trending: boolean): GroupsQuery {
+        this.trending = trending;
+        return this;
+    }
+
+    /**
     * Generates JSON string.
     * @return {string} object as json.
     */
     toJSON() {
-        return {searchTerm: this.search, followerId: this.followerId, memberId: this.memberId};
+        return {searchTerm: this.search, followerId: this.followerId, memberId: this.memberId, trending: this.trending};
     }
 }

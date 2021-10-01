@@ -16,6 +16,7 @@ export default class Group {
   membersCount: number;
   membership: ?Membership;
   isFollowedByMe: boolean;
+  popularity: number;
 
   /**
    * Creates a new Group instance from the provided parameters.
@@ -36,6 +37,12 @@ export default class Group {
       if (rawMembership !== undefined && rawMembership != null) {
           const membership = new Membership(rawMembership);
           this.membership = membership;
+      }
+      const rawPopularity = groupMap['popularity'];
+      if (rawPopularity !== undefined && rawPopularity != null) {
+          this.popularity = rawPopularity;
+      } else {
+          this.popularity = 0.0;
       }
       Object.freeze(this);
   }

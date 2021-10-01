@@ -8,6 +8,7 @@ export default class Identity {
   #providerUserId = null;
   #accessToken = null;
   #providerId = null;
+  #trusted = false;
 
   /**
    * Creates a Facebook identity with specified access token.
@@ -42,10 +43,25 @@ export default class Identity {
   }
 
   /**
+   * Create trusted identity.
+   *
+   * @param {string} trustedProviderName Your trusted provider name.
+   * @param {string} accessToken        Access token for your trusted provider.
+   * @return {Identity} Instance for your trusted provider.
+  */
+  static createTrustedIdentity(trustedProviderName: string, accessToken: string): Identity {
+      const ai = new Identity();
+      ai.#providerId = trustedProviderName;
+      ai.#accessToken = accessToken;
+      ai.#trusted = true;
+      return ai;
+  }
+
+  /**
    * Generates JSON string.
    * @return {string} object as json.
    */
   toJSON() {
-      return {provider: this.#providerId.toLowerCase(), userId: this.#providerUserId, accessToken: this.#accessToken};
+      return {provider: this.#providerId.toLowerCase(), userId: this.#providerUserId, accessToken: this.#accessToken, trusted: this.#trusted};
   }
 }

@@ -16,6 +16,7 @@ type Props = { navigation: Function }
 type State = {
     tags: [string],
     searchText: string,
+    showOnlyTrending: boolean
 }
 
 export default class TagsListView extends Component<Props, State> {
@@ -27,7 +28,8 @@ export default class TagsListView extends Component<Props, State> {
 
     loadTags = async () => {
         showLoading();
-        const query = this.state.searchText == null ? TagsQuery.search('') : TagsQuery.search(this.state.searchText);
+        let query = this.state.searchText == null ? TagsQuery.search('') : TagsQuery.search(this.state.searchText);
+        query = query.onlyTrending(this.state.showOnlyTrending);
         Communities.getTags(query).then((result) => {
             hideLoading();
             this.setState({tags: result});
@@ -51,12 +53,20 @@ export default class TagsListView extends Component<Props, State> {
         const emptyTags: [string]= [];
         this.state = {
             tags: emptyTags,
+            showOnlyTrending: false,
             searchText: null,
         };
     }
 
     componentDidMount() {
         this.loadTags();
+    }
+
+    updateFilterButton = async () => {
+        const currentValue = this.state.showOnlyTrending;
+        this.setState({showOnlyTrending: !currentValue}, () => {
+            this.loadTags();
+        } );
     }
 
     render() {
@@ -72,6 +82,9 @@ export default class TagsListView extends Component<Props, State> {
                     onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadTags()) }
                     onSearchButtonPress={ () => this.loadTags() }
                 />
+                <View style={MenuStyle.menuitem}>
+                    <Button title={this.state.showOnlyTrending ? 'All': 'Only Trending'} onPress={ this.updateFilterButton }/>
+                </View>
                 <View style={MenuStyle.menuContainer}>
                     <FlatList style={{flex: 1}}
                         data={this.state.tags}

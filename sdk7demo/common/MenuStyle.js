@@ -87,7 +87,7 @@ export const MenuStyle = StyleSheet.create({
     },
     rowEndContainer: {
         flex: 1,
-        //width: '20%',
+        // width: '20%',
         alignItems: 'flex-end',
     },
 

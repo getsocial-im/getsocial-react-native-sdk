@@ -15,6 +15,7 @@ import moment from 'moment';
 // eslint-disable-next-line no-unused-vars
 import SearchBar from 'react-native-search-bar';
 import GroupMembersListView from './GroupMembersList.js';
+import ActivitiesListView from './ActivitiesList';
 import CreateActivityPost from './CreateActivityPost';
 import CreatePollView from './CreatePoll';
 import AddGroupMemberView from './AddGroupMember.js';
@@ -30,6 +31,7 @@ type State = {
     searchText: string,
     myGroups: boolean,
     followStatus: ?Map<string, boolean>,
+    showOnlyTrending: boolean,
 }
 
 export default class GroupsListView extends Component<Props, State> {
@@ -58,6 +60,7 @@ export default class GroupsListView extends Component<Props, State> {
         options.push('Details');
         if ((settings != null && !settings.isPrivate) || status == MemberStatus.Member) {
             options.push('Show Feed');
+            options.push('Activities');
             options.push('Activities with Polls');
             options.push('Announcements with Polls');
         }
@@ -218,6 +221,12 @@ export default class GroupsListView extends Component<Props, State> {
         this.props.navigation.navigate('UpdateGroup');
     }
 
+    showActivities = async () => {
+        ActivitiesListView.activitiesQuery = ActivitiesQuery.inGroup(this.state.selectedGroup.id);
+        this.props.navigation.navigate('ActivitiesList');
+    }
+
+
     showFeed = async () => {
         const query = ActivitiesQuery.inGroup(this.state.selectedGroup.id);
         const view = ActivitiesView.create(query);
@@ -276,6 +285,9 @@ export default class GroupsListView extends Component<Props, State> {
         case 'Show Feed':
             this.showFeed();
             break;
+        case 'Activities':
+            this.showActivities();
+            break;
         case 'Activities with Polls':
             this.showPollsActivities();
             break;
@@ -320,7 +332,8 @@ export default class GroupsListView extends Component<Props, State> {
 
     loadGroups = async () => {
         showLoading();
-        const query = GroupsListView.query == null ? (this.state.searchText == null ? GroupsQuery.all() : GroupsQuery.find(this.state.searchText)) : GroupsListView.query;
+        let query = GroupsListView.query == null ? (this.state.searchText == null ? GroupsQuery.all() : GroupsQuery.find(this.state.searchText)) : GroupsListView.query;
+        query = query.onlyTrending(this.state.showOnlyTrending);
         Communities.getGroups(new PagingQuery(query)).then((result) => {
             hideLoading();
             this.setState({groups: result.entries});
@@ -340,6 +353,7 @@ export default class GroupsListView extends Component<Props, State> {
             selectedGroup: undefined,
             searchText: null,
             followStatus: {},
+            showOnlyTrending: false,
         };
     }
 
@@ -385,18 +399,29 @@ export default class GroupsListView extends Component<Props, State> {
         return null;
     }
 
+    updateFilterButton = async () => {
+        const currentValue = this.state.showOnlyTrending;
+        this.setState({showOnlyTrending: !currentValue}, () => {
+            this.loadGroups();
+        } );
+    }
+
     render() {
         return (
             <View style={MenuStyle.container}>
                 {this.renderSearchBar()}
+                <View style={MenuStyle.menuitem}>
+                    <Button title={this.state.showOnlyTrending ? 'All': 'Only Trending'} onPress={ this.updateFilterButton }/>
+                </View>
                 <View style={MenuStyle.menuContainer}>
                     <FlatList style={{flex: 1}}
                         data={this.state.groups}
                         renderItem={({item}) => (
                             <TouchableWithoutFeedback>
-                                <View style={MenuStyle.listitem3rows}>
+                                <View style={MenuStyle.listitem4rows}>
                                     <View style={{flex: 1, flexDirection: 'column', width: '80%'}}>
                                         <Text style={MenuStyle.menuitem14}>Title: {item.title}</Text>
+                                        <Text style={MenuStyle.menuitem14}>Popularity: {item.popularity}</Text>
                                         <Text style={MenuStyle.menuitem14}>Member status: {this.getMemberStatus(item)}</Text>
                                         <Text style={MenuStyle.menuitem14}>Member role: {this.getMemberRole(item)}</Text>
                                     </View>
