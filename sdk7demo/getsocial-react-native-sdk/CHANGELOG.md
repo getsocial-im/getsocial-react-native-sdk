@@ -1,3 +1,7 @@
+## v7.3.1 - Oct 14, 2021
+
++ Overall improvements.
+
 ## v7.3.0 - Oct 1, 2021
 
 + New: added support for trusted identities. [read more](https://docs.getsocial.im/guides/user-management/identify-users/#add-trusted-identity).

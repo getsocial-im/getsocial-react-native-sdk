@@ -14,7 +14,7 @@ GetSocial React Native SDK v7.
   s.author           = { 'GetSocial' => 'info@getsocial.im' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
-  s.dependency 'GetSocialExtended', '7.6.1'
+  s.dependency 'GetSocialExtended', '7.6.3'
   s.platform     = :ios, "9.0"
   s.ios.deployment_target = '9.0'
   s.requires_arc = true
