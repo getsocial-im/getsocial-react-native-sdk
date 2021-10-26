@@ -1,1 +1,0 @@
-{"attachments":[{"imageUrl":"image1","image":null,"videoUrl":null,"video":null},{"imageUrl":null,"image":null,"videoUrl":"image2","video":null}],"properties":{"propkey":"propvalue"},"text":"hello","button":{"title":"title","action":{"data":{"actionkey":"actionvalue"},"type":"show"}}}

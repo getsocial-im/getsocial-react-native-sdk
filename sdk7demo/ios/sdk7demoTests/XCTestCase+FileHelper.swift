@@ -11,17 +11,18 @@ import GetSocialSDK
 extension XCTestCase {
 
   fileprivate func baseURL() -> URL {
-    return Bundle.init(for: Self.self).bundleURL.appendingPathComponent("output", isDirectory: true)
+    return Bundle.init(for: Self.self).bundleURL.appendingPathComponent("wrapper_to_native", isDirectory: true)
   }
 
 
   internal func readContent(of: String) -> String? {
-    return try? String(contentsOf: self.baseURL().appendingPathComponent(of))
+    let fullPath = self.baseURL().appendingPathComponent(of)
+    return try? String(contentsOf: fullPath)
   }
 
   internal func readFiles(in dir: String) -> [String] {
     do {
-      let directory = Bundle.init(for: Self.self).bundlePath.appending("/output/\(dir)")
+      let directory = Bundle.init(for: Self.self).bundlePath.appending("/wrapper_to_native/\(dir)")
       return try FileManager().contentsOfDirectory(atPath: directory)
     } catch {
       print("🧨 ERROR: test file location is missing: \(self.baseURL)")

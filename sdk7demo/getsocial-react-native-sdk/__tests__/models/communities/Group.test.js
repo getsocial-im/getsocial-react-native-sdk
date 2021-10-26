@@ -3,10 +3,10 @@ import MemberStatus from './../../../models/communities/MemberStatus.js';
 import Role from './../../../models/communities/Role.js';
 import CommunitiesAction from './../../../models/communities/CommunitiesAction.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'group.json');
+const testData = readObjectToDecode('group.json');
 const group = new Group(JSON.parse(testData));
 test('parsed Group object properties must match', () => {
     expect(group.avatarUrl).toBe('avatar');

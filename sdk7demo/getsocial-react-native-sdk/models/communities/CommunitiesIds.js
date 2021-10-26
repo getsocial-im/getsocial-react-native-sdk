@@ -50,4 +50,8 @@ export default class CommunitiesIds {
   static everywhere(): CommunitiesIds {
       return new CommunitiesIds(-1, []);
   }
+
+  toJSON() {
+      return {ids: this.ids ?? null, type: this.type ?? null};
+  }
 }

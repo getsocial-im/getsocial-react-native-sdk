@@ -2,10 +2,10 @@ import GroupMember from './../../../models/communities/GroupMember.js';
 import Role from './../../../models/communities/Role.js';
 import MemberStatus from './../../../models/communities/MemberStatus.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'groupmember.json');
+const testData = readObjectToDecode('groupmember.json');
 const member = new GroupMember(JSON.parse(testData));
 test('parsed GroupMember object properties must match', () => {
     expect(member.userId).toBe('userid');

@@ -8,7 +8,7 @@ import PollOptionContent from './PollOptionContent.js';
  */
 export default class PollContent {
   allowMultipleVotes: boolean = false;
-  endDate: ?number;
+  endDate: number = 0;
   options: Array<PollOptionContent> = [];
 
   /**

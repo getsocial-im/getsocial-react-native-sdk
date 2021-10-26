@@ -17,6 +17,6 @@ export default class InviteContent {
    * @return {string} object as json.
    */
   toJSON() {
-      return {text: this.text, subject: this.subject, mediaAttachment: this.mediaAttachment, linkParams: this.linkParams};
+      return {linkParams: this.linkParams, mediaAttachment: this.mediaAttachment ?? null, subject: this.subject ?? null, text: this.text ?? null};
   }
 }

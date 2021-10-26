@@ -1,9 +1,9 @@
 import UserVotes from './../../../models/communities/UserVotes.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'uservotes.json');
+const testData = readObjectToDecode('uservotes.json');
 const uservotes = new UserVotes(JSON.parse(testData));
 test('parsed UserVotes object properties must match', () => {
     const voteUser1 = uservotes.user;

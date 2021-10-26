@@ -4,6 +4,7 @@
 import Identity from './models/communities/Identity.js';
 import ConflictUser from './models/communities/ConflictUser.js';
 import UserUpdate from './models/UserUpdate.js';
+import BanInfo from './models/BanInfo.js';
 import {NativeModules} from 'react-native';
 const {RNGetSocial} = NativeModules;
 
@@ -17,6 +18,7 @@ export default class User {
   identities: {[key: string] : string} = {};
   publicProperties: {[key: string] : string} = {};
   privateProperties: {[key: string] : string} = {};
+  banInfo: ?BanInfo;
 
   /**
    * Requests a bulk change of properties for the current user.
@@ -76,6 +78,13 @@ export default class User {
       return RNGetSocial.callAsync('CurrentUser.refresh', '');
   }
 
+  /**
+   * Returns if user is banned or not.
+   * @return {bool} True, if user is banned, otherwise false.
+   */
+  isBanned(): bool {
+      return (this.banInfo !== undefined && this.banInfo != null);
+  }
 
   /**
    * Creates a new CurrentUser instance from the provider parameters.
@@ -92,6 +101,10 @@ export default class User {
       this.identities = jsonObject['identities'];
       this.publicProperties = jsonObject['publicProperties'];
       this.privateProperties = jsonObject['privateProperties'];
+      const rawBanInfo = jsonObject['banInfo'];
+      if (rawBanInfo !== undefined && rawBanInfo != null) {
+          this.banInfo = new BanInfo(rawBanInfo);
+      }
       Object.freeze(this);
   }
 }

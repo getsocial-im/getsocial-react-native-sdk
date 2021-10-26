@@ -33,4 +33,12 @@ export default class VotesQuery {
         this.pollOptionId = pollOptionId;
         return this;
     }
+
+    /**
+  * Generates JSON string.
+  * @return {string} object as json.
+  */
+    toJSON() {
+        return {ids: this.ids, pollOptionId: this.pollOptionId ?? null};
+    }
 }

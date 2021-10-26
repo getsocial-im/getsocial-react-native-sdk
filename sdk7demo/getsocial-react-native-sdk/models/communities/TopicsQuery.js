@@ -6,7 +6,7 @@ import UserId from './../UserId.js';
  * TopicsQuery object.
  */
 export default class TopicsQuery {
-    search: ?string;
+    search: string = '';
     userId: ?UserId;
     trending: boolean = false;
 
@@ -59,6 +59,6 @@ export default class TopicsQuery {
   * @return {string} object as json.
   */
     toJSON() {
-        return {searchTerm: this.search, followerId: this.userId, trending: this.trending};
+        return {followerId: this.userId ?? null, searchTerm: this.search ?? '', trending: this.trending};
     }
 }

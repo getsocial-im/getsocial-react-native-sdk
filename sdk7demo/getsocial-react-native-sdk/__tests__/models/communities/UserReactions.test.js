@@ -1,9 +1,9 @@
 import UserReactions from './../../../models/communities/UserReactions.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'userreactions.json');
+const testData = readObjectToDecode('userreactions.json');
 const userreaction = new UserReactions(JSON.parse(testData));
 test('parsed UserReactions object properties must match', () => {
     const reactionUser1 = userreaction.user;

@@ -31,4 +31,12 @@ export default class ActivityButton {
       }
       Object.freeze(this);
   }
+
+  /**
+  * Generates JSON string.
+  * @return {string} object as json.
+  */
+  toJSON() {
+      return {action: this.action ?? null, title: this.title ?? null};
+  }
 }

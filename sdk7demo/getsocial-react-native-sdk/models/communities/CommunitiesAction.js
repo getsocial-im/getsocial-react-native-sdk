@@ -12,11 +12,11 @@ export default class CommunitiesAction {
   static valueToName(value: string): string {
       switch (value) {
       case '0':
-          return 'post';
+          return 'Post';
       case '1':
-          return 'react';
+          return 'React';
       case '2':
-          return 'comment';
+          return 'Comment';
       }
   }
 }

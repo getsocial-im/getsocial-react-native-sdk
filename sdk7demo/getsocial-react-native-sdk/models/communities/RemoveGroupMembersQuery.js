@@ -25,4 +25,12 @@ export default class RemoveGroupMembersQuery {
     static create(groupId: string, userIdList: UserIdList): RemoveGroupMembersQuery {
         return new RemoveGroupMembersQuery(userIdList, groupId);
     }
+
+    /**
+    * Generates JSON string.
+    * @return {string} object as json.
+    */
+    toJSON() {
+        return {groupId: this.groupId, userIdList: this.userIdList};
+    }
 }

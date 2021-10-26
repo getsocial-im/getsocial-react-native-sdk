@@ -32,7 +32,6 @@ import UpdateGroupMembersQuery from './../../models/communities/UpdateGroupMembe
 import GroupsQuery from './../../models/communities/GroupsQuery.js';
 import MembersQuery from './../../models/communities/MembersQuery.js';
 import ChatMessageContent from './../../models/communities/ChatMessageContent.js';
-import Membership from './../../models/communities/Membership.js';
 import ChatMessagesQuery from './../../models/communities/ChatMessagesQuery.js';
 import ChatId from './../../models/communities/ChatId.js';
 import VotesQuery from './../../models/communities/VotesQuery.js';

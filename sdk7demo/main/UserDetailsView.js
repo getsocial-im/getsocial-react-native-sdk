@@ -38,6 +38,7 @@ class UserDetailsView extends Component<Props, State> {
             publicProperties: '',
             privateProperties: '',
             authIdentities: '',
+            banInfo: '',
         };
     }
 
@@ -57,6 +58,11 @@ class UserDetailsView extends Component<Props, State> {
             }
             this.setState({publicProperties: JSON.stringify(currentUser.publicProperties)});
             this.setState({privateProperties: JSON.stringify(currentUser.privateProperties)});
+            if (currentUser.isBanned()) {
+                this.setState({banInfo: JSON.stringify(currentUser.banInfo)});
+            } else {
+                this.setState({banInfo: 'Not banned'});
+            }
         });
     }
 
@@ -117,6 +123,14 @@ class UserDetailsView extends Component<Props, State> {
                       </View>
                       <View style={UserDetailsViewStyle.formEntryTitleContainer}>
                           <Text accessibilityLabel='Private properties'>{this.state.privateProperties}</Text>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Ban Info:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Private properties'>{this.state.banInfo}</Text>
                       </View>
                   </View>
                   <Button title={'Close'} onPress={() => this.closeView()}/>

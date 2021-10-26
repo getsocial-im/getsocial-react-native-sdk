@@ -1,9 +1,9 @@
 import Invite from './../../../models/invites/Invite.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'invite.json');
+const testData = readObjectToDecode('invite.json');
 const invite = new Invite(JSON.parse(testData));
 test('parsed Invite object properties must match', () => {
     expect(invite.gifURL).toBe('gifurl');

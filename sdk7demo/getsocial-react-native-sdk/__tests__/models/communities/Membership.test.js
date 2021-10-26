@@ -1,9 +1,9 @@
 import Membership from './../../../models/communities/Membership.js';
 import MemberStatus from './../../../models/communities/MemberStatus.js';
 import Role from './../../../models/communities/Role.js';
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
-const testData = readTestData('encodedobjects', 'membership.json');
+const testData = readObjectToDecode('membership.json');
 const membership = new Membership(JSON.parse(testData));
 test('parsed Membership object properties must match', () => {
     expect(membership.role).toBe(Role.Member);

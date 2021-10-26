@@ -35,4 +35,9 @@ export default class ChatId {
     static createWithUserId(userId: UserId): ChatId {
         return new ChatId(null, userId);
     }
+
+    // eslint-disable-next-line require-jsdoc
+    toJSON() {
+        return {id: this.id ?? null, userId: this.userId ?? null};
+    }
 }

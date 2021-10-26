@@ -12,8 +12,8 @@ export default class GroupContent {
   title: string;
   description: ?string;
   properties: {[key: string] : string} = {};
-  isPrivate: boolean;
-  isDiscoverable: boolean;
+  isPrivate: boolean = false;
+  isDiscoverable: boolean = false;
   avatar: ?MediaAttachment;
   permissions: Map<number, number> = new Map();
 
@@ -28,7 +28,7 @@ export default class GroupContent {
               convertedPermissions[CommunitiesAction.valueToName(key)] = this.permissions[key];
           }
       }
-      return {id: this.id, title: this.title, description: this.description, properties: this.properties, isPrivate: this.isPrivate,
-          isDiscoverable: this.isDiscoverable, permissions: convertedPermissions, avatar: this.avatar};
+      return {avatar: this.avatar ?? null, description: this.description ?? null, id: this.id, isDiscoverable: this.isDiscoverable, isPrivate: this.isPrivate,
+          permissions: convertedPermissions, properties: this.properties, title: this.title ?? null};
   }
 }

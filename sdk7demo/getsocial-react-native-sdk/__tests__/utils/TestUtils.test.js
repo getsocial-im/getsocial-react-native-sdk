@@ -1,23 +1,20 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 /* eslint-disable no-undef */
 const fs = require('fs');
 
-function readTestData(dir, filename) {
-    const filePath = './../../jsonbridge-testdata/' + dir + '/' + filename;
+function readEncodedObject(dir, filename) {
+    const filePath = './../../jsonbridge-testdata/wrapper_to_native/' + dir + '/' + filename;
     return fs.readFileSync(filePath, 'utf8');
 }
 
-function saveResult(dir, filename, result) {
-    const dirPath = './__tests__/output/' + dir;
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath);
-    }
-    const filePath = dirPath + '/' + filename;
-    fs.writeFileSync(filePath, result);
+function readObjectToDecode(filename) {
+    const filePath = './../../jsonbridge-testdata/native_to_wrapper/' + filename;
+    return fs.readFileSync(filePath, 'utf8');
 }
 
-module.exports = {saveResult, readTestData};
+module.exports = {readEncodedObject, readObjectToDecode};
 
 // hack, because cannot be ignored, because ....
 test('true == true', () => {

@@ -16,6 +16,6 @@ export default class PollOptionContent {
   * @return {string} object as json.
   */
   toJSON() {
-      return {optionId: this.optionId, text: this.text, attachment: this.attachment};
+      return {attachment: this.attachment ?? null, optionId: this.optionId ?? null, text: this.text ?? null};
   }
 }

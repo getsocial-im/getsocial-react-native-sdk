@@ -61,6 +61,6 @@ export default class NotificationsQuery {
    * @return {string} object as json.
    */
   toJSON() {
-      return {statuses: this.#status, types: this.#types, actions: this.#actions};
+      return {actions: this.#actions, statuses: this.#status, types: this.#types};
   }
 }

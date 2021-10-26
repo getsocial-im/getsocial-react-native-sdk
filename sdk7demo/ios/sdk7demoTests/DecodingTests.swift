@@ -35,7 +35,7 @@ class DecodingTests: XCTestCase {
   }
 
   func test_addgroupmembersquery() {
-    self.execute(folder: "addgroupmembersquery", onDecode: { (result: UpdateGroupMembersQuery?) in
+    self.execute(folder: "updategroupmembersquery", onDecode: { (result: UpdateGroupMembersQuery?) in
       XCTAssertNotNil(result)
     })
   }
@@ -107,7 +107,7 @@ class DecodingTests: XCTestCase {
   }
 
   func test_joingroupquery() {
-    self.execute(folder: "joingroupquery", onDecode: { (result: UpdateGroupMembersQuery?) in
+    self.execute(folder: "updategroupmembersquery", onDecode: { (result: UpdateGroupMembersQuery?) in
       XCTAssertNotNil(result)
     })
   }
@@ -142,8 +142,7 @@ class DecodingTests: XCTestCase {
     })
   }
 
-  // TODO: fix purchase data
-  func atest_purchaseData() {
+  func test_purchaseData() {
     self.execute(folder: "purchasedata", onDecode: { (result: PurchaseData?) in
       //XCTAssertNotNil(result)
     })

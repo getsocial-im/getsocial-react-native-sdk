@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // @flow
 
 /**
@@ -43,5 +44,13 @@ export default class MembersQuery {
     withStatus(status: number): MembersQuery {
         this.status = status;
         return this;
+    }
+
+    /**
+    * Generates JSON string.
+    * @return {string} object as json.
+    */
+    toJSON() {
+        return {groupId: this.groupId, role: this.role ?? null, status: this.status ?? null};
     }
 }

@@ -46,6 +46,6 @@ export default class PromoCodeContent {
    * @return {string} object as json.
    */
   toJSON() {
-      return {code: this.#code, startDate: this.#startDate, endDate: this.#endDate, data: this.properties, maxClaimCount: this.maxClaims};
+      return {code: this.#code ?? null, data: this.properties, endDate: this.#endDate ?? 0, maxClaimCount: this.maxClaims, startDate: this.#startDate ?? 0};
   }
 }

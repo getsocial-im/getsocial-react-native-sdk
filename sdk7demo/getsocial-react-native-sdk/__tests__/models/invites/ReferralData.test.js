@@ -1,9 +1,9 @@
 import ReferralData from './../../../models/invites/ReferralData.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'referraldata.json');
+const testData = readObjectToDecode('referraldata.json');
 const data = new ReferralData(JSON.parse(testData));
 test('parsed ReferralData object properties must match', () => {
     expect(data.token).toBe('token');

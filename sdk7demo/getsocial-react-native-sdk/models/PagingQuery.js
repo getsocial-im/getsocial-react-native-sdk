@@ -21,6 +21,6 @@ export default class PagingQuery<Query> {
   * @return {string} object as json.
   */
   toJSON() {
-      return {query: this.query, next: this.next, limit: this.limit};
+      return {limit: this.limit, next: this.next, query: this.query};
   }
 }

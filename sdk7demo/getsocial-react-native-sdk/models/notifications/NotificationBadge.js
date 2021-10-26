@@ -34,6 +34,6 @@ export default class NotificationBadge {
   * @return {string} object as json.
   */
   toJSON() {
-      return {increase: this.#increase, badge: this.#badge};
+      return {badge: this.#badge ?? 0, increase: this.#increase ?? 0};
   }
 }

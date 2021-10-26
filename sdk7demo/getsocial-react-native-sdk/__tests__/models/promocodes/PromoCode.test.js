@@ -1,9 +1,9 @@
 import PromoCode from './../../../models/promocodes/PromoCode.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'promocode.json');
+const testData = readObjectToDecode('promocode.json');
 const code = new PromoCode(JSON.parse(testData));
 test('parsed PromoCode object properties must match', () => {
     expect(code.claimCount).toBe(100);

@@ -17,6 +17,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		BC4F609925C2DF3A00BB56A5 /* activityImage.png in Resources */ = {isa = PBXBuildFile; fileRef = BC4F609825C2DF3A00BB56A5 /* activityImage.png */; };
 		BC4F609B25C2E95D00BB56A5 /* giphy.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BC4F609A25C2E95D00BB56A5 /* giphy.mp4 */; };
+		BC5962A6270C57810017A0D7 /* wrapper_to_native in Resources */ = {isa = PBXBuildFile; fileRef = BC5962A5270C57800017A0D7 /* wrapper_to_native */; };
 		BC6382142604D5E900907B2A /* NotificationExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BCC066ED2604C238000F1DE2 /* NotificationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BC6382192604D5ED00907B2A /* GetSocialNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC0DF25425FA6D2E008C054B /* GetSocialNotificationExtension.framework */; };
 		BC63821A2604D5ED00907B2A /* GetSocialNotificationExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BC0DF25425FA6D2E008C054B /* GetSocialNotificationExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -30,7 +31,6 @@
 		BCC066F12604C238000F1DE2 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC066F02604C238000F1DE2 /* NotificationService.m */; };
 		BCC066FF2604C247000F1DE2 /* GetSocialNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC0DF25425FA6D2E008C054B /* GetSocialNotificationExtension.framework */; };
 		BCC0671D2604CD6C000F1DE2 /* GetSocialNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC0DF25425FA6D2E008C054B /* GetSocialNotificationExtension.framework */; };
-		BCC28B6325DBDCA100A2B8C2 /* output in Resources */ = {isa = PBXBuildFile; fileRef = BCC28B6225DBDCA100A2B8C2 /* output */; };
 		BCC28B6825DBFEEE00A2B8C2 /* XCTestCase+FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC28B6725DBFEEE00A2B8C2 /* XCTestCase+FileHelper.swift */; };
 		BCC28B8025DD2A8500A2B8C2 /* DecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC28B7F25DD2A8500A2B8C2 /* DecodingTests.swift */; };
 /* End PBXBuildFile section */
@@ -112,6 +112,7 @@
 		BC0DF26D25FA6DFF008C054B /* NotificationExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationExtension.entitlements; sourceTree = "<group>"; };
 		BC4F609825C2DF3A00BB56A5 /* activityImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = activityImage.png; path = ../img/activityImage.png; sourceTree = "<group>"; };
 		BC4F609A25C2E95D00BB56A5 /* giphy.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = giphy.mp4; path = ../img/giphy.mp4; sourceTree = "<group>"; };
+		BC5962A5270C57800017A0D7 /* wrapper_to_native */ = {isa = PBXFileReference; lastKnownFileType = folder; name = wrapper_to_native; path = "../../jsonbridge-testdata/wrapper_to_native"; sourceTree = "<group>"; };
 		BC80F84B2514B9AA00BAF71C /* getsocial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getsocial.json; sourceTree = "<group>"; };
 		BC80F859251B407B00BAF71C /* getsocial-dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "getsocial-dark"; path = "sdk7demo/getsocial-dark"; sourceTree = "<group>"; };
 		BC80F85A251B407B00BAF71C /* getsocial-light */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "getsocial-light"; path = "sdk7demo/getsocial-light"; sourceTree = "<group>"; };
@@ -124,7 +125,6 @@
 		BCC066EF2604C238000F1DE2 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
 		BCC066F02604C238000F1DE2 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
 		BCC066F22604C238000F1DE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCC28B6225DBDCA100A2B8C2 /* output */ = {isa = PBXFileReference; lastKnownFileType = folder; name = output; path = "../getsocial-react-native-sdk/__tests__/output"; sourceTree = "<group>"; };
 		BCC28B6725DBFEEE00A2B8C2 /* XCTestCase+FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FileHelper.swift"; sourceTree = "<group>"; };
 		BCC28B7F25DD2A8500A2B8C2 /* DecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodingTests.swift; sourceTree = "<group>"; };
 		C4798B21F41A44C57C71A85C /* libPods-sdk7demo-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-sdk7demo-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -242,8 +242,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				BC5962A5270C57800017A0D7 /* wrapper_to_native */,
 				BC0DF25425FA6D2E008C054B /* GetSocialNotificationExtension.framework */,
-				BCC28B6225DBDCA100A2B8C2 /* output */,
 				BC4F609A25C2E95D00BB56A5 /* giphy.mp4 */,
 				BC4F609825C2DF3A00BB56A5 /* activityImage.png */,
 				13B07FAE1A68108700A75B9A /* sdk7demo */,
@@ -409,7 +409,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCC28B6325DBDCA100A2B8C2 /* output in Resources */,
+				BC5962A6270C57810017A0D7 /* wrapper_to_native in Resources */,
 				1C1B4071894062A1E9E86DF1 /* sdk7demo.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

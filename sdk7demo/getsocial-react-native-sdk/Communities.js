@@ -381,7 +381,7 @@ export default class Communities {
      * @return {void} Called if operation succeeded.
      */
     static reportActivity(id: string, reason: number, explanation: ?String): Promise<void> {
-        return JSONBridge.reportActivity(id, reason);
+        return JSONBridge.reportActivity(id, reason, explanation);
     }
 
     /**

@@ -17,7 +17,8 @@ export default class PurchaseData {
   * @return {string} object as json.
   */
   toJSON() {
-      return {productId: this.productId, productTitle: this.productTitle, productType: this.productType, price: this.price, priceCurrency: this.priceCurrency, purchaseDate: this.purchaseDate, purchaseId: this.transactionIdentifier};
+      return {price: this.price, priceCurrency: this.priceCurrency, productId: this.productId, productTitle: this.productTitle, productType: this.productType,
+          purchaseDate: this.purchaseDate, purchaseId: this.transactionIdentifier};
   }
 }
 

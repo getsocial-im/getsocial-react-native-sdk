@@ -1,9 +1,9 @@
 import Notification from './../../../models/notifications/Notification.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'notification.json');
+const testData = readObjectToDecode('notification.json');
 const notification = new Notification(JSON.parse(testData));
 test('parsed Notification object properties must match', () => {
     expect(notification.id).toBe('notificationid');

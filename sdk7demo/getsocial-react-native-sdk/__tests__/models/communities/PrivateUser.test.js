@@ -1,9 +1,9 @@
 import CurrentUser from './../../../CurrentUser.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'privateuser.json');
+const testData = readObjectToDecode('privateuser.json');
 const user = new CurrentUser(testData);
 test('parsed CurrentUser object properties must match', () => {
     expect(user.id).toBe('userid');

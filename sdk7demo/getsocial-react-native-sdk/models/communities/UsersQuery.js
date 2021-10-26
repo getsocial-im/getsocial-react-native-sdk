@@ -6,7 +6,7 @@ import UserId from './../UserId.js';
  * UsersQuery object.
  */
 export default class UsersQuery {
-  searchTerm: ?string
+  searchTerm: ?string;
   userId: ?UserId
 
   // eslint-disable-next-line require-jsdoc
@@ -32,7 +32,7 @@ export default class UsersQuery {
    * @return {UsersQuery} new instance.
    */
   static followedBy(id: UserId): UsersQuery {
-      return new UsersQuery('', id);
+      return new UsersQuery(null, id);
   }
 
   /**
@@ -40,6 +40,6 @@ export default class UsersQuery {
    * @return {string} object as json.
    */
   toJSON() {
-      return {query: this.searchTerm, followedBy: this.userId};
+      return {followedBy: this.userId ?? null, query: this.searchTerm ?? null};
   }
 }

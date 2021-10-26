@@ -1,9 +1,9 @@
 import Chat from './../../../models/communities/Chat.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'chat.json');
+const testData = readObjectToDecode('chat.json');
 const chat = new Chat(JSON.parse(testData));
 test('parsed Activity object properties must match', () => {
     expect(chat.id).toBe('chatid');

@@ -239,7 +239,7 @@ public class DecodingTests {
     }
 
     private File[] getTestFiles(String directory) throws FileNotFoundException {
-        File file = new File("./../__tests__/output/" + directory);
+        File file = new File("./../../../jsonbridge-testdata/wrapper_to_native/" + directory);
         if (file.isDirectory()) {
             return file.listFiles();
         }

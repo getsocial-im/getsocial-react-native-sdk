@@ -11,17 +11,12 @@ export default class UserUpdate {
     publicProperties: {[key: string] : string} = {};
     privateProperties: {[key: string] : string} = {};
 
-    // /**
-    // * Generates JSON string.
-    // * @return {string} object as json.
-    // */
-    // toJSON() {
-    //     return '{' +
-    //         '"displayName": ' + ((this.displayName === undefined || this.displayName == null) ? 'null' : '"' + this.displayName + '"') + ',' +
-    //         '"avatarUrl": ' + ((this.avatarUrl === undefined || this.avatarUrl == null) ? 'null' : '"' + this.avatarUrl + '"') + ',' +
-    //         '"avatar": ' + ((this.avatar === undefined || this.avatar == null) ? 'null' : '"' + this.avatar + '"') + ',' +
-    //         '"publicProperties": ' + (this.publicProperties === undefined ? 'null' : JSON.stringify(this.publicProperties)) + ',' +
-    //         '"privateProperties": ' + (this.privateProperties === undefined ? 'null' : JSON.stringify(this.privateProperties)) +
-    //     '}';
-    // }
+    /**
+    * Generates JSON string.
+    * @return {string} object as json.
+    */
+    toJSON() {
+        return {avatar: this.avatar ?? null, avatarUrl: this.avatarUrl ?? null, displayName: this.displayName ?? null,
+            privateProperties: this.privateProperties, publicProperties: this.publicProperties};
+    }
 }

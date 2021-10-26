@@ -25,10 +25,10 @@ NativeModules.RNGetSocial = {
             return Promise.resolve('{"result":"7.3.3"}');
         }
         if (method == 'GetSocial.getCurrentUser') {
-            return Promise.resolve(readTestData('encodedobjects', 'privateuser.json'));
+            return Promise.resolve(readObjectToDecode('privateuser.json'));
         }
         if (method == 'Analytics.trackPurchase') {
-            if (body == '{"productId":"productId","productTitle":"productTitle","productType":0,"price":1,"priceCurrency":"priceCurrency","purchaseDate":2,"purchaseId":"transactionIdentifier"}') {
+            if (body == '{"price":1,"priceCurrency":"priceCurrency","productId":"productId","productTitle":"productTitle","productType":0,"purchaseDate":2,"purchaseId":"transactionIdentifier"}') {
                 return Promise.resolve('{"result": true}');
             } else {
                 return Promise.reject(new Error());
@@ -46,73 +46,73 @@ NativeModules.RNGetSocial = {
         // console.log('[ASYNC] method: ' + method);
         // console.log('[ASYNC] body: ' + body);
         if (method == 'Communities.addFriends') {
-            if (body == '{"ids":["bob","jay"]}') {
+            if (body == '{"ids":["bob","jay"],"provider":null}') {
                 return Promise.resolve('{"result": 3}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.removeFriends') {
-            if (body == '{"ids":["bob","jay"]}') {
+            if (body == '{"ids":["bob","jay"],"provider":null}') {
                 return Promise.resolve('{"result": 4}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.areFriends') {
-            if (body == '{"ids":["bob","jay"]}') {
+            if (body == '{"ids":["bob","jay"],"provider":null}') {
                 return Promise.resolve('{"bob": true, "jay": false}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.isFriend') {
-            if (body == '{"userId":"john"}') {
+            if (body == '{"provider":null,"userId":"john"}') {
                 return Promise.resolve('{"result": true}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getFriendsCount') {
-            if (body == '{"userId":{"userId":"john"}}') {
+            if (body == '{"userId":{"provider":null,"userId":"john"}}') {
                 return Promise.resolve('{"result": 23}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getFriends') {
-            if (body == '{"query":{"userId":{"userId":"john"}},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'user.json')));
+            if (body == '{"limit":20,"query":{"userId":{"provider":null,"userId":"john"}}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('user.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getSuggestedFriends') {
             if (body == '{"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'suggestedfriend.json')));
+                return Promise.resolve(createPagingResult(readObjectToDecode('suggestedfriend.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.setFriends') {
-            if (body == '{"ids":["bob","jay"]}') {
+            if (body == '{"ids":["bob","jay"],"provider":null}') {
                 return Promise.resolve('{"result": 9}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getUsers') {
-            if (body == '{"query":{"query":"best","followedBy":null},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'user.json')));
+            if (body == '{"limit":20,"query":{"followedBy":null,"query":"best"}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('user.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getUsersByIds') {
-            if (body == '{"ids":["bob","jay"]}') {
-                return Promise.resolve('{"bob": ' + readTestData('encodedobjects', 'user.json') + ' , "jay": null}');
+            if (body == '{"ids":["bob","jay"],"provider":null}') {
+                return Promise.resolve('{"bob": ' + readObjectToDecode('user.json') + ' , "jay": null}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getUserById') {
-            if (body == '{"userId":"john"}') {
-                return Promise.resolve(readTestData('encodedobjects', 'user.json'));
+            if (body == '{"provider":null,"userId":"john"}') {
+                return Promise.resolve(readObjectToDecode('user.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getUsersCount') {
-            if (body == '{"query":"best","followedBy":null}') {
+            if (body == '{"followedBy":null,"query":"best"}') {
                 return Promise.resolve('{"result": 123}');
             }
             return Promise.reject(new Error());
@@ -130,14 +130,14 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.isFollowing') {
-            if (body == '{"userId":{"userId":"bob"},"query":{"ids":{"ids":["topic1","topic2"],"type":2}}}') {
+            if (body == '{"userId":{"provider":null,"userId":"bob"},"query":{"ids":{"ids":["topic1","topic2"],"type":2}}}') {
                 return Promise.resolve('{"topic1": true, "topic2": false}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getFollowers') {
-            if (body == '{"query":{"ids":{"ids":["sometopic"],"type":2}},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'user.json')));
+            if (body == '{"limit":20,"query":{"ids":{"ids":["sometopic"],"type":2}}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('user.json')));
             }
             return Promise.reject(new Error());
         }
@@ -149,31 +149,31 @@ NativeModules.RNGetSocial = {
         }
         if (method == 'Communities.getAnnouncements') {
             if (body == '{"ids":{"ids":["topic"],"type":2},"pollStatus":0}') {
-                return Promise.resolve('[' + readTestData('encodedobjects', 'activity.json') + ']');
+                return Promise.resolve('[' + readObjectToDecode('activity.json') + ']');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getActivities') {
-            if (body == '{"query":{"ids":{"ids":["timeline"],"type":1},"pollStatus":0,"trending":false},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'activity.json')));
+            if (body == '{"limit":20,"query":{"author":null,"ids":{"ids":["timeline"],"type":1},"pollStatus":0,"tag":null,"trending":false}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('activity.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getActivity') {
             if (body == 'randomactivity') {
-                return Promise.resolve(readTestData('encodedobjects', 'activity.json'));
+                return Promise.resolve(readObjectToDecode('activity.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.postActivity') {
-            if (body == '{"target":{"ids":{"ids":["group"],"type":3}},"content":{"attachments":[],"properties":{},"text":"hello"}}') {
-                return Promise.resolve(readTestData('encodedobjects', 'activity.json'));
+            if (body == '{"target":{"ids":{"ids":["group"],"type":3}},"content":{"attachments":[],"button":null,"poll":null,"properties":{},"text":"hello"}}') {
+                return Promise.resolve(readObjectToDecode('activity.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.updateActivity') {
-            if (body == '{"target":"oldid","content":{"attachments":[],"properties":{},"text":"hi there"}}') {
-                return Promise.resolve(readTestData('encodedobjects', 'activity.json'));
+            if (body == '{"target":"oldid","content":{"attachments":[],"button":null,"poll":null,"properties":{},"text":"hi there"}}') {
+                return Promise.resolve(readObjectToDecode('activity.json'));
             }
             return Promise.reject(new Error());
         }
@@ -196,8 +196,8 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getReactions') {
-            if (body == '{"query":{"ids":{"ids":["activity"],"type":6}},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'userreactions.json')));
+            if (body == '{"limit":20,"query":{"ids":{"ids":["activity"],"type":6}}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('userreactions.json')));
             }
             return Promise.reject(new Error());
         }
@@ -220,8 +220,8 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getVotes') {
-            if (body == '{"query":{"ids":{"ids":["activity"],"type":6}},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'uservotes.json')));
+            if (body == '{"limit":20,"query":{"ids":{"ids":["activity"],"type":6},"pollOptionId":null}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('uservotes.json')));
             }
             return Promise.reject(new Error());
         }
@@ -238,37 +238,37 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTags') {
-            if (body == '{"query":"hell","trending":false}') {
+            if (body == '{"query":"hell","target":null,"trending":false}') {
                 return Promise.resolve('["hello", "hell!"]');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopic') {
             if (body == 'topicid') {
-                return Promise.resolve(readTestData('encodedobjects', 'topic.json'));
+                return Promise.resolve(readObjectToDecode('topic.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopics') {
-            if (body == '{"query":{"trending":false},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'topic.json')));
+            if (body == '{"limit":20,"query":{"followerId":null,"searchTerm":"","trending":false}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('topic.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopicsCount') {
-            if (body == '{"searchTerm":"rn","trending":false}') {
+            if (body == '{"followerId":null,"searchTerm":"rn","trending":false}') {
                 return Promise.resolve('{"result": 0}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Invites.getAvailableChannels') {
             if (body == '') {
-                return Promise.resolve('[' + readTestData('encodedobjects', 'invitechannel.json') + ']');
+                return Promise.resolve('[' + readObjectToDecode('invitechannel.json') + ']');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Invites.createLink') {
-            if (body == '{"linkParams":{"link":"param"}}') {
+            if (body == '{"linkParams":{"link":"param"},"mediaAttachment":null,"subject":null,"text":null}') {
                 return Promise.resolve('{"result": "https://google.com"}');
             }
             return Promise.reject(new Error());
@@ -277,31 +277,31 @@ NativeModules.RNGetSocial = {
             if (body == '{"content":null,"channelId":"cancel"}') {
                 return Promise.resolve('{"result": "cancel"}');
             }
-            if (body == '{"content":{"text":"text","linkParams":{}},"channelId":"cancel"}') {
+            if (body == '{"content":{"linkParams":{},"mediaAttachment":null,"subject":null,"text":"text"},"channelId":"cancel"}') {
                 return Promise.resolve('{"result": ""}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Invites.create') {
             if (body == null) {
-                return Promise.resolve(readTestData('encodedobjects', 'invite.json'));
+                return Promise.resolve(readObjectToDecode('invite.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Invites.getReferredUsers') {
-            if (body == '{"query":{"eventName":""},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'referraluser.json')));
+            if (body == '{"limit":20,"query":{"eventName":""}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('referraluser.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Invites.getReferrerUsers') {
-            if (body == '{"query":{"eventName":"hello"},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'referraluser.json')));
+            if (body == '{"limit":20,"query":{"eventName":"hello"}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('referraluser.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Invites.setReferrer') {
-            if (body == '{"userId":{"userId":"bob"},"eventName":"app_delete","customData":{"key":"value"}}') {
+            if (body == '{"userId":{"provider":null,"userId":"bob"},"eventName":"app_delete","customData":{"key":"value"}}') {
                 return Promise.resolve();
             }
             return Promise.reject(new Error());
@@ -319,19 +319,19 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Notifications.get') {
-            if (body == '{"query":{"statuses":[],"types":[],"actions":[]},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'notification.json')));
+            if (body == '{"limit":20,"query":{"actions":[],"statuses":[],"types":[]}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('notification.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Notifications.count') {
-            if (body == '{"statuses":[],"types":[],"actions":[]}') {
+            if (body == '{"actions":[],"statuses":[],"types":[]}') {
                 return Promise.resolve('{"result": 30}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Notifications.send') {
-            if (body == '{"target":{"placeholderIds":["placeholder"]},"content":{"text":"text","templatePlaceholders":{},"actionButtons":[]}}') {
+            if (body == '{"target":{"placeholderIds":["placeholder"],"userIdList":null},"content":{"text":"text","templatePlaceholders":{},"actionButtons":[]}}') {
                 return Promise.resolve();
             }
             return Promise.reject(new Error());
@@ -343,32 +343,32 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'PromoCodes.create') {
-            if (body == '{"code":"secretcode","data":{},"maxClaimCount":0}') {
-                return Promise.resolve(readTestData('encodedobjects', 'promocode.json'));
+            if (body == '{"code":"secretcode","data":{},"endDate":0,"maxClaimCount":0,"startDate":0}') {
+                return Promise.resolve(readObjectToDecode('promocode.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'PromoCodes.claim') {
             if (body == 'code') {
-                return Promise.resolve(readTestData('encodedobjects', 'promocode.json'));
+                return Promise.resolve(readObjectToDecode('promocode.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'PromoCodes.get') {
             if (body == 'code') {
-                return Promise.resolve(readTestData('encodedobjects', 'promocode.json'));
+                return Promise.resolve(readObjectToDecode('promocode.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.createGroup') {
-            if (body == '{"id":"groupid","properties":{},"permissions":{}}') {
-                return Promise.resolve(readTestData('encodedobjects', 'group.json'));
+            if (body == '{"avatar":null,"description":null,"id":"groupid","isDiscoverable":false,"isPrivate":false,"permissions":{},"properties":{},"title":null}') {
+                return Promise.resolve(readObjectToDecode('group.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.updateGroup') {
-            if (body == '{"groupId":"oldgroupid","content":{"id":"groupid","properties":{},"permissions":{}}}') {
-                return Promise.resolve(readTestData('encodedobjects', 'group.json'));
+            if (body == '{"groupId":"oldgroupid","content":{"avatar":null,"description":null,"id":"groupid","isDiscoverable":false,"isPrivate":false,"permissions":{},"properties":{},"title":null}}') {
+                return Promise.resolve(readObjectToDecode('group.json'));
             }
             return Promise.reject(new Error());
         }
@@ -380,73 +380,73 @@ NativeModules.RNGetSocial = {
         }
         if (method == 'Communities.getGroup') {
             if (body == 'oldgroupid') {
-                return Promise.resolve(readTestData('encodedobjects', 'group.json'));
+                return Promise.resolve(readObjectToDecode('group.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroups') {
-            if (body == '{"query":{"searchTerm":"searchTerm","trending":false},"limit":40}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'group.json')));
+            if (body == '{"limit":40,"query":{"followerId":null,"memberId":null,"searchTerm":"searchTerm","trending":false}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('group.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroupsCount') {
-            if (body == '{"searchTerm":"searchTerm","trending":false}') {
+            if (body == '{"followerId":null,"memberId":null,"searchTerm":"searchTerm","trending":false}') {
                 return Promise.resolve('{"result": 40}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.updateGroupMembers') {
-            if (body == '{"role":0,"status":2,"groupId":"groupId","userIdList":{"ids":["userid1","userid2"]}}') {
-                return Promise.resolve('[' + readTestData('encodedobjects', 'groupmember.json') + ']');
+            if (body == '{"role":0,"status":2,"groupId":"groupId","userIdList":{"ids":["userid1","userid2"],"provider":null}}') {
+                return Promise.resolve('[' + readObjectToDecode('groupmember.json') + ']');
             }
-            if (body == '{"role":3,"status":0,"groupId":"groupId","userIdList":{"ids":["GETSOCIAL_CURRENT_USER_PLACEHOLDER_42_42"]},"invitationToken":"token"}') {
-                return Promise.resolve('[' + readTestData('encodedobjects', 'groupmember.json') + ']');
+            if (body == '{"role":3,"status":0,"groupId":"groupId","userIdList":{"ids":["GETSOCIAL_CURRENT_USER_PLACEHOLDER_42_42"],"provider":null},"invitationToken":"token"}') {
+                return Promise.resolve('[' + readObjectToDecode('groupmember.json') + ']');
             }
-            if (body == '{"role":1,"status":2,"groupId":"groupId","userIdList":{"ids":["id1","id2"]}}') {
-                return Promise.resolve('[' + readTestData('encodedobjects', 'groupmember.json') + ']');
+            if (body == '{"groupId":"groupId","invitationToken":null,"role":1,"status":2,"userIdList":{"ids":["id1","id2"],"provider":null}}') {
+                return Promise.resolve('[' + readObjectToDecode('groupmember.json') + ']');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.removeGroupMembers') {
-            if (body == '{"userIdList":{"ids":["id1","id2"]},"groupId":"groupId"}') {
+            if (body == '{"groupId":"groupId","userIdList":{"ids":["id1","id2"],"provider":null}}') {
                 return Promise.resolve();
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroupMembers') {
-            if (body == '{"query":{"groupId":"groupId"},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'groupmember.json')));
+            if (body == '{"limit":20,"query":{"groupId":"groupId","role":null,"status":null}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('groupmember.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.areGroupMembers') {
-            if (body == '{"groupId":"groupId","userIdList":{"ids":["jane","john"]}}') {
-                return Promise.resolve('{"jane": ' + readTestData('encodedobjects', 'membership.json') + ', "john": null}');
+            if (body == '{"groupId":"groupId","userIdList":{"ids":["jane","john"],"provider":null}}') {
+                return Promise.resolve('{"jane": ' + readObjectToDecode('membership.json') + ', "john": null}');
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.sendChatMessage') {
-            if (body == '{"target":{"id":"id"},"content":{"attachments":[],"properties":{},"text":"hello"}}') {
-                return Promise.resolve(readTestData('encodedobjects', 'chatmessage.json'));
+            if (body == '{"target":{"id":"id","userId":null},"content":{"attachments":[],"properties":{},"text":"hello"}}') {
+                return Promise.resolve(readObjectToDecode('chatmessage.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getChatMessages') {
-            if (body == '{"query":{"chatId":{"id":"id"}},"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'chatmessage.json')));
+            if (body == '{"limit":20,"query":{"chatId":{"id":"id","userId":null}}}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('chatmessage.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getChats') {
             if (body == '{"limit":20}') {
-                return Promise.resolve(createPagingResult(readTestData('encodedobjects', 'chat.json')));
+                return Promise.resolve(createPagingResult(readObjectToDecode('chat.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getChat') {
-            if (body == '{"userId":{"userId":"hey"}}') {
-                return Promise.resolve(readTestData('encodedobjects', 'chat.json'));
+            if (body == '{"id":null,"userId":{"provider":null,"userId":"hey"}}') {
+                return Promise.resolve(readObjectToDecode('chat.json'));
             }
             return Promise.reject(new Error());
         }
@@ -457,7 +457,7 @@ function createPagingResult(entry) {
     return '{"next": "123", "entries": [' + entry + ']}';
 }
 
-function readTestData(dir, filename) {
-    const filePath = './../../jsonbridge-testdata/' + dir + '/' + filename;
+function readObjectToDecode(filename) {
+    const filePath = './../../jsonbridge-testdata/native_to_wrapper/' + filename;
     return fs.readFileSync(filePath, 'utf8');
 }

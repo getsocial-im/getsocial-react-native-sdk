@@ -1,3 +1,7 @@
+## v7.3.2 - Oct 26, 2021
+
++ New: added `BanInfo` to `CurrentUser`.
+
 ## v7.3.1 - Oct 14, 2021
 
 + Overall improvements.

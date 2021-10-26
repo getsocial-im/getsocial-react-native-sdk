@@ -50,6 +50,6 @@ export default class TagsQuery {
   * @return {string} object as json.
   */
     toJSON() {
-        return {query: this.search, target: this.target, trending: this.trending};
+        return {query: this.search, target: this.target ?? null, trending: this.trending};
     }
 }

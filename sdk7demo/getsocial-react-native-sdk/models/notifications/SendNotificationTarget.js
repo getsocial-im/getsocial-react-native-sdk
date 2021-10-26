@@ -47,6 +47,6 @@ export default class SendNotificationTarget {
     * @return {string} object as json.
     */
     toJSON() {
-        return {userIdList: this.userIdList, placeholderIds: this.placeholders};
+        return {placeholderIds: this.placeholders, userIdList: this.userIdList ?? null};
     }
 }

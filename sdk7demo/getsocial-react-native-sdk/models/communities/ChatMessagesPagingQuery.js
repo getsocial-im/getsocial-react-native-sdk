@@ -5,7 +5,7 @@ import ChatMessagesQuery from './ChatMessagesQuery.js';
  * ChatMessagesPagingQuery object.
  */
 export default class ChatMessagesPagingQuery {
-  static DefaultLimit = 20;
+  static DefaultLimit = 50;
 
   query: ChatMessagesQuery
 
@@ -23,6 +23,6 @@ export default class ChatMessagesPagingQuery {
   * @return {string} object as json.
   */
   toJSON() {
-      return {query: this.query, nextMessages: this.next, previousMessages: this.previous, limit: this.limit};
+      return {limit: this.limit, nextMessages: this.next ?? null, previousMessages: this.previous ?? null, query: this.query};
   }
 }

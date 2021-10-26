@@ -82,7 +82,7 @@ export default class MediaAttachment {
    * @return {string} object as json.
    */
   toJSON() {
-      return {imageUrl: this.#imageUrl, image: this.#base64Image, videoUrl: this.#videoUrl, video: this.#base64Video};
+      return {gifUrl: null, image: this.#base64Image ?? null, imageUrl: this.#imageUrl ?? null, video: this.#base64Video ?? null, videoUrl: this.#videoUrl ?? null};
   }
 
   // eslint-disable-next-line require-jsdoc

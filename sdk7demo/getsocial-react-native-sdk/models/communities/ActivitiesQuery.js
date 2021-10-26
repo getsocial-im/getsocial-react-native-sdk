@@ -135,6 +135,6 @@ export default class ActivitiesQuery {
   * @return {string} object as json.
   */
   toJSON() {
-      return {ids: this.ids, author: this.author, tag: this.tag, pollStatus: this.pollStatus, trending: this.trending};
+      return {author: this.author ?? null, ids: this.ids, pollStatus: this.pollStatus, tag: this.tag ?? null, trending: this.trending};
   }
 }

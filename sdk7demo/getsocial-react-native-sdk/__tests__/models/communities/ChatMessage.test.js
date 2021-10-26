@@ -1,9 +1,9 @@
 import ChatMessage from './../../../models/communities/ChatMessage.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'chatmessage.json');
+const testData = readObjectToDecode('chatmessage.json');
 const message = new ChatMessage(JSON.parse(testData));
 test('parsed ChatMessage object properties must match', () => {
     expect(message.id).toBe('messageid');

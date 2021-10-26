@@ -12,6 +12,7 @@ import GetSocialUI from './GetSocialUI.js';
 import CurrentUser from './CurrentUser.js';
 import Topic from './models/communities/Topic.js';
 import PurchaseData from './models/analytics/PurchaseData.js';
+import BanInfo from './models/BanInfo.js';
 import PagingQuery from './models/PagingQuery.js';
 import PagingResult from './models/PagingResult.js';
 import UserId from './models/UserId.js';
@@ -87,7 +88,7 @@ module.exports = {GetSocial, GetSocialUI, CurrentUser,
     User, SuggestedFriend, UserUpdate, TagsQuery, Topic, PurchaseData, AnnouncementsQuery, PostActivityTarget, ReactionsQuery,
     UsersQuery, PagingQuery, PagingResult, UserId, UserIdList, UserReactions, RemoveActivitiesQuery, Invite,
     Invites, ReferralData, ReferralUser, ReferralUsersQuery, NotificationButton, NotificationBadge, NotificationCustomization,
-    TopicsQuery, ActivitiesView, ActivitiesQuery, FollowQuery, FollowersQuery,
+    TopicsQuery, ActivitiesView, ActivitiesQuery, FollowQuery, FollowersQuery, BanInfo,
     PromoCode, PromoCodeContent, Activity, ActivityContent, PromoCodes, SendNotificationTarget,
     Group, GroupsQuery, GroupContent, GroupMember, Membership, MemberStatus, Role, MembersQuery,
     AddGroupMembersQuery, UpdateGroupMembersQuery, JoinGroupQuery, RemoveGroupMembersQuery,

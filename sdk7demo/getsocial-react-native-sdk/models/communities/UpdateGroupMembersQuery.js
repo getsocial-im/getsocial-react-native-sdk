@@ -50,4 +50,12 @@ export default class UpdateGroupMembersQuery {
         this.status = memberStatus;
         return this;
     }
+
+    /**
+    * Generates JSON string.
+    * @return {string} object as json.
+    */
+    toJSON() {
+        return {groupId: this.groupId, invitationToken: this.invitationToken ?? null, role: this.role, status: this.status, userIdList: this.userIdList};
+    }
 }

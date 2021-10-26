@@ -17,6 +17,9 @@ android {
     warning 'InvalidPackage'
   }
   testOptions {
+    unitTests.all {
+      useJUnitPlatform()
+    }
     unitTests.returnDefaultValues = true
   }
 }
@@ -38,4 +41,3 @@ dependencies {
   // Optional. GetSocial is using it to obtain more accurate data about installs and make attribution more reliable
   implementation 'com.android.installreferrer:installreferrer:2.1'
 }
-

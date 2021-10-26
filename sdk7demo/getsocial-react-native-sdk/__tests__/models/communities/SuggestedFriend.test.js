@@ -1,9 +1,9 @@
 import SuggestedFriend from './../../../models/communities/SuggestedFriend.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'suggestedfriend.json');
+const testData = readObjectToDecode('suggestedfriend.json');
 const user = new SuggestedFriend(JSON.parse(testData));
 test('parsed SuggestedFriend object properties must match', () => {
     expect(user.userId).toBe('userid');

@@ -2,10 +2,10 @@ import Topic from './../../../models/communities/Topic.js';
 import CommunitiesAction from './../../../models/communities/CommunitiesAction.js';
 import Role from './../../../models/communities/Role.js';
 
-const {readTestData} = require('./../../utils/TestUtils.test.js');
+const {readObjectToDecode} = require('./../../utils/TestUtils.test.js');
 
 // Test json received from bridge
-const testData = readTestData('encodedobjects', 'topic.json');
+const testData = readObjectToDecode('topic.json');
 const topic = new Topic(JSON.parse(testData));
 test('parsed Topic object properties must match', () => {
     expect(topic.createdAt).toBe(123);

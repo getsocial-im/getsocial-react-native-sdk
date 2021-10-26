@@ -53,6 +53,6 @@ export default class UserId {
   * @return {string} object as json.
   */
   toJSON() {
-      return {userId: this.#id, providerId: this.#providerId};
+      return {provider: this.#providerId ?? null, userId: this.#id};
   }
 }

@@ -49,6 +49,6 @@ export default class UserIdList {
   * @return {string} object as json.
   */
   toJSON() {
-      return {ids: this.#ids, provider: this.#providerId};
+      return {ids: this.#ids, provider: this.#providerId ?? null};
   }
 }

@@ -30,6 +30,6 @@ export default class NotificationCustomization {
   * @return {string} object as json.
   */
   toJSON() {
-      return {backgroundImage: this.backgroundImage, titleColor: this.titleColor, textColor: this.textColor};
+      return {backgroundImage: this.backgroundImage, textColor: this.textColor, titleColor: this.titleColor};
   }
 }

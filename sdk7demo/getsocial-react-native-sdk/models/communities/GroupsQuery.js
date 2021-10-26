@@ -71,6 +71,6 @@ export default class GroupsQuery {
     * @return {string} object as json.
     */
     toJSON() {
-        return {searchTerm: this.search, followerId: this.followerId, memberId: this.memberId, trending: this.trending};
+        return {followerId: this.followerId ?? null, memberId: this.memberId ?? null, searchTerm: this.search ?? null, trending: this.trending};
     }
 }
