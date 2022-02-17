@@ -10,6 +10,8 @@ export default class GroupsQuery {
     followerId: ?UserId;
     memberId: ?UserId;
     trending: boolean = false;
+    labels: Array<string> = [];
+    properties: {[key: string] : string} = {};
 
     /**
     * Get all groups.
@@ -37,7 +39,7 @@ export default class GroupsQuery {
     * Get groups followed by a specific user.
     *
     * @param {UserId} userId ID of user.
-    * @return {GroupsQuery} new instance.
+    * @return {GroupsQuery} same instance.
     */
     followedBy(userId: UserId): GroupsQuery {
         this.followerId = userId;
@@ -48,7 +50,7 @@ export default class GroupsQuery {
     * Get groups by member.
     *
     * @param {UserId} userId ID of user.
-    * @return {GroupsQuery} new instance.
+    * @return {GroupsQuery} same instance.
     */
     withMember(userId: UserId): GroupsQuery {
         this.memberId = userId;
@@ -59,10 +61,32 @@ export default class GroupsQuery {
     * Get only trending groups.
     *
     * @param {boolean} trending Only trending groups or all.
-    * @return {GroupsQuery} new query.
+    * @return {GroupsQuery} same query.
     */
     onlyTrending(trending: boolean): GroupsQuery {
         this.trending = trending;
+        return this;
+    }
+
+    /**
+     * Get groups matching the specified properties.
+     *
+     * @param {Object<string, string>} properties Properties.
+     * @return {GroupsQuery} same query.
+     */
+    withProperties(properties: {[key: string] : string}): GroupsQuery {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * Get groups matching the specified labels.
+     *
+     * @param {[string]} labels Labels list.
+     * @return {GroupsQuery} same query.
+     */
+    withLabels(labels: string[]): GroupsQuery {
+        this.labels = labels;
         return this;
     }
 
@@ -71,6 +95,6 @@ export default class GroupsQuery {
     * @return {string} object as json.
     */
     toJSON() {
-        return {followerId: this.followerId ?? null, memberId: this.memberId ?? null, searchTerm: this.search ?? null, trending: this.trending};
+        return {followerId: this.followerId ?? null, labels: this.labels ?? null, memberId: this.memberId ?? null, properties: this.properties ?? null, searchTerm: this.search ?? null, trending: this.trending};
     }
 }

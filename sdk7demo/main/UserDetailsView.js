@@ -58,11 +58,22 @@ class UserDetailsView extends Component<Props, State> {
             }
             this.setState({publicProperties: JSON.stringify(currentUser.publicProperties)});
             this.setState({privateProperties: JSON.stringify(currentUser.privateProperties)});
-            if (currentUser.isBanned()) {
-                this.setState({banInfo: JSON.stringify(currentUser.banInfo)});
-            } else {
-                this.setState({banInfo: 'Not banned'});
-            }
+            currentUser.isBanned()
+                .then((isBanned) => {
+                    console.log ({ isBanned });
+                    if (isBanned) {
+                        currentUser.getBanInfo()
+                            .then((banInfo) => {
+                                this.setState({
+                                    banInfo: JSON.stringify(banInfo)
+                                });
+                            })
+                            .catch(console.error);
+                    } else {
+                        this.setState({banInfo: 'Not banned'});
+                    }
+                })
+                .catch(console.error);
         });
     }
 

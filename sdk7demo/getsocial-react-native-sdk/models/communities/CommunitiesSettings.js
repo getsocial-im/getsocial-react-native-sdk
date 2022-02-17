@@ -10,6 +10,7 @@ export default class CommunitiesSettings {
     isPrivate: boolean;
     isDiscoverable: boolean;
     permissions: {[key: number]: number} = {};
+    labels: Array<string> = [];
 
     /**
     * Check if current user is allowed to perform a certain action.
@@ -29,6 +30,7 @@ export default class CommunitiesSettings {
         this.isDiscoverable = settingsMap['isDiscoverable'] === true;
         this.isPrivate = settingsMap['isPrivate'] === true;
         this.permissions = settingsMap['permissions'];
+        this.labels = settingsMap['labels'];
         Object.freeze(this);
     }
 }

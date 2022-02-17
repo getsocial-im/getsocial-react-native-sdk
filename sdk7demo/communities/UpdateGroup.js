@@ -25,6 +25,7 @@ type State = {
     base64Image: ?string,
     localImageUri: ?string,
     properties: Map<string, string>,
+    labels: [string],
     isPrivate: boolean,
     isDiscoverable: boolean,
     allowPost: string,
@@ -45,6 +46,7 @@ export default class UpdateGroupView extends Component<Props, State> {
           base64Image: null,
           localImageUri: null,
           properties: new Map(),
+          labels: new Array(),
           isPrivate: UpdateGroupView.oldGroup == null ? null : UpdateGroupView.oldGroup.settings.isPrivate,
           isDiscoverable: UpdateGroupView.oldGroup == null ? null : UpdateGroupView.oldGroup.settings.isDiscoverable,
           allowPost: '0',
@@ -144,8 +146,40 @@ export default class UpdateGroupView extends Component<Props, State> {
         });
     }
 
+    addLabelsRow = async () => {
+        this.setState({
+            labels: [
+                ...this.state.labels,
+                { key: 'LBL_' + this.generateRandom() }
+            ],
+        });
+    }
 
-    createGroup = async () => {
+    removeLabelsRow = async (key: string) => {
+        this.setState((prevState) => {
+            return {
+                labels: prevState.labels
+                    .filter((label) => label.key !== key)
+            };
+        });
+    }
+
+    updateLabelData = async (key: string, newLabel: string) => {
+        this.setState((prevState) => {
+            return {
+                labels: prevState.labels
+                    .map((label) => {
+                        if (label.key === key) {
+                            label.label = newLabel;
+                        }
+
+                        return label
+                    })
+            };
+        });
+    }
+
+    updateGroup = async () => {
         let mediaAttachment = null;
         if (this.state.avatarUrl != null && this.state.avatarUrl.length != 0) {
             mediaAttachment = MediaAttachment.withImageUrl(this.state.avatarUrl);
@@ -174,6 +208,7 @@ export default class UpdateGroupView extends Component<Props, State> {
             return;
         }
         content.properties = propertiesMap;
+        content.labels = this.state.labels.map((label) => label.label);
         content.isPrivate = this.state.isPrivate;
         content.isDiscoverable = this.state.isDiscoverable;
         const permissionsMap = {};
@@ -197,43 +232,56 @@ export default class UpdateGroupView extends Component<Props, State> {
 
     componentDidMount() {
         const props = [];
-        if (UpdateGroupView.oldGroup != undefined && UpdateGroupView.oldGroup != null && UpdateGroupView.oldGroup.settings.properties.length != 0) {
-            Object.keys(UpdateGroupView.oldGroup.settings.properties).map((itemKey) => {
-                props.push({key: ('PR_' + itemKey), name: itemKey, value: UpdateGroupView.oldGroup.settings.properties[itemKey]});
-            });
-        }
-        this.setState({
-            properties: props,
-        });
-        if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.Post] == 0) {
-            this.setState({
-                allowPost: '0',
-            });
-        }
-        if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.Post] == 1) {
-            this.setState({
-                allowPost: '1',
-            });
-        }
-        if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.Post] == 3) {
-            this.setState({
-                allowPost: '3',
-            });
-        }
-        if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.React] == 0) {
-            this.setState({
-                allowInteract: '0',
-            });
-        }
-        if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.React] == 1) {
-            this.setState({
-                allowInteract: '1',
-            });
-        }
-        if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.React] == 3) {
-            this.setState({
-                allowInteract: '3',
-            });
+        if (UpdateGroupView.oldGroup != undefined && UpdateGroupView.oldGroup != null) {
+            if(UpdateGroupView.oldGroup.settings.properties.length != 0) {
+                Object.keys(UpdateGroupView.oldGroup.settings.properties).map((itemKey) => {
+                    props.push({key: ('PR_' + itemKey), name: itemKey, value: UpdateGroupView.oldGroup.settings.properties[itemKey]});
+                });
+                this.setState({
+                    properties: props,
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.labels.length) {
+                this.setState({
+                    labels: UpdateGroupView.oldGroup.settings.labels
+                        .map((label) => {
+                            return {
+                                key: 'LBL_' + label,
+                                label
+                            };
+                        }),
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.Post] == 0) {
+                this.setState({
+                    allowPost: '0',
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.Post] == 1) {
+                this.setState({
+                    allowPost: '1',
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.Post] == 3) {
+                this.setState({
+                    allowPost: '3',
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.React] == 0) {
+                this.setState({
+                    allowInteract: '0',
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.React] == 1) {
+                this.setState({
+                    allowInteract: '1',
+                });
+            }
+            if (UpdateGroupView.oldGroup.settings.permissions[CommunitiesAction.React] == 3) {
+                this.setState({
+                    allowInteract: '3',
+                });
+            }
         }
     }
 
@@ -406,6 +454,26 @@ export default class UpdateGroupView extends Component<Props, State> {
                     )}
                     keyExtractor={(item) => item.key}
                 />
+                <View style={CreateActivityPostStyle.formEntryButtonContainer}>
+                    <Button title='Add Label' onPress={ () => this.addLabelsRow() }/>
+                </View>
+                <FlatList style={{flex: 1}} removeClippedSubviews={false}
+                    data={this.state.labels}
+                    extraData={this.state.labels}
+                    renderItem={({item}) => (
+                        <View style={CreateActivityPostStyle.formEntryRow}>
+                            <View style={CreateActivityPostStyle.formEntryInputContainer}>
+                                <TextInput style={CreateActivityPostStyle.formEntryInput} onChangeText={(newLabel) => {
+                                    this.updateLabelData(item.key, newLabel);
+                                }} value={item.label} placeholder='label'/>
+                            </View>
+                            <View style={CreateActivityPostStyle.formEntryButtonContainer}>
+                                <Button title='Remove' onPress={ () => this.removeLabelsRow(item.key) }/>
+                            </View>
+                        </View>
+                    )}
+                    keyExtractor={(item) => item.key}
+                />
                 <View style={Styles.formEntryRow}>
                     <Text style={Styles.formEntryTitle}>Private</Text>
                     <Switch value={this.state.isPrivate} onValueChange={(newValue) => this.setState({isPrivate: newValue})}/>
@@ -418,7 +486,7 @@ export default class UpdateGroupView extends Component<Props, State> {
                 <KeyboardAvoidingView behavior='padding'>
                     <View style={CreateActivityPostStyle.sectionTitleRow}>
                         <View style={{flex: 1, justifyContent: 'center'}}>
-                            <Button title='Update' onPress={ () => this.createGroup() }/>
+                            <Button title='Update' onPress={ () => this.updateGroup() }/>
                         </View>
                     </View>
                 </KeyboardAvoidingView>

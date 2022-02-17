@@ -28,6 +28,8 @@ type State = {
     topics: [Topic],
     selectedTopic: ?Topic,
     searchText: string,
+    labels: [string],
+    properties: Map<string, string>,
     followStatus: ?Map<string, boolean>,
     showOnlyTrending: boolean,
 }
@@ -39,6 +41,29 @@ export default class TopicsListView extends Component<Props, State> {
 
     updateSearchText = async (text: String) => {
         this.setState({searchText: text});
+    }
+
+    updateLabels = async (text: String) => {
+        return this.setState({
+            labels: text
+                ? text.split(',').map((label) => label.trim())
+                : []
+        });
+    }
+
+    updateProps = async (text: String) => {
+        let properties = {};
+
+        if (text) {
+            text.split(',').forEach((prop) => {
+                prop = prop.split('=');
+                if (prop.length === 2 && prop[0] && prop[1]) {
+                    properties[prop[0].trim()] = prop[1].trim();
+                }
+            });
+        }
+
+        return this.setState({ properties });
     }
 
     generateOptions() : [string] {
@@ -121,17 +146,28 @@ export default class TopicsListView extends Component<Props, State> {
     }
 
     updateFollowStatus = async () => {
+        const topicId = this.state.selectedTopic.id;
+        const isFollowed = this.state.selectedTopic != undefined &&
+        (this.state.selectedTopic.isFollowedByMe ||
+            this.state.followStatus[topicId]);
+        const query = FollowQuery.topics([topicId]);
+
         showLoading();
-        const isFollowed = this.state.selectedTopic != undefined && (this.state.selectedTopic.isFollowedByMe === true || this.state.followStatus[this.state.selectedTopic.id] === true);
-        const query = FollowQuery.topics([this.state.selectedTopic.id]);
+
         if (isFollowed) {
             Communities.unfollow(query).then(
                 (result) => {
                     hideLoading();
                     Alert.alert('Unfollowed', 'You are following now ' + result + ' topics');
                     const mp = this.state.followStatus;
-                    mp[this.state.selectedTopic.id] = false;
+                    mp[topicId] = false;
                     this.setState({followStatus: mp});
+                    if (TopicsListView.areFollowedTopics) {
+                        this.setState({
+                            topics: this.state.topics
+                                .filter((topic) => topic.id !== topicId)
+                        });
+                    }
                 },
                 (error) => {
                     hideLoading();
@@ -193,8 +229,18 @@ export default class TopicsListView extends Component<Props, State> {
 
     loadTopics = async () => {
         showLoading();
-        let query = TopicsListView.query == null ? (this.state.searchText == null ? TopicsQuery.all() : TopicsQuery.find(this.state.searchText)) : TopicsListView.query;
-        query = query.onlyTrending(this.state.showOnlyTrending);
+        let query = TopicsListView.query == null
+            ? (this.state.searchText == null
+                ? TopicsQuery.all()
+                : TopicsQuery.find(this.state.searchText)
+            )
+            : TopicsListView.query;
+
+        query
+            .onlyTrending(this.state.showOnlyTrending)
+            .withProperties(this.state.properties)
+            .withLabels(this.state.labels);
+
         Communities.getTopics(new PagingQuery(query)).then((result) => {
             hideLoading();
             this.setState({topics: result.entries});
@@ -229,21 +275,6 @@ export default class TopicsListView extends Component<Props, State> {
         });
     }
 
-    renderSearchBar() {
-        if (!TopicsListView.areFollowedTopics) {
-            return (<SearchBar
-                ref="topicsearch"
-                textColor='black'
-                autoCapitalize='none'
-                onChangeText= { (text) => this.updateSearchText(text) }
-                placeholder="Search"
-                onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadTopics()) }
-                onSearchButtonPress={ () => this.loadTopics() }
-            />);
-        }
-        return null;
-    }
-
     updateFilterButton = async () => {
         const currentValue = this.state.showOnlyTrending;
         this.setState({showOnlyTrending: !currentValue}, () => {
@@ -254,7 +285,38 @@ export default class TopicsListView extends Component<Props, State> {
     render() {
         return (
             <View style={MenuStyle.container}>
-                {this.renderSearchBar()}
+                {
+                    !TopicsListView.areFollowedTopics &&
+                    <>
+                        <SearchBar
+                            ref="topicsearch"
+                            textColor='black'
+                            autoCapitalize='none'
+                            onChangeText= { (text) => this.updateSearchText(text) }
+                            placeholder="Search"
+                            onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadTopics()) }
+                            onSearchButtonPress={ () => this.loadTopics() }
+                        />
+                        <SearchBar
+                            ref="topicLabels"
+                            textColor='black'
+                            autoCapitalize='none'
+                            onChangeText= { (text) => this.updateLabels(text) }
+                            placeholder="label1,label2"
+                            onCancelButtonPress= { () => this.updateLabels().then(() => this.loadTopics()) }
+                            onSearchButtonPress={ () => this.loadTopics() }
+                        />
+                        <SearchBar
+                            ref="topicProps"
+                            textColor='black'
+                            autoCapitalize='none'
+                            onChangeText= { (text) => this.updateProps(text) }
+                            placeholder="key=value,key1=value1"
+                            onCancelButtonPress= { () => this.updateProps().then(() => this.loadTopics()) }
+                            onSearchButtonPress={ () => this.loadTopics() }
+                        />
+                    </>
+                }
                 <View style={MenuStyle.menuitem}>
                     <Button title={this.state.showOnlyTrending ? 'All': 'Only Trending'} onPress={ this.updateFilterButton }/>
                 </View>
@@ -263,10 +325,20 @@ export default class TopicsListView extends Component<Props, State> {
                         data={this.state.topics}
                         renderItem={({item}) => (
                             <TouchableWithoutFeedback>
-                                <View style={MenuStyle.listitem}>
+                                <View style={MenuStyle.listitem4rows}>
                                     <View style={{flex: 1, flexDirection: 'column', width: '80%'}}>
-                                        <Text style={MenuStyle.menuitem14}>Title: {item.title}</Text>
-                                        <Text style={MenuStyle.menuitem14}>Popularity: {item.popularity}</Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Title: {item.title}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Popularity: {item.popularity}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Labels: {item.settings.labels.length ? item.settings.labels.join(', ') : 'None'}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Properties: {item.settings.properties ? JSON.stringify(item.settings.properties) : 'None'}
+                                        </Text>
                                     </View>
                                     <View>
                                         <Button title='Actions' onPress={ () => {

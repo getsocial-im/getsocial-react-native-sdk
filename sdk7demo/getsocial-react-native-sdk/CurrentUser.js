@@ -18,7 +18,6 @@ export default class User {
   identities: {[key: string] : string} = {};
   publicProperties: {[key: string] : string} = {};
   privateProperties: {[key: string] : string} = {};
-  banInfo: ?BanInfo;
 
   /**
    * Requests a bulk change of properties for the current user.
@@ -79,11 +78,39 @@ export default class User {
   }
 
   /**
-   * Returns if user is banned or not.
-   * @return {bool} True, if user is banned, otherwise false.
+   * Returns reason and expiration of the ban of the current user
+   * @return {Promise<BanInfo>} Ban information
    */
-  isBanned(): bool {
-      return (this.banInfo !== undefined && this.banInfo != null);
+  getBanInfo(): Promise<BanInfo> {
+      return RNGetSocial.callSync('CurrentUser.getBanInfo', '')
+          .then((res) => {
+              try {
+                  res = JSON.parse(res);
+                  if (!res || res.result === '') {
+                      return null;
+                  }
+
+                  return new BanInfo(res);
+              } catch (e) {
+                  throw e;
+              }
+          });
+  }
+
+  /**
+   * Returns if user is banned or not.
+   * @return {Promise<bool>} True, if user is banned, otherwise false.
+   */
+  isBanned(): Promise<bool> {
+      return RNGetSocial.callSync('CurrentUser.isBanned', '')
+          .then((res) => {
+              try {
+                  res = JSON.parse(res);
+                  return !!res.result;
+              } catch(e) {
+                  throw e;
+              }
+          });
   }
 
   /**

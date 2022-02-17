@@ -62,6 +62,7 @@ o2Content.text = 'option2';
 o2Content.attachment = MediaAttachment.withImageUrl('image2');
 pContent.options = [o1Content, o2Content];
 content5.poll = pContent;
+content5.labels = ['label1'];
 
 const json5 = JSON.stringify(content5);
 const jsonResult5 = readEncodedObject('activitycontent', 'activitycontent_complete.json');

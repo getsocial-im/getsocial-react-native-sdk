@@ -39,13 +39,13 @@ export default class ActivitiesView {
     show() {
         const parameters = {windowTitle: (this.windowTitle == null ? null : this.windowTitle), query: JSON.stringify(this.query)};
         GetSocialEventEmitter.removeAllListeners('view_open');
-        GetSocialEventEmitter.addListener('view_open', (result) => {
+        GetSocialEventEmitter.addListener('view_open', () => {
             if (this.onOpenListener != undefined) {
                 this.onOpenListener();
             }
         });
         GetSocialEventEmitter.removeAllListeners('view_close');
-        GetSocialEventEmitter.addListener('view_close', (result) => {
+        GetSocialEventEmitter.addListener('view_close', () => {
             if (this.onCloseListener != undefined) {
                 this.onCloseListener();
             }

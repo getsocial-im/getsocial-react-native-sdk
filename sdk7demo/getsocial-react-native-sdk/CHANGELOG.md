@@ -1,3 +1,20 @@
+## v7.9.0 - Feb 17, 2022
+
++ New: improved find for labels and hashtags.
++ New: find topics and groups by labels and properties.
++ New: find activities by content, labels and properties
++ New: get suggested users based on user connections and trending users
++ New: follow labels and tags to see related content in the user’s timeline.
++ New: bookmark activities and get all the bookmarked activities from the user.
++ New: get reacted or voted activities from the user.
++ New: filter activities by mentions of a user or the app.
++ Fixed: added missing PendingIntent.FLAG_IMMUTABLE flag to which caused crash on Android 12.
++ Fixed: isBanned() is now correctly updated if the ban expiration happens while the user is using the app.
++ Fixed: Push Notifications were not opening the app on Android 12.
++ Fixed: error when trying to open Native Share option on Android 12.
++ Fixed: Push Notifications listeners not working correctly on Android 12.
++ Overall improvements.
+
 ## v7.3.2 - Oct 26, 2021
 
 + New: added `BanInfo` to `CurrentUser`.
@@ -50,7 +67,7 @@
 
 ## v7.1.0 - Feb 12, 2021
 
-+ Added [Groups](https://docs.getsocial.im/guides/communities/groups/) and [Chat](https://docs.getsocial.im/guides/communities/chats/) features. 
++ Added [Groups](https://docs.getsocial.im/guides/communities/groups/) and [Chat](https://docs.getsocial.im/guides/communities/chats/) features.
 + Fix issue with AnnouncementsQuery.
 
 ## v7.0.15 - Feb 10, 2021

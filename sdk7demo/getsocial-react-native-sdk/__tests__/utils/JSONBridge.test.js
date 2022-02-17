@@ -397,10 +397,11 @@ it('removeActivities', () => {
 
 it('getTags', () => {
     expect.assertions(2);
-    const query = TagsQuery.search('hell');
+    const query = TagsQuery.search('tag');
     return JSONBridge.getTags(query).then((result) => {
-        expect(result[0]).toBe('hello');
-        expect(result[1]).toBe('hell!');
+        expect(result.next).toBe('123');
+        const tag = result.entries[0];
+        expect(tag.name).toBe('tag');
     });
 });
 

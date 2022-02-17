@@ -8,28 +8,27 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, FlatList, Text, Button, View, TouchableWithoutFeedback} from 'react-native';
-import {Communities, TagsQuery, ActivitiesView, ActivitiesQuery, Tag} from './../getsocial-react-native-sdk';
+import {Communities, LabelsQuery, ActivitiesView, ActivitiesQuery, Label} from './../getsocial-react-native-sdk';
 import SearchBar from 'react-native-search-bar';
-import ActionSheet from 'react-native-actionsheet';
 import PagingQuery from '../getsocial-react-native-sdk/models/PagingQuery';
-PagingQuery
+import ActionSheet from 'react-native-actionsheet';
 import FollowQuery from '../getsocial-react-native-sdk/models/communities/FollowQuery';
 import FollowersQuery from '../getsocial-react-native-sdk/models/communities/FollowersQuery';
 import FollowersListView from './FollowersList';
 
 type Props = { navigation: Function }
 type State = {
-    tags: [string],
-    selectedTag: ?Tag,
+    labels: [string],
+    selectedLabel: ?Label,
     followStatus: ?Map<string, boolean>,
     searchText: string,
     showOnlyTrending: boolean
 }
 
-export default class TagsListView extends Component<Props, State> {
-    static navigationOptions = {title: 'Tags'};
-    static query: TagsQuery;
-    static areFollowedTags: boolean = false;
+export default class LabelsListView extends Component<Props, State> {
+    static navigationOptions = {title: 'Labels'};
+    static query: LabelsQuery;
+    static areFollowedLabels: boolean = false;
 
     updateSearchText = async (text: String) => {
         this.setState({searchText: text});
@@ -39,9 +38,9 @@ export default class TagsListView extends Component<Props, State> {
         const options = [];
         options.push('Details');
         options.push('Show Feed');
-        const isFollowed = this.state.selectedTag != undefined &&
-            (this.state.selectedTag.isFollowedByMe ||
-                this.state.followStatus[this.state.selectedTag.name]);
+        const isFollowed = this.state.selectedLabel != undefined &&
+            (this.state.selectedLabel.isFollowedByMe ||
+                this.state.followStatus[this.state.selectedLabel.name]);
         options.push(isFollowed ? 'Unfollow' : 'Follow');
         options.push('Show Followers');
         options.push('Cancel');
@@ -49,7 +48,7 @@ export default class TagsListView extends Component<Props, State> {
     }
 
     showDetails = async () => {
-        let stringified = JSON.stringify(this.state.selectedTag);
+        let stringified = JSON.stringify(this.state.selectedLabel);
 
         Alert.alert('Details', stringified + '\n \n \n');
     }
@@ -75,22 +74,23 @@ export default class TagsListView extends Component<Props, State> {
         }
     }
 
-    loadTags = async () => {
-        let query = TagsListView.query == null
+    loadLabels = async () => {
+        showLoading();
+
+        let query = LabelsListView.query == null
             ? (this.state.searchText == null
-                ? TagsQuery.all()
-                : TagsQuery.search(this.state.searchText)
+                ? LabelsQuery.all()
+                : LabelsQuery.search(this.state.searchText)
             )
-            : TagsListView.query;
+            : LabelsListView.query;
 
         query.onlyTrending(this.state.showOnlyTrending);
 
-        showLoading();
-
-        Communities.getTags(new PagingQuery(query)).then((result) => {
+        Communities.getLabels(new PagingQuery(query)).then((result) => {
             hideLoading();
-            this.setState({tags: result.entries});
+            this.setState({labels: result.entries});
         }, (error) => {
+            console.log(error);
             hideLoading();
             Alert.alert('Error', error.message);
         });
@@ -98,23 +98,23 @@ export default class TagsListView extends Component<Props, State> {
 
     showFeed = () => {
         const query = ActivitiesQuery.everywhere();
-        query.withTag(this.state.selectedTag.name);
+        query.withLabels([this.state.selectedLabel.name]);
         const view = ActivitiesView.create(query);
         view.show();
     }
 
     showFollowers = async () => {
-        const query = FollowersQuery.ofTag(this.state.selectedTag.name);
+        const query = FollowersQuery.ofLabel(this.state.selectedLabel.name);
         FollowersListView.query = query;
         this.props.navigation.navigate('FollowersList');
     }
 
     updateFollowStatus = async () => {
-        const tagName = this.state.selectedTag.name;
-        const isFollowed = this.state.selectedTag &&
-            (this.state.selectedTag.isFollowedByMe ||
-                this.state.followStatus[tagName]);
-        const query = FollowQuery.tags([tagName]);
+        const labelName = this.state.selectedLabel.name;
+        const isFollowed = this.state.selectedLabel &&
+            (this.state.selectedLabel.isFollowedByMe ||
+                this.state.followStatus[labelName]);
+        const query = FollowQuery.labels([labelName]);
 
         showLoading();
 
@@ -122,14 +122,14 @@ export default class TagsListView extends Component<Props, State> {
             Communities.unfollow(query).then(
                 (result) => {
                     hideLoading();
-                    Alert.alert('Unfollowed', 'You are following now ' + result + ' tags');
+                    Alert.alert('Unfollowed', 'You are following now ' + result + ' labels');
                     const mp = this.state.followStatus;
-                    mp[tagName] = false;
+                    mp[labelName] = false;
                     this.setState({followStatus: mp});
-                    if (TagsListView.areFollowedTags) {
+                    if (LabelsListView.areFollowedLabels) {
                         this.setState({
-                            tags: this.state.tags
-                                .filter((tag) => tag.name !== tagName)
+                            labels: this.state.labels
+                                .filter((label) => label.name !== labelName)
                         });
                     }
                 },
@@ -141,9 +141,9 @@ export default class TagsListView extends Component<Props, State> {
             Communities.follow(query).then(
                 (result) => {
                     hideLoading();
-                    Alert.alert('Followed', 'You are following now ' + result + ' tags');
+                    Alert.alert('Followed', 'You are following now ' + result + ' labels');
                     const mp = this.state.followStatus;
-                    mp[tagName] = true;
+                    mp[labelName] = true;
                     this.setState({followStatus: mp});
                 },
                 (error) => {
@@ -157,9 +157,9 @@ export default class TagsListView extends Component<Props, State> {
         super(props);
 
         // $FlowFixMe
-        const emptyTags: [string]= [];
+        const emptyLabels: [string]= [];
         this.state = {
-            tags: emptyTags,
+            labels: emptyLabels,
             showOnlyTrending: false,
             followStatus: {},
             searchText: null,
@@ -167,11 +167,11 @@ export default class TagsListView extends Component<Props, State> {
     }
 
     componentDidMount() {
-        this.loadTags();
+        this.loadLabels();
     }
 
-    showActionSheet = (tag: Tag) => {
-        this.setState({selectedTag: tag}, () => {
+    showActionSheet = (label: Label) => {
+        this.setState({selectedLabel: label}, () => {
             this.ActionSheet.show();
         });
     }
@@ -179,7 +179,7 @@ export default class TagsListView extends Component<Props, State> {
     updateFilterButton = async () => {
         const currentValue = this.state.showOnlyTrending;
         this.setState({showOnlyTrending: !currentValue}, () => {
-            this.loadTags();
+            this.loadLabels();
         } );
     }
 
@@ -188,15 +188,15 @@ export default class TagsListView extends Component<Props, State> {
             <View style={MenuStyle.container}>
                 {/* menu starts */}
                 {
-                    !TagsListView.areFollowedTags &&
+                    !LabelsListView.areFollowedLabels &&
                     <SearchBar
-                        ref="tagsearch"
+                        ref="labelsearch"
                         textColor='black'
                         autoCapitalize='none'
                         onChangeText= { (text) => this.updateSearchText(text) }
                         placeholder="Search"
-                        onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadTags()) }
-                        onSearchButtonPress={ () => this.loadTags() }
+                        onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadLabels()) }
+                        onSearchButtonPress={ () => this.loadLabels() }
                     />
                 }
                 <View style={MenuStyle.menuitem}>
@@ -204,7 +204,7 @@ export default class TagsListView extends Component<Props, State> {
                 </View>
                 <View style={MenuStyle.menuContainer}>
                     <FlatList style={{flex: 1}}
-                        data={this.state.tags}
+                        data={this.state.labels}
                         renderItem={({item}) => (
                             <TouchableWithoutFeedback>
                                 <View style={MenuStyle.listitem4rows}>

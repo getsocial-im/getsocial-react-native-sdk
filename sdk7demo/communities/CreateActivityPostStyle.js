@@ -53,4 +53,8 @@ export const CreateActivityPostStyle = StyleSheet.create({
     pickerStyle: {
         height: 44,
     },
+    formEntryButtonContainer: {
+        marginTop: 10,
+        marginBottom: 5
+    }
 });

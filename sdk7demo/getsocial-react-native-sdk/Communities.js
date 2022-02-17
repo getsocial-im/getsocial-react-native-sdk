@@ -41,6 +41,9 @@ import ChatMessagesPagingResult from './models/communities/ChatMessagesPagingRes
 import ChatMessageContent from './models/communities/ChatMessageContent.js';
 import VotesQuery from './models/communities/VotesQuery.js';
 import UserVotes from './models/communities/UserVotes.js';
+import Tag from './models/communities/Tag.js';
+import LabelsQuery from './models/communities/LabelsQuery.js';
+import Label from './models/communities/Label.js';
 
 /**
  * Analytics interface of GetSocial plugin.
@@ -373,6 +376,26 @@ export default class Communities {
     }
 
     /**
+     * Bookmark an activity
+     *
+     * @param {string} activityId
+     * @return {void} Called if operation was successful
+     */
+    static bookmark(activityId: string): Promise<void> {
+        return JSONBridge.bookmark(activityId);
+    }
+
+    /**
+     * Remove a bookmark from an activity
+     *
+     * @param {string} activityId
+     * @return {void} Called if operation was successful
+     */
+    static removeBookmark(activityId: string): Promise<void> {
+        return JSONBridge.removeBookmark(activityId);
+    }
+
+    /**
      * Report activity with a specified reason.
      *
      * @param {string} id  ID of activity.
@@ -397,11 +420,41 @@ export default class Communities {
     /**
      * Get tags matching query. Returns a list of tags.
      *
-     * @param {TagsQuery} query Tags query and pagination details.
-     * @return {[string]} Called with list of tags.
+     * @param {PagingQuery<TagsQuery>} query Tags query and pagination details.
+     * @return {PagingResult<[Tag]>} Called with list of tags and a cursor for a next query.
      */
-    static getTags(query: TagsQuery): Promise<[string]> {
+    static getTags(query: PagingQuery<TagsQuery>): Promise<PagingResult<[Tag]>> {
         return JSONBridge.getTags(query);
+    }
+
+    /**
+     * Get tags count for matching query. Returns amount of tags.
+     *
+     * @param {TagsQuery} query Tags query.
+     * @return {number} Called with tags count.
+     */
+    static getTagsCount(query: TagsQuery): Promise<number> {
+        return JSONBridge.getTagsCount(query);
+    }
+
+    /**
+     * Get labels matching query. Returns a list of labels.
+     *
+     * @param {PagingQuery<LabelsQuery>} query Labels query and pagination details.
+     * @return {PagingResult<[Label]>} Called with list of labels and a cursor for a next query.
+     */
+    static getLabels(query: PagingQuery<LabelsQuery>): Promise<PagingResult<[Label]>> {
+        return JSONBridge.getLabels(query);
+    }
+
+    /**
+     * Get labels count for matching query. Returns amount of labels.
+     *
+     * @param {LabelsQuery} query Labels query.
+     * @return {number} Called with labels count.
+     */
+    static getLabelsCount(query: LabelsQuery): Promise<number> {
+        return JSONBridge.getLabelsCount(query);
     }
 
     /**

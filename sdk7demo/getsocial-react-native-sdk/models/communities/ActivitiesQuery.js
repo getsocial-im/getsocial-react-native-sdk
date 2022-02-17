@@ -13,6 +13,12 @@ export default class ActivitiesQuery {
   tag: ?string;
   pollStatus: PollStatus = PollStatus.All;
   trending: boolean = false;
+  labels: Array<string> = [];
+  properties: {[key: string] : string} = {};
+  mentions: Array<UserId> = [];
+  searchTerm: ?string;
+  reactionGroup: ?string;
+  reactions: Array<string> = [];
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
@@ -87,10 +93,49 @@ export default class ActivitiesQuery {
   }
 
   /**
+   * Get bookmarked activities.
+   *
+   * @return {ActivitiesQuery} new query.
+   */
+  static bookmarkedActivities(): ActivitiesQuery {
+      const query = ActivitiesQuery.everywhere();
+      query.reactionGroup = 'bookmarks';
+      return query;
+  }
+
+  /**
+   * Get activities that match given reaction(s).
+   *
+   * @param {[string]} reactions
+   * @return {ActivitiesQuery} new query.
+   */
+  static reactedActivities(reactions: string[]): ActivitiesQuery {
+      const query = ActivitiesQuery.everywhere();
+      query.reactionGroup = 'reactions';
+      query.reactions = reactions;
+
+      return query;
+  }
+
+  /**
+   * Get polls voted with the given option(s).
+   *
+   * @param {[string]} options
+   * @return {ActivitiesQuery} new query.
+   */
+  static votedActivities(options: string[]): ActivitiesQuery {
+      const query = ActivitiesQuery.everywhere();
+      query.reactionGroup = 'votes';
+      query.reactions = options;
+
+      return query;
+  }
+
+  /**
    * Get activities of a specific user.
    *
    * @param {UserId} id author of activities.
-   * @return {ActivitiesQuery} new query.
+   * @return {ActivitiesQuery} same query.
    */
   byUser(id: UserId): ActivitiesQuery {
       this.author = id;
@@ -101,7 +146,7 @@ export default class ActivitiesQuery {
    * Get activities with a specific tag.
    *
    * @param {string} tag tag in activity text.
-   * @return {ActivitiesQuery} new query.
+   * @return {ActivitiesQuery} same query.
    */
   withTag(tag: string): ActivitiesQuery {
       this.tag = tag;
@@ -112,7 +157,7 @@ export default class ActivitiesQuery {
    * Get activities with the specified poll status.
    *
    * @param {number} status Poll status value.
-   * @return {ActivitiesQuery} new query.
+   * @return {ActivitiesQuery} same query.
    */
   withPollStatus(status: number): ActivitiesQuery {
       this.pollStatus = status;
@@ -123,10 +168,54 @@ export default class ActivitiesQuery {
    * Get only trending activities.
    *
    * @param {boolean} trending Only trending activities or all.
-   * @return {ActivitiesQuery} new query.
+   * @return {ActivitiesQuery} same query.
    */
   onlyTrending(trending: boolean): ActivitiesQuery {
       this.trending = trending;
+      return this;
+  }
+
+  /**
+   * Get activities matching the specified text.
+   *
+   * @param {string} searchTerm Text.
+   * @return {ActivitiesQuery} same query.
+   */
+  withText(searchTerm: string): ActivitiesQuery {
+      this.searchTerm = searchTerm;
+      return this;
+  }
+
+  /**
+   * Get activities matching the specified properties.
+   *
+   * @param {Object<string, string>} properties Properties.
+   * @return {ActivitiesQuery} same query.
+   */
+  withProperties(properties: {[key: string] : string}): ActivitiesQuery {
+      this.properties = properties;
+      return this;
+  }
+
+  /**
+   * Get activities matching the specified labels.
+   *
+   * @param {[string]} labels Labels list.
+   * @return {ActivitiesQuery} same query.
+   */
+  withLabels(labels: string[]): ActivitiesQuery {
+      this.labels = labels;
+      return this;
+  }
+
+  /**
+   * Get activities matching the specified mentions.
+   *
+   * @param {[UserId]} mentions User IDs.
+   * @return {ActivitiesQuery} same query.
+   */
+  withMentions(mentions: UserId[]): ActivitiesQuery {
+      this.mentions = mentions;
       return this;
   }
 
@@ -135,6 +224,6 @@ export default class ActivitiesQuery {
   * @return {string} object as json.
   */
   toJSON() {
-      return {author: this.author ?? null, ids: this.ids, pollStatus: this.pollStatus, tag: this.tag ?? null, trending: this.trending};
+      return {author: this.author ?? null, ids: this.ids, labels: this.labels ?? null, mentions: this.mentions ?? null, pollStatus: this.pollStatus, properties: this.properties ?? null, reactions: this.reactions ?? null, reactionGroup: this.reactionGroup ?? null, searchTerm: this.searchTerm ?? null, tag: this.tag ?? null, trending: this.trending};
   }
 }

@@ -14,13 +14,14 @@ export default class ActivityContent {
   button: ?ActivityButton;
   properties: {[key: string] : string} = {};
   poll: ?PollContent;
+  labels: Array<string> = [];
 
   /**
   * Generates JSON string.
   * @return {string} object as json.
   */
   toJSON() {
-      return {attachments: this.attachments, button: this.button ?? null, poll: this.poll ?? null,
+      return {attachments: this.attachments, button: this.button ?? null, labels: this.labels ?? null, poll: this.poll ?? null,
           properties: this.properties, text: this.text ?? null};
   }
 }

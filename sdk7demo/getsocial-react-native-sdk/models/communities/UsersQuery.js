@@ -7,7 +7,9 @@ import UserId from './../UserId.js';
  */
 export default class UsersQuery {
   searchTerm: ?string;
-  userId: ?UserId
+  userId: ?UserId;
+  _suggested: ?boolean = false;
+
 
   // eslint-disable-next-line require-jsdoc
   constructor(searchTerm: string, userId: UserId) {
@@ -36,10 +38,22 @@ export default class UsersQuery {
   }
 
   /**
+   * Get suggested users.
+   *
+   * @return {UsersQuery} new instance.
+   */
+  static suggested(): UsersQuery {
+      const query = new UsersQuery();
+      query._suggested = true;
+
+      return query;
+  }
+
+  /**
    * Generates JSON string.
    * @return {string} object as json.
    */
   toJSON() {
-      return {followedBy: this.userId ?? null, query: this.searchTerm ?? null};
+      return {followedBy: this.userId ?? null, query: this.searchTerm ?? null, suggested: this._suggested ?? null};
   }
 }

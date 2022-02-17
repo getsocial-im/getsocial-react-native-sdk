@@ -28,6 +28,7 @@ type State = {
     action: ?string,
     actionData: Map<string, string>,
     properties: Map<string, string>,
+    labels: [string],
 }
 
 export default class CreateActivityPost extends Component<Props, State> {
@@ -50,6 +51,7 @@ export default class CreateActivityPost extends Component<Props, State> {
             actionButtonName: null,
             actionData: new Map(),
             properties: new Map(),
+            labels: new Array(),
         };
     }
 
@@ -195,6 +197,38 @@ export default class CreateActivityPost extends Component<Props, State> {
         });
     }
 
+    addLabelsRow = async () => {
+        this.setState({
+            labels: [
+                ...this.state.labels,
+                { key: 'LBL_' + this.generateRandom() }
+            ],
+        });
+    }
+
+    removeLabelsRow = async (key: string) => {
+        this.setState((prevState) => {
+            return {
+                labels: prevState.labels
+                    .filter((label) => label.key !== key)
+            };
+        });
+    }
+
+    updateLabelData = async (key: string, newLabel: string) => {
+        this.setState((prevState) => {
+            return {
+                labels: prevState.labels
+                    .map((label) => {
+                        if (label.key === key) {
+                            label.label = newLabel;
+                        }
+
+                        return label
+                    })
+            };
+        });
+    }
 
     createPost = async () => {
         let mediaAttachment = null;
@@ -231,6 +265,7 @@ export default class CreateActivityPost extends Component<Props, State> {
             propertiesMap[item.name] = item.value;
         });
         content.properties = propertiesMap;
+        content.labels = this.state.labels.map((label) => label.label);
         const target = CreateActivityPost.activityTarget == undefined ? PostActivityTarget.timeline(): CreateActivityPost.activityTarget;
         const query = CreateActivityPost.query == undefined ? ActivitiesQuery.timeline(): CreateActivityPost.query;
 
@@ -343,6 +378,26 @@ export default class CreateActivityPost extends Component<Props, State> {
                             </View>
                             <View style={CreateActivityPostStyle.formEntryButtonContainer}>
                                 <Button title='Remove' onPress={ () => this.removePropertiesRow(index) }/>
+                            </View>
+                        </View>
+                    )}
+                    keyExtractor={(item) => item.key}
+                />
+                <View style={CreateActivityPostStyle.formEntryButtonContainer}>
+                    <Button title='Add Label' onPress={ () => this.addLabelsRow() }/>
+                </View>
+                <FlatList style={{flex: 1}} removeClippedSubviews={false}
+                    data={this.state.labels}
+                    extraData={this.state.labels}
+                    renderItem={({item}) => (
+                        <View style={CreateActivityPostStyle.formEntryRow}>
+                            <View style={CreateActivityPostStyle.formEntryInputContainer}>
+                                <TextInput style={CreateActivityPostStyle.formEntryInput} onChangeText={(newLabel) => {
+                                    this.updateLabelData(item.key, newLabel);
+                                }} value={item.label} placeholder='label'/>
+                            </View>
+                            <View style={CreateActivityPostStyle.formEntryButtonContainer}>
+                                <Button title='Remove' onPress={ () => this.removeLabelsRow(item.key) }/>
                             </View>
                         </View>
                     )}

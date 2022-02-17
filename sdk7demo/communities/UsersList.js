@@ -7,8 +7,8 @@ import {MenuStyle} from './../common/MenuStyle';
 // eslint-disable-next-line no-unused-vars
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
-import {Alert, FlatList, Text, TextInput, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
-import {Communities, ChatId, CurrentUser, GetSocial, UsersQuery, User, PagingQuery, UserId, UserIdList, FollowQuery, ActivitiesQuery, ActivitiesView} from './../getsocial-react-native-sdk';
+import {Alert, FlatList, Text, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
+import {Communities, GetSocial, UsersQuery, User, PagingQuery, UserId, UserIdList, FollowQuery, ActivitiesQuery, ActivitiesView} from './../getsocial-react-native-sdk';
 import FollowersQuery from '../getsocial-react-native-sdk/models/communities/FollowersQuery';
 import FollowersListView from './FollowersList';
 import FollowingsListView from './FollowingsList';
@@ -30,7 +30,7 @@ export default class UsersListView extends Component<Props, State> {
     static navigationOptions = {title: 'Users'};
 
     updateSearchText = async (text: String) => {
-        this.setState({searchText: text});
+        return this.setState({searchText: text});
     }
 
     generateOptions() : [string] {
@@ -46,6 +46,7 @@ export default class UsersListView extends Component<Props, State> {
         options.push('Show Followings');
         options.push('User\'s Posts');
         options.push('User\'s Feed');
+        options.push('User\'s Mentions');
         if (this.state.currentUserId != undefined && this.state.selectedUser != undefined && this.state.currentUserId != this.state.selectedUser.userId) {
             options.push('Open Chat');
         }
@@ -77,7 +78,12 @@ export default class UsersListView extends Component<Props, State> {
 
     showFeed = async () => {
         const query = ActivitiesQuery.feedOf(UserId.create(this.state.selectedUser.userId));
-        // query.byUser(UserId.create(this.state.selectedUser.userId));
+        ActivitiesView.create(query).show();
+    }
+
+    showMentions = async () => {
+        const userId = UserId.create(this.state.selectedUser.userId);
+        const query = ActivitiesQuery.everywhere().withMentions([userId]);
         ActivitiesView.create(query).show();
     }
 
@@ -127,17 +133,21 @@ export default class UsersListView extends Component<Props, State> {
     }
 
     loadUsers = async () => {
-        showLoading();
-        const query = UsersQuery.find(this.state.searchText);
-        Communities.getUsers(new PagingQuery(query)).then((result) => {
-            hideLoading();
-            this.setState({users: result.entries}, () => {
-                this.loadFriendsStatus();
+        if (!global.loadingIndicatorRef.current.state.visible) {
+            showLoading();
+            const query = this.state.searchText
+                ? UsersQuery.find(this.state.searchText)
+                : UsersQuery.suggested();
+            Communities.getUsers(new PagingQuery(query)).then((result) => {
+                hideLoading();
+                this.setState({users: result.entries}, () => {
+                    this.loadFriendsStatus();
+                });
+            }, (error) => {
+                hideLoading();
+                Alert.alert('Error', error.message);
             });
-        }, (error) => {
-            hideLoading();
-            Alert.alert('Error', error.message);
-        });
+        }
     }
 
     constructor(props: any) {
@@ -155,10 +165,10 @@ export default class UsersListView extends Component<Props, State> {
 
     componentDidMount() {
         GetSocial.getCurrentUser().then((user) => {
-            console.log('done');
             this.setState({
                 currentUserId: user.id,
             });
+            this.loadUsers();
         });
     }
 
@@ -263,6 +273,9 @@ export default class UsersListView extends Component<Props, State> {
             break;
         case 'User\'s Feed':
             this.showFeed();
+            break;
+        case 'User\'s Mentions':
+            this.showMentions();
             break;
         case 'Open Chat':
             this.openChat();

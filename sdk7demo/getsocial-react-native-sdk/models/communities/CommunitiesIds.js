@@ -43,6 +43,22 @@ export default class CommunitiesIds {
       return new CommunitiesIds(CommunitiesEntityType.Activity, [id]);
   }
 
+  static label(id: string): CommunitiesIds {
+      return new CommunitiesIds(CommunitiesEntityType.Label, [id]);
+  }
+
+  static labels(ids: string[]): CommunitiesIds {
+      return new CommunitiesIds(CommunitiesEntityType.Label, ids);
+  }
+
+  static tag(id: string): CommunitiesIds {
+      return new CommunitiesIds(CommunitiesEntityType.Tag, [id]);
+  }
+
+  static tags(ids: string[]): CommunitiesIds {
+      return new CommunitiesIds(CommunitiesEntityType.Tag, ids);
+  }
+
   static timeline(): CommunitiesIds {
       return new CommunitiesIds(CommunitiesEntityType.App, ['timeline']);
   }

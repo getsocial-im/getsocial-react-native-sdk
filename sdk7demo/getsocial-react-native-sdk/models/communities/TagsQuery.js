@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 // @flow
+import UserId from '../UserId.js';
 import PostActivityTarget from './PostActivityTarget.js';
 
 /**
@@ -9,10 +10,19 @@ export default class TagsQuery {
     search: string
     target: ?PostActivityTarget;
     trending: boolean = false;
+    follower: ?UserId;
 
     // eslint-disable-next-line require-jsdoc
     constructor(search: string) {
-        this.search = search;
+        this.search = search || null;
+    }
+
+    /**
+     * All tags.
+     * @return {TagsQuery} New instance.
+     */
+    static all(): TagsQuery {
+        return new TagsQuery();
     }
 
     /**
@@ -27,7 +37,7 @@ export default class TagsQuery {
     /**
      * Filter in which target execute the search.
      * @param {PostActivityTarget} target Search target.
-     * @return {TagsQuery} New instance.
+     * @return {TagsQuery} same instance.
      */
     inTarget(target: PostActivityTarget): TagsQuery {
         this.target = target;
@@ -38,10 +48,21 @@ export default class TagsQuery {
     * Get only trending tags.
     *
     * @param {boolean} trending Only trending tags or all.
-    * @return {TagsQuery} new query.
+    * @return {TagsQuery} same query.
     */
     onlyTrending(trending: boolean): TagsQuery {
         this.trending = trending;
+        return this;
+    }
+
+    /**
+     * Get tags followed by a specific user.
+     *
+     * @param {UserId} id User ID.
+     * @return {TagsQuery} same query.
+     */
+    followedBy(id: UserId): TagsQuery {
+        this.follower = id;
         return this;
     }
 
@@ -50,6 +71,6 @@ export default class TagsQuery {
   * @return {string} object as json.
   */
     toJSON() {
-        return {query: this.search, target: this.target ?? null, trending: this.trending};
+        return {followerId: this.follower ?? null, query: this.search, target: this.target ?? null, trending: this.trending};
     }
 }

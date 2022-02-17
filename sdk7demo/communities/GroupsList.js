@@ -29,6 +29,8 @@ type State = {
     groups: [Group],
     selectedGroup: ?Group,
     searchText: string,
+    labels: [string],
+    properties: Map<string, string>,
     myGroups: boolean,
     followStatus: ?Map<string, boolean>,
     showOnlyTrending: boolean,
@@ -39,7 +41,30 @@ export default class GroupsListView extends Component<Props, State> {
     static query: GroupsQuery;
 
     updateSearchText = async (text: String) => {
-        this.setState({searchText: text});
+        return this.setState({searchText: text});
+    }
+
+    updateLabels = async (text: String) => {
+        return this.setState({
+            labels: text
+                ? text.split(',').map((label) => label.trim())
+                : []
+        });
+    }
+
+    updateProps = async (text: String) => {
+        let properties = {};
+
+        if (text) {
+            text.split(',').forEach((prop) => {
+                prop = prop.split('=');
+                if (prop.length === 2 && prop[0] && prop[1]) {
+                    properties[prop[0].trim()] = prop[1].trim();
+                }
+            });
+        }
+
+        return this.setState({ properties });
     }
 
     generateOptions() : [string] {
@@ -332,9 +357,19 @@ export default class GroupsListView extends Component<Props, State> {
 
     loadGroups = async () => {
         showLoading();
-        let query = GroupsListView.query == null ? (this.state.searchText == null ? GroupsQuery.all() : GroupsQuery.find(this.state.searchText)) : GroupsListView.query;
-        query = query.onlyTrending(this.state.showOnlyTrending);
-        Communities.getGroups(new PagingQuery(query)).then((result) => {
+        let query = GroupsListView.query == null
+            ? (this.state.searchText == null
+                ? GroupsQuery.all()
+                : GroupsQuery.find(this.state.searchText)
+            )
+            : GroupsListView.query;
+
+        query
+            .onlyTrending(this.state.showOnlyTrending)
+            .withProperties(this.state.properties)
+            .withLabels(this.state.labels);
+
+            Communities.getGroups(new PagingQuery(query)).then((result) => {
             hideLoading();
             this.setState({groups: result.entries});
         }, (error) => {
@@ -384,21 +419,6 @@ export default class GroupsListView extends Component<Props, State> {
         });
     }
 
-    renderSearchBar() {
-        if (!GroupsListView.myGroups) {
-            return (<SearchBar
-                ref="groupsearch"
-                textColor='black'
-                autoCapitalize='none'
-                onChangeText= { (text) => this.updateSearchText(text) }
-                placeholder="Search"
-                onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadGroups()) }
-                onSearchButtonPress={ () => this.loadGroups() }
-            />);
-        }
-        return null;
-    }
-
     updateFilterButton = async () => {
         const currentValue = this.state.showOnlyTrending;
         this.setState({showOnlyTrending: !currentValue}, () => {
@@ -409,7 +429,38 @@ export default class GroupsListView extends Component<Props, State> {
     render() {
         return (
             <View style={MenuStyle.container}>
-                {this.renderSearchBar()}
+                {
+                    !GroupsListView.myGroups &&
+                    <>
+                        <SearchBar
+                            ref="groupsearch"
+                            textColor='black'
+                            autoCapitalize='none'
+                            onChangeText= { (text) => this.updateSearchText(text) }
+                            placeholder="Search"
+                            onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadGroups()) }
+                            onSearchButtonPress={ () => this.loadGroups() }
+                        />
+                        <SearchBar
+                            ref="groupLabels"
+                            textColor='black'
+                            autoCapitalize='none'
+                            onChangeText= { (text) => this.updateLabels(text) }
+                            placeholder="label1,label2"
+                            onCancelButtonPress= { () => this.updateLabels().then(() => this.loadGroups()) }
+                            onSearchButtonPress={ () => this.loadGroups() }
+                        />
+                        <SearchBar
+                            ref="groupProps"
+                            textColor='black'
+                            autoCapitalize='none'
+                            onChangeText= { (text) => this.updateProps(text) }
+                            placeholder="key=value,key1=value1"
+                            onCancelButtonPress= { () => this.updateProps().then(() => this.loadGroups()) }
+                            onSearchButtonPress={ () => this.loadGroups() }
+                        />
+                    </>
+                }
                 <View style={MenuStyle.menuitem}>
                     <Button title={this.state.showOnlyTrending ? 'All': 'Only Trending'} onPress={ this.updateFilterButton }/>
                 </View>
@@ -418,12 +469,26 @@ export default class GroupsListView extends Component<Props, State> {
                         data={this.state.groups}
                         renderItem={({item}) => (
                             <TouchableWithoutFeedback>
-                                <View style={MenuStyle.listitem4rows}>
+                                <View style={MenuStyle.listitem6rows}>
                                     <View style={{flex: 1, flexDirection: 'column', width: '80%'}}>
-                                        <Text style={MenuStyle.menuitem14}>Title: {item.title}</Text>
-                                        <Text style={MenuStyle.menuitem14}>Popularity: {item.popularity}</Text>
-                                        <Text style={MenuStyle.menuitem14}>Member status: {this.getMemberStatus(item)}</Text>
-                                        <Text style={MenuStyle.menuitem14}>Member role: {this.getMemberRole(item)}</Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Title: {item.title}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Popularity: {item.popularity}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Member status: {this.getMemberStatus(item)}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Member role: {this.getMemberRole(item)}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Labels: {item.settings.labels.length ? item.settings.labels.join(', ') : 'None'}
+                                        </Text>
+                                        <Text style={MenuStyle.menuitem14}>
+                                            Properties: {item.settings.properties ? JSON.stringify(item.settings.properties) : 'None'}
+                                        </Text>
                                     </View>
                                     <View>
                                         <Button title='Actions' onPress={ () => {

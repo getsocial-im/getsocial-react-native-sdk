@@ -9,13 +9,13 @@ buildscript {
     }
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.6.0")
+        classpath('com.android.tools.build:gradle:3.6.1')
         classpath "im.getsocial:plugin-v7:1.0.9"
         classpath 'com.google.gms:google-services:4.3.2'
         // NOTE: Do not place your application dependencies here; they belong
@@ -36,7 +36,18 @@ allprojects {
         }
 
         google()
-        jcenter()
+        mavenCentral()
         maven { url 'https://www.jitpack.io' }
+        configurations.all {
+            resolutionStrategy {
+                // versions available in maven (used by React)
+                force 'com.facebook.yoga:proguard-annotations:1.19.0'
+                force 'com.facebook.fbjni:fbjni-java-only:0.2.2'
+                force 'com.facebook.flipper:flipper:0.99.0'
+                force 'com.facebook.flipper:flipper-network-plugin:0.99.0'
+                force 'com.facebook.flipper:flipper-fresco-plugin:0.99.0'
+                force 'com.android.billingclient:billing:2.1.0'
+            }
+        }
     }
 }

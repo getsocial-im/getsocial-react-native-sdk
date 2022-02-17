@@ -63,6 +63,7 @@ content6.description = 'groupdescription';
 content6.properties = {'propkey': 'propvalue'};
 content6.avatar = MediaAttachment.withImageUrl('image1');
 content6.permissions[CommunitiesAction.Comment] = Role.Owner;
+content6.labels = ['label1'];
 const json6 = JSON.stringify(content6);
 const jsonResult6 = readEncodedObject('groupcontent', 'groupcontent_complete.json');
 test('content6.toJSON() result shall be', () => {

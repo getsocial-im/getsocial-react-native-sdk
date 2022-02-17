@@ -25,6 +25,7 @@ import PostActivityTarget from './../models/communities/PostActivityTarget.js';
 import ReactionsQuery from './../models/communities/ReactionsQuery.js';
 import VotesQuery from './../models/communities/VotesQuery.js';
 import TagsQuery from './../models/communities/TagsQuery.js';
+import Tag from '../models/communities/Tag.js';
 import UserReactions from './../models/communities/UserReactions.js';
 import UserVotes from './../models/communities/UserVotes.js';
 import RemoveActivitiesQuery from './../models/communities/RemoveActivitiesQuery.js';
@@ -60,6 +61,9 @@ import ChatMessagesPagingResult from './../models/communities/ChatMessagesPaging
 
 import {GetSocialEventEmitter} from '../GetSocialEventEmitter.js';
 import {Platform, NativeModules} from 'react-native';
+import LabelsQuery from '../models/communities/LabelsQuery.js';
+import Label from '../models/communities/Label.js';
+
 const {RNGetSocial} = NativeModules;
 
 export default class JSONBridge {
@@ -369,6 +373,22 @@ export default class JSONBridge {
         });
     }
 
+    static bookmark(activityId: string): Promise<void> {
+        const bookmarkBody = {reaction: 'bookmark', activityId};
+        return RNGetSocial.callAsync(
+            'Communities.bookmark',
+            JSON.stringify(bookmarkBody),
+        );
+    }
+
+    static removeBookmark(activityId: string): Promise<void> {
+        const removeBookmarkBody = {reaction: 'bookmark', activityId};
+        return RNGetSocial.callAsync(
+            'Communities.removeBookmark',
+            JSON.stringify(removeBookmarkBody),
+        );
+    }
+
     static reportActivity(id: string, reason: number, explanation: ?string): Promise<void> {
         const reportActivityBody = {activityId: id, reason: reason, explanation: explanation};
         return RNGetSocial.callAsync('Communities.reportActivity', JSON.stringify(reportActivityBody));
@@ -378,8 +398,14 @@ export default class JSONBridge {
         return RNGetSocial.callAsync('Communities.removeActivities', JSON.stringify(query));
     }
 
-    static getTags(query: TagsQuery): Promise<[string]> {
+    static getTags(query: TagsQuery): Promise<PagingResult<Tag>> {
         return RNGetSocial.callAsync('Communities.getTags', JSON.stringify(query)).then((result) => {
+            return JSON.parse(result);
+        });
+    }
+
+    static getLabels(query: LabelsQuery): Promise<PagingResult<Label>> {
+        return RNGetSocial.callAsync('Communities.getLabels', JSON.stringify(query)).then((result) => {
             return JSON.parse(result);
         });
     }

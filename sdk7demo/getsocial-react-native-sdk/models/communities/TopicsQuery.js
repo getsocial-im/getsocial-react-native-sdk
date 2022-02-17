@@ -9,6 +9,8 @@ export default class TopicsQuery {
     search: string = '';
     userId: ?UserId;
     trending: boolean = false;
+    labels: Array<string> = [];
+    properties: {[key: string] : string} = {};
 
     /**
    * Get all topics.
@@ -36,7 +38,7 @@ export default class TopicsQuery {
    * Get topics followed by a specific user.
    *
    * @param {UserId} userId ID of user.
-   * @return {TopicsQuery} new instance.
+   * @return {TopicsQuery} same instance.
    */
     followedBy(userId: UserId): TopicsQuery {
         this.userId = userId;
@@ -47,7 +49,7 @@ export default class TopicsQuery {
     * Get only trending topics.
     *
     * @param {boolean} trending Only trending topics or all.
-    * @return {TopicsQuery} new query.
+    * @return {TopicsQuery} same query.
     */
     onlyTrending(trending: boolean): TopicsQuery {
         this.trending = trending;
@@ -55,10 +57,32 @@ export default class TopicsQuery {
     }
 
     /**
-  * Generates JSON string.
-  * @return {string} object as json.
-  */
+     * Get topics matching the specified properties.
+     *
+     * @param {Object<string, string>} properties Properties.
+     * @return {TopicsQuery} same query.
+     */
+    withProperties(properties: {[key: string] : string}): TopicsQuery {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * Get topics matching the specified labels.
+     *
+     * @param {[string]} labels Labels list.
+     * @return {TopicsQuery} same query.
+     */
+    withLabels(labels: string[]): TopicsQuery {
+        this.labels = labels;
+        return this;
+    }
+
+    /**
+     * Generates JSON string.
+     * @return {string} object as json.
+     */
     toJSON() {
-        return {followerId: this.userId ?? null, searchTerm: this.search ?? '', trending: this.trending};
+        return {followerId: this.userId ?? null, labels: this.labels ?? null, properties: this.properties ?? null, searchTerm: this.search ?? '', trending: this.trending};
     }
 }

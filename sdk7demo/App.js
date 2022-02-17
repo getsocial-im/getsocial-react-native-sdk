@@ -43,6 +43,9 @@ import PollsListView from './communities/PollsList.js';
 import VotesListView from './communities/VotesList.js';
 import VoteView from './communities/Vote.js';
 import CreatePollView from './communities/CreatePoll.js';
+import LabelsListView from './communities/LabelsList.js';
+import LabelsMenu from './communities/LabelsMenu';
+import TagsMenu from './communities/TagsMenu';
 
 // eslint-disable-next-line no-unused-vars
 import {View, Alert} from 'react-native';
@@ -61,7 +64,6 @@ import RemoveTrustedIdentity from './usermanagement/RemoveTrustedIdentity';
 import ActivitiesListView from './communities/ActivitiesList';
 import {globalActionProcessor} from './common/CommonMethods.js';
 
-
 const MainNavigator = createStackNavigator({
     MainMenu: {screen: MainMenu},
     SettingsMenu: {screen: SettingsMenu},
@@ -79,6 +81,7 @@ const MainNavigator = createStackNavigator({
     EventTrackingMenu: {screen: EventTrackingMenu},
     PromoCodesMenu: {screen: PromoCodesMenu},
     TagsList: {screen: TagsListView},
+    LabelsList: {screen: LabelsListView},
     TopicsList: {screen: TopicsListView},
     UsersList: {screen: UsersListView},
     FollowersList: {screen: FollowersListView},
@@ -96,6 +99,8 @@ const MainNavigator = createStackNavigator({
     InitWithCustomIdentity: {screen: InitWithCustomIdentity},
     RemoveTrustedIdentity: {screen: RemoveTrustedIdentity},
     TopicsMenu: {screen: TopicsMenu},
+    LabelsMenu: {screen: LabelsMenu},
+    TagsMenu: {screen: TagsMenu},
     GroupsMenu: {screen: GroupsMenu},
     GroupsList: {screen: GroupsListView},
     GroupMembersList: {screen: GroupMembersListView},

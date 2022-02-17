@@ -10,11 +10,11 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, View, FlatList, TouchableWithoutFeedback, Text} from 'react-native';
-import {PagingQuery, PollStatus, Action, ActivitiesView, ActivitiesQuery, UserId, User} from './../getsocial-react-native-sdk';
+import {PagingQuery, PollStatus, ActivitiesQuery, UserId} from './../getsocial-react-native-sdk';
 import Communities from '../getsocial-react-native-sdk/Communities';
 import CreateActivityPost from './CreateActivityPost';
 import UpdateActivityPost from './UpdateActivityPost';
-import {globalActionProcessor} from './../common/CommonMethods.js';
+import ActivitiesListView from './ActivitiesList';
 
 type Props = { navigation: Function }
 type State = {
@@ -26,6 +26,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
 
     loadLastPost = async () => {
         const query = ActivitiesQuery.everywhere().byUser(UserId.currentUser()).withPollStatus(PollStatus.WithoutPoll);
+        showLoading();
         Communities.getActivities(new PagingQuery(query)).then((result) => {
             hideLoading();
             if (result.entries === undefined || result.entries.length == 0) {
@@ -39,21 +40,10 @@ export default class ActivitiesMenu extends Component<Props, State> {
         });
     }
 
-    openFeed = async (query: ActivitiesQuery) => {
-        const view = ActivitiesView.create(query);
-        view.onMentionClickListener = (mention: string) => {
-            Alert.alert('Info', 'Mention [' + mention + '] clicked.');
-        };
-        view.onTagClickListener = (tag: string) => {
-            Alert.alert('Info', 'Tag [' + tag + '] clicked.');
-        };
-        view.onAvatarClickListener = (user: User) => {
-            Alert.alert('Info', 'User [' + JSON.stringify(user) + '] clicked.');
-        };
-        view.onActionButtonClickListener = (action: Action) => {
-            globalActionProcessor(action);
-        };
-        view.show();
+    openList = async (title: string, query: ActivitiesQuery) => {
+        ActivitiesListView.navigationOptions.title = title;
+        ActivitiesListView.activitiesQuery = query;
+        this.props.navigation.navigate('ActivitiesList');
     }
 
     constructor(props: any) {
@@ -62,22 +52,74 @@ export default class ActivitiesMenu extends Component<Props, State> {
         const timeline = new MenuItem();
         timeline.key = 'timeline';
         timeline.title = 'Open Timeline';
-        timeline.action = () => this.openFeed(ActivitiesQuery.timeline());
+        timeline.action = () => this.openList(
+            'Timeline',
+            ActivitiesQuery.timeline()
+        );
 
         const myfeed = new MenuItem();
         myfeed.key = 'myfeed';
         myfeed.title = 'Open My feed';
-        myfeed.action = () => this.openFeed(ActivitiesQuery.feedOf(UserId.currentUser()));
+        myfeed.action = () => this.openList(
+            'My Feed',
+            ActivitiesQuery.feedOf(UserId.currentUser())
+        );
 
         const demofeed = new MenuItem();
         demofeed.key = 'demofeed';
         demofeed.title = 'Open Demo Feed';
-        demofeed.action = () => this.openFeed(ActivitiesQuery.inTopic('demoTopic'));
+        demofeed.action = () => this.openList(
+            'Demo Feed',
+            ActivitiesQuery.inTopic('demoTopic')
+        );
 
         const myposts = new MenuItem();
         myposts.key = 'myposts';
         myposts.title = 'My Posts';
-        myposts.action = () => this.openFeed(ActivitiesQuery.everywhere().byUser(UserId.currentUser()));
+        myposts.action = () => this.openList(
+            'My Posts',
+            ActivitiesQuery.everywhere().byUser(UserId.currentUser())
+        );
+
+        const appMentions = new MenuItem();
+        appMentions.key = 'appMentions';
+        appMentions.title = 'All app mentions';
+        appMentions.action = () => this.openList(
+            'App mentions',
+            ActivitiesQuery.everywhere().withMentions([UserId.createForApp()])
+        );
+
+        const bookmarks = new MenuItem();
+        bookmarks.key = 'bookmarks';
+        bookmarks.title = 'All Bookmarks';
+        bookmarks.action = () => this.openList(
+            'Bookmarks',
+            ActivitiesQuery.bookmarkedActivities()
+        );
+
+        const reactedActivities = new MenuItem();
+        reactedActivities.key = 'reactedActivities';
+        reactedActivities.title = 'All reacted activities';
+        reactedActivities.action = () => this.openList(
+            'Reacted activities',
+            ActivitiesQuery.reactedActivities()
+        );
+
+        const likedActivities = new MenuItem();
+        likedActivities.key = 'likedActivities';
+        likedActivities.title = 'All liked activities';
+        likedActivities.action = () => this.openList(
+            'Liked activities',
+            ActivitiesQuery.reactedActivities(['like'])
+        );
+
+        const votedActivities = new MenuItem();
+        votedActivities.key = 'votedActivities';
+        votedActivities.title = 'All voted activities';
+        votedActivities.action = () => this.openList(
+            'Voted activities',
+            ActivitiesQuery.votedActivities()
+        );
 
         const createpost = new MenuItem();
         createpost.key = 'createpost';
@@ -92,8 +134,18 @@ export default class ActivitiesMenu extends Component<Props, State> {
         editpost.title = 'Edit Post (Last post by current user)';
         editpost.action = () => this.loadLastPost();
 
-        const mainMenu = [timeline, myfeed,
-            demofeed, myposts, createpost, editpost];
+        const mainMenu = [
+            timeline,
+            myfeed,
+            demofeed,
+            myposts,
+            appMentions,
+            bookmarks,
+            reactedActivities,
+            likedActivities,
+            votedActivities,
+            createpost,
+            editpost];
 
         this.state = {
             menu: mainMenu,

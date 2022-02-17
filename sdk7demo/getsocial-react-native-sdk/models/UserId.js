@@ -32,6 +32,17 @@ export default class UserId {
   }
 
   /**
+   * Create a single GetSocial user identifier for the app.
+   *
+   * @return {UserId} New identifier
+   */
+  static createForApp(): UserId {
+      const userId = new UserId();
+      userId.#id = 'app';
+      return userId;
+  }
+
+  /**
    * @return {UserId} for a current user.
    */
   static currentUser(): UserId {

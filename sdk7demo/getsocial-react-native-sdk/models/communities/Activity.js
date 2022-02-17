@@ -30,6 +30,9 @@ export default class Activity {
     status: string;
     poll: ?Poll;
     popularity: number;
+    labels: Array<string> = [];
+    isBookmarked: boolean = false;
+    bookmarksCount: number = 0;
 
     /**
     * Creates a new Activity instance from the provider parameters.
@@ -96,6 +99,10 @@ export default class Activity {
         } else {
             this.popularity = 0.0;
         }
+        this.labels = activityMap['labels'] || [];
+        this.isBookmarked = activityMap['isBookmarked'] === true;
+        this.bookmarksCount = activityMap['bookmarksCount'] || 0;
+
         Object.freeze(this);
     }
 }

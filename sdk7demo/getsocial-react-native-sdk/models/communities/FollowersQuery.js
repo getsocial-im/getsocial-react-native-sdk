@@ -44,6 +44,26 @@ export default class FollowersQuery {
   }
 
   /**
+   * Get followers of label with ID.
+   *
+   * @param {string} id Label ID.
+   * @return {FollowersQuery} new query.
+   */
+  static ofLabel(id: string): FollowersQuery {
+      return new FollowersQuery(CommunitiesIds.label(id));
+  }
+
+  /**
+   * Get followers of tag with ID.
+   *
+   * @param {string} id Label ID.
+   * @return {FollowersQuery} new query.
+   */
+  static ofTag(id: string): FollowersQuery {
+      return new FollowersQuery(CommunitiesIds.tag(id));
+  }
+
+  /**
   * Generates JSON string.
   * @return {string} object as json.
   */

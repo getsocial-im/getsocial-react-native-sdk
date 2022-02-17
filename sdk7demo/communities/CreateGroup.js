@@ -25,6 +25,7 @@ type State = {
     base64Image: ?string,
     localImageUri: ?string,
     properties: Map<string, string>,
+    labels: [string],
     isPrivate: boolean,
     isDiscoverable: boolean,
     allowPost: number,
@@ -46,6 +47,7 @@ export default class CreateGroupView extends Component<Props, State> {
           base64Video: null,
           localVideoUri: null,
           properties: new Map(),
+          labels: new Array(),
           isPrivate: false,
           isDiscoverable: true,
           allowPost: '0',
@@ -145,6 +147,38 @@ export default class CreateGroupView extends Component<Props, State> {
         });
     }
 
+    addLabelsRow = async () => {
+        this.setState({
+            labels: [
+                ...this.state.labels,
+                { key: 'LBL_' + this.generateRandom() }
+            ],
+        });
+    }
+
+    removeLabelsRow = async (key: string) => {
+        this.setState((prevState) => {
+            return {
+                labels: prevState.labels
+                    .filter((label) => label.key !== key)
+            };
+        });
+    }
+
+    updateLabelData = async (key: string, newLabel: string) => {
+        this.setState((prevState) => {
+            return {
+                labels: prevState.labels
+                    .map((label) => {
+                        if (label.key === key) {
+                            label.label = newLabel;
+                        }
+
+                        return label
+                    })
+            };
+        });
+    }
 
     createGroup = async () => {
         let mediaAttachment = null;
@@ -175,6 +209,7 @@ export default class CreateGroupView extends Component<Props, State> {
             return;
         }
         content.properties = propertiesMap;
+        content.labels = this.state.labels.map((label) => label.label);
         content.isPrivate = this.state.isPrivate;
         content.isDiscoverable = this.state.isDiscoverable;
         const permissionsMap = {};
@@ -359,6 +394,26 @@ export default class CreateGroupView extends Component<Props, State> {
                             </View>
                             <View style={CreateActivityPostStyle.formEntryButtonContainer}>
                                 <Button title='Remove' onPress={ () => this.removePropertiesRow(index) }/>
+                            </View>
+                        </View>
+                    )}
+                    keyExtractor={(item) => item.key}
+                />
+                <View style={CreateActivityPostStyle.formEntryButtonContainer}>
+                    <Button title='Add Label' onPress={ () => this.addLabelsRow() }/>
+                </View>
+                <FlatList style={{flex: 1}} removeClippedSubviews={false}
+                    data={this.state.labels}
+                    extraData={this.state.labels}
+                    renderItem={({item}) => (
+                        <View style={CreateActivityPostStyle.formEntryRow}>
+                            <View style={CreateActivityPostStyle.formEntryInputContainer}>
+                                <TextInput style={CreateActivityPostStyle.formEntryInput} onChangeText={(newLabel) => {
+                                    this.updateLabelData(item.key, newLabel);
+                                }} value={item.label} placeholder='label'/>
+                            </View>
+                            <View style={CreateActivityPostStyle.formEntryButtonContainer}>
+                                <Button title='Remove' onPress={ () => this.removeLabelsRow(item.key) }/>
                             </View>
                         </View>
                     )}

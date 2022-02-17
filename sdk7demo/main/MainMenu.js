@@ -46,7 +46,12 @@ export default class MainMenu extends Component<Props, State> {
         const tagsMenu = new MenuItem();
         tagsMenu.key = 'tags';
         tagsMenu.title = 'Tags';
-        tagsMenu.navigateTo = 'TagsList';
+        tagsMenu.navigateTo = 'TagsMenu';
+
+        const labelsMenu = new MenuItem();
+        labelsMenu.key = 'labels';
+        labelsMenu.title = 'Labels';
+        labelsMenu.navigateTo = 'LabelsMenu';
 
         const topicsMenu = new MenuItem();
         topicsMenu.key = 'topicsmenu';
@@ -98,6 +103,7 @@ export default class MainMenu extends Component<Props, State> {
             invitesMenu,
             activitiesMenu,
             tagsMenu,
+            labelsMenu,
             topicsMenu,
             groupsMenu,
             chatsListMenu,

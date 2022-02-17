@@ -44,6 +44,26 @@ export default class FollowQuery {
   }
 
   /**
+   * Follow tags from list.
+   *
+   * @param {[string]} ids list of tag IDs.
+   * @return {FollowQuery} new query.
+   */
+  static tags(ids: string[]): FollowQuery {
+      return new FollowQuery(CommunitiesIds.tags(ids));
+  }
+
+  /**
+   * Follow labels from list.
+   *
+   * @param {[string]} ids list of label IDs.
+   * @return {FollowQuery} new query.
+   */
+  static labels(ids: string[]): FollowQuery {
+      return new FollowQuery(CommunitiesIds.labels(ids));
+  }
+
+  /**
   * Generates JSON string.
   * @return {string} object as json.
   */

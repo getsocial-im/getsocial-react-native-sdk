@@ -11,6 +11,7 @@ module.exports = {
   resolver: {
     blacklistRE: blacklist([
       /node_modules\/.*\/node_modules\/react-native\/.*/,
+      /ios\/build\/.*\/assets\/getsocial-react-native-sdk\/.*/,
     ])
   },
 };

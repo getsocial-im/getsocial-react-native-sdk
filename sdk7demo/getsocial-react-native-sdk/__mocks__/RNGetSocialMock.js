@@ -94,7 +94,7 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getUsers') {
-            if (body == '{"limit":20,"query":{"followedBy":null,"query":"best"}}') {
+            if (body == '{"limit":20,"query":{"followedBy":null,"query":"best","suggested":false}}') {
                 return Promise.resolve(createPagingResult(readObjectToDecode('user.json')));
             }
             return Promise.reject(new Error());
@@ -112,7 +112,7 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getUsersCount') {
-            if (body == '{"followedBy":null,"query":"best"}') {
+            if (body == '{"followedBy":null,"query":"best","suggested":false}') {
                 return Promise.resolve('{"result": 123}');
             }
             return Promise.reject(new Error());
@@ -154,7 +154,7 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getActivities') {
-            if (body == '{"limit":20,"query":{"author":null,"ids":{"ids":["timeline"],"type":1},"pollStatus":0,"tag":null,"trending":false}}') {
+            if (body == '{"limit":20,"query":{"author":null,"ids":{"ids":["timeline"],"type":1},"labels":[],"mentions":[],"pollStatus":0,"properties":{},"reactions":[],"reactionGroup":null,"searchTerm":null,"tag":null,"trending":false}}') {
                 return Promise.resolve(createPagingResult(readObjectToDecode('activity.json')));
             }
             return Promise.reject(new Error());
@@ -166,13 +166,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.postActivity') {
-            if (body == '{"target":{"ids":{"ids":["group"],"type":3}},"content":{"attachments":[],"button":null,"poll":null,"properties":{},"text":"hello"}}') {
+            if (body == '{"target":{"ids":{"ids":["group"],"type":3}},"content":{"attachments":[],"button":null,"labels":[],"poll":null,"properties":{},"text":"hello"}}') {
                 return Promise.resolve(readObjectToDecode('activity.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.updateActivity') {
-            if (body == '{"target":"oldid","content":{"attachments":[],"button":null,"poll":null,"properties":{},"text":"hi there"}}') {
+            if (body == '{"target":"oldid","content":{"attachments":[],"button":null,"labels":[],"poll":null,"properties":{},"text":"hi there"}}') {
                 return Promise.resolve(readObjectToDecode('activity.json'));
             }
             return Promise.reject(new Error());
@@ -238,8 +238,8 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTags') {
-            if (body == '{"query":"hell","target":null,"trending":false}') {
-                return Promise.resolve('["hello", "hell!"]');
+            if (body == '{"followerId":null,"query":"tag","target":null,"trending":false}') {
+                return Promise.resolve(createPagingResult(readObjectToDecode('tag.json')));
             }
             return Promise.reject(new Error());
         }
@@ -250,13 +250,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopics') {
-            if (body == '{"limit":20,"query":{"followerId":null,"searchTerm":"","trending":false}}') {
+            if (body == '{"limit":20,"query":{"followerId":null,"labels":[],"properties":{},"searchTerm":"","trending":false}}') {
                 return Promise.resolve(createPagingResult(readObjectToDecode('topic.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getTopicsCount') {
-            if (body == '{"followerId":null,"searchTerm":"rn","trending":false}') {
+            if (body == '{"followerId":null,"labels":[],"properties":{},"searchTerm":"rn","trending":false}') {
                 return Promise.resolve('{"result": 0}');
             }
             return Promise.reject(new Error());
@@ -361,13 +361,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.createGroup') {
-            if (body == '{"avatar":null,"description":null,"id":"groupid","isDiscoverable":false,"isPrivate":false,"permissions":{},"properties":{},"title":null}') {
+            if (body == '{"avatar":null,"description":null,"id":"groupid","isDiscoverable":false,"isPrivate":false,"labels":[],"permissions":{},"properties":{},"title":null}') {
                 return Promise.resolve(readObjectToDecode('group.json'));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.updateGroup') {
-            if (body == '{"groupId":"oldgroupid","content":{"avatar":null,"description":null,"id":"groupid","isDiscoverable":false,"isPrivate":false,"permissions":{},"properties":{},"title":null}}') {
+            if (body == '{"groupId":"oldgroupid","content":{"avatar":null,"description":null,"id":"groupid","isDiscoverable":false,"isPrivate":false,"labels":[],"permissions":{},"properties":{},"title":null}}') {
                 return Promise.resolve(readObjectToDecode('group.json'));
             }
             return Promise.reject(new Error());
@@ -385,13 +385,13 @@ NativeModules.RNGetSocial = {
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroups') {
-            if (body == '{"limit":40,"query":{"followerId":null,"memberId":null,"searchTerm":"searchTerm","trending":false}}') {
+            if (body == '{"limit":40,"query":{"followerId":null,"labels":[],"memberId":null,"properties":{},"searchTerm":"searchTerm","trending":false}}') {
                 return Promise.resolve(createPagingResult(readObjectToDecode('group.json')));
             }
             return Promise.reject(new Error());
         }
         if (method == 'Communities.getGroupsCount') {
-            if (body == '{"followerId":null,"memberId":null,"searchTerm":"searchTerm","trending":false}') {
+            if (body == '{"followerId":null,"labels":[],"memberId":null,"properties":{},"searchTerm":"searchTerm","trending":false}') {
                 return Promise.resolve('{"result": 40}');
             }
             return Promise.reject(new Error());
