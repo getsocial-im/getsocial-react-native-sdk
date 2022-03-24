@@ -25,7 +25,7 @@ android {
 }
 
 repositories {
-  maven { url 'http://maven.getsocial.im/' }
+  maven { url 'https://maven.getsocial.im/' }
 }
 
 dependencies {

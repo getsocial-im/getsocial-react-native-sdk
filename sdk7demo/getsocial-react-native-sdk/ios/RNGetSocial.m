@@ -47,42 +47,42 @@ RCT_EXPORT_MODULE()
     // register native listeners here to avoid race conditions
 
     if ([eventName isEqualToString:@"onInitialized"]) {
-        [GetSocialJSONBridge addListener:@"GetSocial.addOnInitializedListener" listener:^(NSString * result) {
+        (void)[GetSocialJSONBridge addListener:@"GetSocial.addOnInitializedListener" listener:^(NSString * result) {
             if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onInitialized" body: result];
             }
         }];
     }
     if ([eventName isEqualToString:@"onCurrentUserChanged"]) {
-        [GetSocialJSONBridge addListener:@"GetSocial.addOnCurrentUserChangedListener" listener:^(NSString * result) {
+        (void)[GetSocialJSONBridge addListener:@"GetSocial.addOnCurrentUserChangedListener" listener:^(NSString * result) {
             if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onCurrentUserChanged" body: result];
             }
         }];
     }
     if ([eventName isEqualToString:@"onNotificationReceived"]) {
-        [GetSocialJSONBridge addListener:@"Notifications.setOnNotificationReceivedListener" listener:^(NSString * notificationJSON) {
+        (void)[GetSocialJSONBridge addListener:@"Notifications.setOnNotificationReceivedListener" listener:^(NSString * notificationJSON) {
             if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onNotificationReceived" body: notificationJSON];
             }
         }];
     }
     if ([eventName isEqualToString:@"onNotificationClicked"]) {
-        [GetSocialJSONBridge addListener:@"Notifications.setOnNotificationClickedListener" listener:^(NSString * notificationClickedJSON) {
+        (void)[GetSocialJSONBridge addListener:@"Notifications.setOnNotificationClickedListener" listener:^(NSString * notificationClickedJSON) {
             if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onNotificationClicked" body: notificationClickedJSON];
             }
         }];
     }
     if ([eventName isEqualToString:@"onTokenReceived"]) {
-        [GetSocialJSONBridge addListener:@"Notifications.setOnTokenReceivedListener" listener:^(NSString * tokenJSON) {
+        (void)[GetSocialJSONBridge addListener:@"Notifications.setOnTokenReceivedListener" listener:^(NSString * tokenJSON) {
             if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onTokenReceived" body: tokenJSON];
             }
         }];
     }
     if ([eventName isEqualToString:@"onReferralDataReceived"]) {
-        [GetSocialJSONBridge addListener:@"Invites.setOnReferralDataReceivedListener" listener:^(NSString * referralDataJSON) {
+        (void)[GetSocialJSONBridge addListener:@"Invites.setOnReferralDataReceivedListener" listener:^(NSString * referralDataJSON) {
 			if (self->hasListeners && self.bridge) {
                 [self sendEventWithName:@"onReferralDataReceived" body: referralDataJSON];
             }

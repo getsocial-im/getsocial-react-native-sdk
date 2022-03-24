@@ -1,3 +1,8 @@
+## v7.9.1 - Mar 24, 2022
+
++ Fixed: make use of HTTPS for maven repository.
++ Fixed: remove warnings.
+
 ## v7.9.0 - Feb 17, 2022
 
 + New: improved find for labels and hashtags.
