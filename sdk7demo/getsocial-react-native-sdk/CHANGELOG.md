@@ -1,3 +1,10 @@
+## v7.9.2 - Apr 19, 2022
+
+- Fixed: AddGroupMembersQuery is now correctly parsed.
+- Fixed: addGroupMembers was calling the wrong method.
+- Fixed: JoinGroupQuery is now correctly parsed.
+- Fixed: joinGroup was calling the wrong method.
+
 ## v7.9.1 - Mar 24, 2022
 
 + Fixed: make use of HTTPS for maven repository.

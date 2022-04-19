@@ -54,6 +54,6 @@ export default class AddGroupMembersQuery {
     * @return {string} object as json.
     */
      toJSON() {
-         return this.internalQuery;
+         return {internalQuery: this.internalQuery};
      }
 }

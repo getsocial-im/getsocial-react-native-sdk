@@ -655,7 +655,7 @@ export default class JSONBridge {
     }
 
     static addGroupMembers(query: AddGroupMembersQuery): Promise<[GroupMember]> {
-        return RNGetSocial.callAsync('Communities.updateGroupMembers', JSON.stringify(query)).then((result) => {
+        return RNGetSocial.callAsync('Communities.addGroupMembers', JSON.stringify(query)).then((result) => {
             const jsonArray = JSON.parse(result);
             const memberResult: GroupMember[] = [];
             jsonArray.forEach((rawMember) => {
@@ -667,7 +667,7 @@ export default class JSONBridge {
     }
 
     static joinGroup(query: JoinGroupQuery): Promise<GroupMember> {
-        return RNGetSocial.callAsync('Communities.updateGroupMembers', JSON.stringify(query)).then((result) => {
+        return RNGetSocial.callAsync('Communities.addGroupMembers', JSON.stringify(query)).then((result) => {
             const jsonArray = JSON.parse(result);
             const memberResult: GroupMember[] = [];
             jsonArray.forEach((rawMember) => {
