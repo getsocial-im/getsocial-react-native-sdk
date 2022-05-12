@@ -58,6 +58,7 @@ import ChatMessage from './../models/communities/ChatMessage.js';
 import ChatMessageContent from './../models/communities/ChatMessageContent.js';
 import ChatMessagesPagingQuery from './../models/communities/ChatMessagesPagingQuery.js';
 import ChatMessagesPagingResult from './../models/communities/ChatMessagesPagingResult.js';
+import SearchResult from './../models/communities/SearchResult.js';
 
 import {GetSocialEventEmitter} from '../GetSocialEventEmitter.js';
 import {Platform, NativeModules} from 'react-native';
@@ -743,6 +744,12 @@ export default class JSONBridge {
     static getChat(chatId: ChatId): Promise<Chat> {
         return RNGetSocial.callAsync('Communities.getChat', JSON.stringify(chatId)).then((result) => {
             return new Chat(JSON.parse(result));
+        });
+    }
+
+    static search(query: PagingQuery): Promise<SearchResult> {
+        return RNGetSocial.callAsync('Communities.search', JSON.stringify(query)).then((result) => {
+            return new SearchResult(JSON.parse(result));
         });
     }
 }

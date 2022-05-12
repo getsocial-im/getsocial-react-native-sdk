@@ -654,4 +654,16 @@ export default class Communities {
     static getChat(chatId: ChatId): Promise<Chat> {
         return JSONBridge.getChat(chatId);
     }
+
+    /**
+     * Search topics, groups, users, activities, tags and labels by matching query.
+     * Returns a list of each of those entities with a cursor for a next query.
+     * If cursor is empty string, or {@link PagingResult#isLastPage()} is true, this is a last page.
+     *
+     * @param {PagingQuery<SearchQuery>} query - Search query and pagination.
+     * @return {SearchResult} Promise with Result and cursor(s) for next query.
+     */
+    static search(query) {
+        return JSONBridge.search(query);
+    }
 }

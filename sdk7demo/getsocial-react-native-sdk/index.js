@@ -84,6 +84,8 @@ import VotesQuery from './models/communities/VotesQuery.js';
 import Label from './models/communities/Label.js';
 import LabelsQuery from './models/communities/LabelsQuery.js';
 import ReportingReason from './models/communities/ReportingReason';
+import SearchQuery from './models/communities/SearchQuery';
+import SearchResult from './models/communities/SearchResult';
 
 module.exports = {GetSocial, GetSocialUI, CurrentUser,
     Action, Analytics, Communities, FriendsQuery, Identity, ConflictUser, InviteContent, InviteChannel, InvitesView,
@@ -98,4 +100,5 @@ module.exports = {GetSocial, GetSocialUI, CurrentUser,
     Chat, ChatId, ChatMessage, ChatMessageContent, ChatMessagesQuery,
     ChatMessagesPagingQuery, ChatMessagesPagingResult, CommunitiesAction,
     Poll, PollOption, PollContent, PollOptionContent, UserVotes, VotesQuery, PollStatus, Label, LabelsQuery, ReportingReason,
+    SearchQuery, SearchResult,
 };

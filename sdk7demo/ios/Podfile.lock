@@ -32,11 +32,11 @@ PODS:
     - boost-for-react-native
     - DoubleConversion
     - glog
-  - GetSocialExtended (7.9.0):
-    - GetSocialExtended/Core (= 7.9.0)
-    - GetSocialExtended/UI (= 7.9.0)
-  - GetSocialExtended/Core (7.9.0)
-  - GetSocialExtended/UI (7.9.0):
+  - GetSocialExtended (7.10.0):
+    - GetSocialExtended/Core (= 7.10.0)
+    - GetSocialExtended/UI (= 7.10.0)
+  - GetSocialExtended/Core (7.10.0)
+  - GetSocialExtended/UI (7.10.0):
     - GetSocialExtended/Core
   - glog (0.3.5)
   - RCTRequired (0.63.2)
@@ -290,7 +290,7 @@ PODS:
   - RNGestureHandler (1.7.0):
     - React
   - RNGetSocial (7.3.0):
-    - GetSocialExtended (= 7.9.0)
+    - GetSocialExtended (= 7.10.0)
     - React
   - RNScreens (2.9.0):
     - React
@@ -431,7 +431,7 @@ SPEC CHECKSUMS:
   FBSDKLoginKit: 1a61d79e2b25e2fc0d03dccab1e34b38bbdf2546
   FBSDKShareKit: 00a055c1999b099596e00212dd1c0600c6697019
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
-  GetSocialExtended: 480561c63b89bbb1038ad0301a67133825945479
+  GetSocialExtended: 2881e8c8ff9c5996f7d3bc73534b66051e9cbcd8
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
@@ -459,7 +459,7 @@ SPEC CHECKSUMS:
   RNCCheckbox: d1749e6a92178ce5dbc31e63becd1f34f0c76bbd
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNGestureHandler: b6b359bb800ae399a9c8b27032bdbf7c18f08a08
-  RNGetSocial: 591b0f3ef3de6e10cabea084986effb11134ed6e
+  RNGetSocial: a70037542a9ee105905c884a3c1b03cf677b80c5
   RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNVectorIcons: da6fe858f5a65d7bbc3379540a889b0b12aa5976

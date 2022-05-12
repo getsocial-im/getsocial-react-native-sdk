@@ -34,6 +34,7 @@ import GroupMembersListView from './communities/GroupMembersList.js';
 import TopicsMenu from './communities/TopicsMenu.js';
 import GroupsMenu from './communities/GroupsMenu.js';
 import UsersListView from './communities/UsersList.js';
+import SearchListView from './communities/SearchList.js';
 import ChatsListView from './communities/ChatsList.js';
 import ChatMessagesListView from './communities/ChatMessagesList.js';
 import FollowersListView from './communities/FollowersList.js';
@@ -84,6 +85,7 @@ const MainNavigator = createStackNavigator({
     LabelsList: {screen: LabelsListView},
     TopicsList: {screen: TopicsListView},
     UsersList: {screen: UsersListView},
+    SearchList: {screen: SearchListView},
     FollowersList: {screen: FollowersListView},
     FollowingsList: {screen: FollowingsListView},
     ActivitiesMenu: {screen: ActivitiesMenu},

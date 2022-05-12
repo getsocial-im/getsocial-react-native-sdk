@@ -396,6 +396,15 @@ NativeModules.RNGetSocial = {
             }
             return Promise.reject(new Error());
         }
+        if (method == 'Communities.addGroupMembers') {
+            if (body == '{"internalQuery":{"groupId":"groupId","invitationToken":"token","role":3,"status":0,"userIdList":{"ids":["GETSOCIAL_CURRENT_USER_PLACEHOLDER_42_42"],"provider":null}}}') {
+                return Promise.resolve('[' + readObjectToDecode('groupmember.json') + ']');
+            }
+            if (body == '{"internalQuery":{"groupId":"groupId","invitationToken":null,"role":0,"status":2,"userIdList":{"ids":["userid1","userid2"],"provider":null}}}') {
+                return Promise.resolve('[' + readObjectToDecode('groupmember.json') + ']');
+            }
+            return Promise.reject(new Error());
+        }
         if (method == 'Communities.updateGroupMembers') {
             if (body == '{"role":0,"status":2,"groupId":"groupId","userIdList":{"ids":["userid1","userid2"],"provider":null}}') {
                 return Promise.resolve('[' + readObjectToDecode('groupmember.json') + ']');

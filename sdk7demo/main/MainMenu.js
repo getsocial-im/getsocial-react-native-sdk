@@ -73,6 +73,11 @@ export default class MainMenu extends Component<Props, State> {
         usersMenu.title = 'Users';
         usersMenu.navigateTo = 'UsersList';
 
+        const searchMenu = new MenuItem();
+        searchMenu.key = 'search';
+        searchMenu.title = 'Search';
+        searchMenu.navigateTo = 'SearchList';
+
         const notificationsMenu = new MenuItem();
         notificationsMenu.key = 'notifications';
         notificationsMenu.title = 'Notifications';
@@ -108,6 +113,7 @@ export default class MainMenu extends Component<Props, State> {
             groupsMenu,
             chatsListMenu,
             usersMenu,
+            searchMenu,
             notificationsMenu,
             promoCodesMenu,
             eventTrackingMenu,
