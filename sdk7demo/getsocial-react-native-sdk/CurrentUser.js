@@ -18,6 +18,8 @@ export default class User {
   identities: {[key: string] : string} = {};
   publicProperties: {[key: string] : string} = {};
   privateProperties: {[key: string] : string} = {};
+  banInfo: BanInfo;
+  verified: boolean;
 
   /**
    * Requests a bulk change of properties for the current user.
@@ -132,6 +134,7 @@ export default class User {
       if (rawBanInfo !== undefined && rawBanInfo != null) {
           this.banInfo = new BanInfo(rawBanInfo);
       }
+      this.verified = jsonObject['verified'];
       Object.freeze(this);
   }
 }

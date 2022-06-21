@@ -39,6 +39,7 @@ class UserDetailsView extends Component<Props, State> {
             privateProperties: '',
             authIdentities: '',
             banInfo: '',
+            verified: false,
         };
     }
 
@@ -60,7 +61,6 @@ class UserDetailsView extends Component<Props, State> {
             this.setState({privateProperties: JSON.stringify(currentUser.privateProperties)});
             currentUser.isBanned()
                 .then((isBanned) => {
-                    console.log ({ isBanned });
                     if (isBanned) {
                         currentUser.getBanInfo()
                             .then((banInfo) => {
@@ -74,6 +74,7 @@ class UserDetailsView extends Component<Props, State> {
                     }
                 })
                 .catch(console.error);
+            this.setState({verified: currentUser.verified});
         });
     }
 
@@ -142,6 +143,16 @@ class UserDetailsView extends Component<Props, State> {
                       </View>
                       <View style={UserDetailsViewStyle.formEntryTitleContainer}>
                           <Text accessibilityLabel='Private properties'>{this.state.banInfo}</Text>
+                      </View>
+                  </View>
+                  <View style={UserDetailsViewStyle.formEntryRow}>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text style={UserDetailsViewStyle.formEntryTitle} >Verified:</Text>
+                      </View>
+                      <View style={UserDetailsViewStyle.formEntryTitleContainer}>
+                          <Text accessibilityLabel='Verified'>
+                            {this.state.verified ? 'Yes' : 'No'}
+                        </Text>
                       </View>
                   </View>
                   <Button title={'Close'} onPress={() => this.closeView()}/>
