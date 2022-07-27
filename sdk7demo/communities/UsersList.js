@@ -42,6 +42,8 @@ export default class UsersListView extends Component<Props, State> {
             const isFollowed = this.state.followStatus != undefined && this.state.selectedUser != undefined && this.state.followStatus[this.state.selectedUser.userId] === true;
             options.push(isFollowed ? 'Unfollow': 'Follow');
         }
+        options.push('Block');
+        options.push('Unblock');
         options.push('Show Followers');
         options.push('Show Followings');
         options.push('User\'s Posts');
@@ -150,6 +152,34 @@ export default class UsersListView extends Component<Props, State> {
         }
     }
 
+    blockUser = async () => {
+        const userIdList = UserIdList.create([this.state.selectedUser.userId]);
+
+        showLoading();
+        Communities.blockUsers(userIdList)
+            .then(() => {
+                hideLoading();
+                Alert.alert('Success', 'User blocked');
+            }, (error) => {
+                hideLoading();
+                Alert.alert('Error', error.message);
+            });
+    }
+
+    unblockUser = async () => {
+        const userIdList = UserIdList.create([this.state.selectedUser.userId]);
+
+        showLoading();
+        Communities.unblockUsers(userIdList)
+            .then(() => {
+                hideLoading();
+                Alert.alert('Success', 'User unblocked');
+            }, (error) => {
+                hideLoading();
+                Alert.alert('Error', error.message);
+            });
+    }
+
     constructor(props: any) {
         super(props);
 
@@ -245,7 +275,7 @@ export default class UsersListView extends Component<Props, State> {
         if (selectedIndex == this.generateOptions().length - 1) {
             return;
         }
-        console.log(selected);
+
         switch (selected) {
         case 'Details':
             this.showDetails();
@@ -279,6 +309,12 @@ export default class UsersListView extends Component<Props, State> {
             break;
         case 'Open Chat':
             this.openChat();
+            break;
+        case 'Block':
+            this.blockUser();
+            break;
+        case 'Unblock':
+            this.unblockUser();
             break;
         }
     }

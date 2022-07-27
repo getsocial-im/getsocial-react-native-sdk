@@ -666,4 +666,34 @@ export default class Communities {
     static search(query) {
         return JSONBridge.search(query);
     }
+
+    /**
+     * Get list of users blocked by the current user.
+     *
+     * @param {PagingQuery} query Query parameter.
+     * @return {PagingResult<User>} Called with users.
+     */
+    static getBlockedUsers(query: PagingQuery): Promise<PagingResult<User>> {
+        return JSONBridge.getBlockedUsers(query);
+    }
+
+    /**
+     * Block one or more users.
+     *
+     * @param {UserIdList} ids List of User IDs to block.
+     * @return {void}  Called if operation succeeded.
+     */
+    static blockUsers(ids: UserIdList): Promise<void> {
+        return JSONBridge.blockUsers(ids);
+    }
+
+    /**
+     * Unblock one or more users.
+     *
+     * @param {UserIdList} ids List of User IDs to unblock.
+     * @return {void}  Called if operation succeeded.
+     */
+    static unblockUsers(ids: UserIdList): Promise<void> {
+        return JSONBridge.unblockUsers(ids);
+    }
 }

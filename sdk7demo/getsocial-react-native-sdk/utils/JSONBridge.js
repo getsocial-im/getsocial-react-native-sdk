@@ -752,4 +752,20 @@ export default class JSONBridge {
             return new SearchResult(JSON.parse(result));
         });
     }
+
+    static getBlockedUsers(query: PagingQuery): Promise<PagingResult<User>> {
+        return RNGetSocial.callAsync('Communities.getBlockedUsers', JSON.stringify(query)).then((result) => {
+            return new PagingResult<User>(result, (userJson) => {
+                return new User(userJson);
+            });
+        });
+    }
+
+    static blockUsers(ids: UserIdList): Promise<void> {
+        return RNGetSocial.callAsync('Communities.blockUsers', JSON.stringify(ids));
+    }
+
+    static unblockUsers(query: PagingQuery): Promise<void> {
+        return RNGetSocial.callAsync('Communities.unblockUsers', JSON.stringify(query));
+    }
 }

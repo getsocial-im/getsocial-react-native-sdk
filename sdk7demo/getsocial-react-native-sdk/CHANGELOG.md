@@ -1,3 +1,16 @@
+## v7.12.0 - Jul 27, 2022
+
+- New: Support for blocked users
+
+## v7.11.0 - Jun 21, 2022
+
++ New: support for verified users
++ Overall improvements.
+
+## v7.10.0 - May 12, 2022
+
++ New: Global search (beta) for activities, labels, hashtags, users, groups and topics
+
 ## v7.9.2 - Apr 19, 2022
 
 - Fixed: AddGroupMembersQuery is now correctly parsed.
