@@ -231,13 +231,13 @@ export default class JSONBridge {
     static getUsersByIds(ids: UserIdList): Promise<Map<string, User>> {
         return RNGetSocial.callAsync('Communities.getUsersByIds', JSON.stringify(ids)).then((result) => {
             const jsonMap = JSON.parse(result);
-            const entries = new Map();
+            const entries: Map<string, User> = new Map();
             Object.keys(jsonMap).forEach(function(key) {
                 const value = jsonMap[key];
                 if (value !== null && value !== undefined) {
-                    entries[key] = new User(value);
+                    entries.set(key, new User(value));
                 } else {
-                    entries[key] = null;
+                    entries.set(key, null);
                 }
             });
             return entries;
@@ -711,9 +711,9 @@ export default class JSONBridge {
             Object.keys(jsonMap).forEach(function(key) {
                 const value = jsonMap[key];
                 if (value !== null && value !== undefined) {
-                    resultMap[key] = new Membership(value);
+                    resultMap.set(key, new Membership(value));
                 } else {
-                    resultMap[key] = null;
+                    resultMap.set(key, null);
                 }
             });
             return resultMap;

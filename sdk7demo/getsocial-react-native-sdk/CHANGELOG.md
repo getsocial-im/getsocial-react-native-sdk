@@ -1,3 +1,7 @@
+## v7.12.1 - Aug 18, 2022
+
+- Fix: Map returned by getUsersByIds and areGroupMembers methods
+
 ## v7.12.0 - Jul 27, 2022
 
 - New: Support for blocked users
