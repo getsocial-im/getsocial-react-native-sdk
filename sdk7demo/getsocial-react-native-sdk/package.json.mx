@@ -1,8 +1,8 @@
 {
-  "name": "getsocial-react-native-sdk",
+  "name": "getsocial-react-native-sdk-mx",
   "title": "GetSocial React Native SDK",
   "version": "7.12.2",
-  "description": "React Native wrapper for GetSocial iOS and Android SDK",
+  "description": "React Native wrapper for GetSocial iOS and Android SDK with support for running on iOS Simulator on Macs with M1/M2 chips that require arm64 architecture",
   "repository": {
     "type": "git",
     "url": "https://github.com/getsocial-im/getsocial-react-native-sdk"
@@ -37,7 +37,6 @@
     "CurrentUser.js",
     "GetSocial.js",
     "GetSocialEventEmitter.js",
-    "GetSocialUI.js",
     "index.js",
     "Invites.js",
     "Notifications.js",

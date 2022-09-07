@@ -1,3 +1,7 @@
+## v7.12.2 - Sep 7, 2022
+
++ Overall improvements.
+
 ## v7.12.1 - Aug 18, 2022
 
 - Fix: Map returned by getUsersByIds and areGroupMembers methods
