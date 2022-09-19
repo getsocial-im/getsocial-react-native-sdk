@@ -1,3 +1,7 @@
+## v7.12.3 - Sep 16, 2022
+
++ Expose ActivityButton, Tag, NotificationContext and others.
+
 ## v7.12.2 - Sep 7, 2022
 
 + Overall improvements.

@@ -1,7 +1,7 @@
 {
   "name": "getsocial-react-native-sdk-mx",
   "title": "GetSocial React Native SDK",
-  "version": "7.12.2",
+  "version": "7.12.3",
   "description": "React Native wrapper for GetSocial iOS and Android SDK with support for running on iOS Simulator on Macs with M1/M2 chips that require arm64 architecture",
   "repository": {
     "type": "git",
