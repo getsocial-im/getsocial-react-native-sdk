@@ -32,8 +32,8 @@ export default class AddGroupMemberView extends Component<Props, State> {
         this.state = {
             userId: null,
             providerId: null,
-            role: '0',
-            status: '0',
+            role: Role.Admin,
+            status: MemberStatus.InvitationPending,
         };
     }
 
@@ -44,17 +44,10 @@ export default class AddGroupMemberView extends Component<Props, State> {
         }
 
         const userIdList = this.state.providerId == undefined ? UserIdList.create([this.state.userId]): UserIdList.createWithProvider(this.state.providerId, [this.state.userId]);
-        let query = AddGroupMembersQuery.create(AddGroupMemberView.groupId, userIdList);
-        if (this.state.status == '0') {
-            query = query.withMemberStatus(MemberStatus.InvitationPending);
-        } else {
-            query = query.withMemberStatus(MemberStatus.Member);
-        }
-        if (this.state.role == '0') {
-            query = query.withRole(Role.Admin);
-        } else {
-            query = query.withRole(Role.Member);
-        }
+        let query = AddGroupMembersQuery
+            .create(AddGroupMemberView.groupId, userIdList)
+            .withMemberStatus(this.state.status)
+            .withRole(this.state.role);
         showLoading();
         Communities.addGroupMembers(query).then((member) => {
             hideLoading();
@@ -76,8 +69,8 @@ export default class AddGroupMemberView extends Component<Props, State> {
                             onChangeItem={(item) => this.setState({role: item.value})}
                             containerStyle={{height: 44}}
                             items={[
-                                {label: 'Admin', value: '0'},
-                                {label: 'Member', value: '1'},
+                                {label: 'Admin', value: Role.Admin},
+                                {label: 'Member', value: Role.Member},
                             ]}/>
                     </View>
                 </View>
@@ -89,8 +82,8 @@ export default class AddGroupMemberView extends Component<Props, State> {
                     <View style={CreateActivityPostStyle.formEntryPickerContainer}>
                         <Picker style={CreateActivityPostStyle.pickerStyle} itemStyle={{height: 44}}
                             selectedValue={this.state.role} onValueChange={(itemValue, itemIndex) => this.setState({role: itemValue})}>
-                            <Picker.Item label="Admin" value="0"/>
-                            <Picker.Item label="Member" value="1"/>
+                            <Picker.Item label="Admin" value={Role.Admin}/>
+                            <Picker.Item label="Member" value={Role.Member}/>
                         </Picker>
                     </View>
                 </View>
@@ -109,8 +102,9 @@ export default class AddGroupMemberView extends Component<Props, State> {
                             onChangeItem={(item) => this.setState({status: item.value})}
                             containerStyle={{height: 44}}
                             items={[
-                                {label: 'Invite', value: '0'},
-                                {label: 'Member', value: '1'},
+                                {label: 'Invite', value: MemberStatus.InvitationPending},
+                                {label: 'Member', value: MemberStatus.Member},
+                                {label: 'Reject', value: MemberStatus.Rejected},
                             ]}/>
                     </View>
                 </View>
@@ -121,9 +115,10 @@ export default class AddGroupMemberView extends Component<Props, State> {
                     <Text style={Styles.formEntryTitle}>Status</Text>
                     <View style={CreateActivityPostStyle.formEntryPickerContainer}>
                         <Picker style={CreateActivityPostStyle.pickerStyle} itemStyle={{height: 44}}
-                            selectedValue={this.state.status} onValueChange={(itemValue, itemIndex) => this.setState({status: itemValue})}>
-                            <Picker.Item label="Invite" value="0"/>
-                            <Picker.Item label="Member" value="1"/>
+                            selectedValue={this.state.status} onValueChange={(itemValue) => this.setState({status: itemValue})}>
+                            <Picker.Item label="Invite" value={MemberStatus.InvitationPending}/>
+                            <Picker.Item label="Member" value={MemberStatus.Member}/>
+                            <Picker.Item label="Reject" value={MemberStatus.Rejected}/>
                         </Picker>
                     </View>
                 </View>

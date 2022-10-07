@@ -20,6 +20,7 @@ type State = {
     selectedUser: ?User,
     friendsStatus: Map<string, boolean>,
     followStatus: Map<string, boolean>,
+    searchText: '',
 }
 
 export default class FollowersListView extends Component<Props, State> {
@@ -47,7 +48,11 @@ export default class FollowersListView extends Component<Props, State> {
 
     loadFollowers = async () => {
         showLoading();
-        Communities.getFollowers(new PagingQuery(FollowersListView.query)).then((result) => {
+        const query = FollowersListView.query;
+
+        query.withName(this.state.searchText || '');
+
+        Communities.getFollowers(new PagingQuery(query)).then((result) => {
             hideLoading();
             this.setState({users: result.entries}, () => {
                 this.loadFriendsStatus();
@@ -81,6 +86,7 @@ export default class FollowersListView extends Component<Props, State> {
             selectedUser: undefined,
             friendsStatus: new Map(),
             followStatus: new Map(),
+            searchText: ''
         };
     }
 
@@ -225,9 +231,22 @@ export default class FollowersListView extends Component<Props, State> {
         });
     }
 
+    updateSearchText = async (text: String) => {
+        this.setState({searchText: text});
+    }
+
     render() {
         return (
             <View style={MenuStyle.container}>
+                <SearchBar
+                    ref="followersSearch"
+                    textColor='black'
+                    autoCapitalize='none'
+                    onChangeText= { (text) => this.updateSearchText(text) }
+                    placeholder="Search by name"
+                    onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadFollowers()) }
+                    onSearchButtonPress={ () => this.loadFollowers() }
+                />
                 <View style={MenuStyle.menuContainer}>
                     <FlatList style={{flex: 1}}
                         data={this.state.users}

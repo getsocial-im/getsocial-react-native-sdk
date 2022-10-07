@@ -1,3 +1,8 @@
+## v7.12.4 - Oct 7, 2022
+
++ New: Search for Topic/Group/Label/Hashtag/User followers and group members by name
++ New: Rejected status for Group Members
+
 ## v7.12.3 - Sep 16, 2022
 
 + Expose ActivityButton, Tag, NotificationContext and others.

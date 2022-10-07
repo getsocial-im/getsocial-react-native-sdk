@@ -8,6 +8,7 @@ export default class MembersQuery {
     groupId: string;
     role: ?number;
     status: ?number;
+    searchTerm: ?string;
 
     // eslint-disable-next-line require-jsdoc
     constructor(groupId: string) {
@@ -47,10 +48,21 @@ export default class MembersQuery {
     }
 
     /**
+     * Filter members by username or displayName.
+     *
+     * @param {string} searchTerm Beginning of name.
+     * @return {MembersQuery} same query.
+     */
+    withName(searchTerm: string): MembersQuery {
+        this.searchTerm = searchTerm;
+        return this;
+    }
+
+    /**
     * Generates JSON string.
     * @return {string} object as json.
     */
     toJSON() {
-        return {groupId: this.groupId, role: this.role ?? null, status: this.status ?? null};
+        return {groupId: this.groupId, role: this.role ?? null, searchTerm: this.searchTerm ?? null, status: this.status ?? null};
     }
 }

@@ -10,6 +10,8 @@ export default class MemberStatus {
   static InvitationPending = 1;
   /** Member */
   static Member = 2;
+  /** Rejected */
+  static Rejected = 3;
 
   // eslint-disable-next-line require-jsdoc
   static valueToName(value: number): string {
@@ -20,6 +22,8 @@ export default class MemberStatus {
           return 'invitation pending';
       case 2:
           return 'member';
+      case 3:
+          return 'rejected';
       }
   }
 }

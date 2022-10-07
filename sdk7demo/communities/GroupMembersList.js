@@ -18,6 +18,7 @@ type Props = { navigation: Function }
 type State = {
     groupMembers: [GroupMember],
     selectedMember: ?GroupMember,
+    searchText: null,
 }
 
 export default class GroupMembersListView extends Component<Props, State> {
@@ -47,9 +48,14 @@ export default class GroupMembersListView extends Component<Props, State> {
             if (role != Role.Owner) {
                 options.push('Remove');
             }
-            if (status == MemberStatus.ApprovalPending) {
+            if (status == MemberStatus.ApprovalPending ||
+                status == MemberStatus.Rejected) {
                 options.push('Approve');
             }
+            if (status != MemberStatus.Rejected) {
+                options.push('Approve');
+            }
+            options.push('Reject');
         }
         if (this.state.selectedMember != undefined && this.state.selectedMember.userId == GroupMembersListView.currentUser.id && GroupMembersListView.currentUserRole != Role.Owner) {
             options.push('Leave');
@@ -66,10 +72,27 @@ export default class GroupMembersListView extends Component<Props, State> {
     approveMember = async () => {
         showLoading();
         let query = UpdateGroupMembersQuery.create(GroupMembersListView.groupId, UserIdList.create([this.state.selectedMember.userId]));
-        query = query.withRole(Role.Member);
-        query = query.withMemberStatus(MemberStatus.Member);
-        Communities.updateGroupMembers(query).then((result) => {
+        query
+            .withMemberStatus(MemberStatus.Member)
+            .withRole(this.state.selectedMember.membership.role);
+        Communities.updateGroupMembers(query).then(() => {
             Alert.alert('Success', 'Member approved');
+            hideLoading();
+            this.loadGroupMembers();
+        }, (error) => {
+            hideLoading();
+            Alert.alert('Error', error.message);
+        });
+    }
+
+    rejectMember = async () => {
+        showLoading();
+        let query = UpdateGroupMembersQuery.create(GroupMembersListView.groupId, UserIdList.create([this.state.selectedMember.userId]));
+        query
+            .withMemberStatus(MemberStatus.Rejected)
+            .withRole(this.state.selectedMember.membership.role);
+        Communities.updateGroupMembers(query).then(() => {
+            Alert.alert('Success', 'Member rejected');
             hideLoading();
             this.loadGroupMembers();
         }, (error) => {
@@ -119,6 +142,9 @@ export default class GroupMembersListView extends Component<Props, State> {
         case 'Approve':
             this.approveMember();
             break;
+        case 'Reject':
+            this.rejectMember();
+            break;
         case 'Leave':
             this.leaveGroup();
             break;
@@ -128,6 +154,9 @@ export default class GroupMembersListView extends Component<Props, State> {
     loadGroupMembers = async () => {
         showLoading();
         const query = MembersQuery.ofGroup(GroupMembersListView.groupId);
+
+        query.withName(this.state.searchText || null);
+
         Communities.getGroupMembers(new PagingQuery(query)).then((result) => {
             hideLoading();
             this.setState({groupMembers: result.entries});
@@ -178,6 +207,15 @@ export default class GroupMembersListView extends Component<Props, State> {
     render() {
         return (
             <View style={MenuStyle.container}>
+                <SearchBar
+                    ref="membersSearch"
+                    textColor='black'
+                    autoCapitalize='none'
+                    onChangeText= { (text) => this.updateSearchText(text) }
+                    placeholder="Search by name"
+                    onCancelButtonPress= { () => this.updateSearchText(null).then(() => this.loadGroupMembers()) }
+                    onSearchButtonPress={ () => this.loadGroupMembers() }
+                />
                 <View style={MenuStyle.menuContainer}>
                     <FlatList style={{flex: 1}}
                         data={this.state.groupMembers}
@@ -197,7 +235,7 @@ export default class GroupMembersListView extends Component<Props, State> {
                                 </View>
                             </TouchableWithoutFeedback>
                         )}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.userId}
                     />
                 </View>
                 <ActionSheet
