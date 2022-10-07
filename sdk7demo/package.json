@@ -18,7 +18,7 @@
     "moment": "^2.27.0",
     "patch-package": "^6.4.6",
     "react": "16.13.1",
-    "react-native": "0.63.2",
+    "react-native": "0.64.1",
     "react-native-actionsheet": "^2.4.2",
     "react-native-datepicker": "^1.7.2",
     "react-native-dropdown-picker": "^3.8.0",
