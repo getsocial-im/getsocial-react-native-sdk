@@ -55,6 +55,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         timeline.action = () => this.openList(
             'Timeline',
             ActivitiesQuery.timeline()
+                .includeComments(3)
         );
 
         const myfeed = new MenuItem();
@@ -63,6 +64,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         myfeed.action = () => this.openList(
             'My Feed',
             ActivitiesQuery.feedOf(UserId.currentUser())
+                .includeComments(3)
         );
 
         const demofeed = new MenuItem();
@@ -71,6 +73,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         demofeed.action = () => this.openList(
             'Demo Feed',
             ActivitiesQuery.inTopic('demoTopic')
+                .includeComments(3)
         );
 
         const myposts = new MenuItem();
@@ -79,6 +82,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         myposts.action = () => this.openList(
             'My Posts',
             ActivitiesQuery.everywhere().byUser(UserId.currentUser())
+                .includeComments(3)
         );
 
         const appMentions = new MenuItem();
@@ -86,7 +90,9 @@ export default class ActivitiesMenu extends Component<Props, State> {
         appMentions.title = 'All app mentions';
         appMentions.action = () => this.openList(
             'App mentions',
-            ActivitiesQuery.everywhere().withMentions([UserId.createForApp()])
+            ActivitiesQuery.everywhere()
+                .withMentions([UserId.createForApp()])
+                .includeComments(3)
         );
 
         const bookmarks = new MenuItem();
@@ -95,6 +101,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         bookmarks.action = () => this.openList(
             'Bookmarks',
             ActivitiesQuery.bookmarkedActivities()
+                .includeComments(3)
         );
 
         const reactedActivities = new MenuItem();
@@ -103,6 +110,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         reactedActivities.action = () => this.openList(
             'Reacted activities',
             ActivitiesQuery.reactedActivities()
+                .includeComments(3)
         );
 
         const likedActivities = new MenuItem();
@@ -111,6 +119,7 @@ export default class ActivitiesMenu extends Component<Props, State> {
         likedActivities.action = () => this.openList(
             'Liked activities',
             ActivitiesQuery.reactedActivities(['like'])
+                .includeComments(3)
         );
 
         const votedActivities = new MenuItem();
@@ -119,13 +128,13 @@ export default class ActivitiesMenu extends Component<Props, State> {
         votedActivities.action = () => this.openList(
             'Voted activities',
             ActivitiesQuery.votedActivities()
+                .includeComments(3)
         );
 
         const createpost = new MenuItem();
         createpost.key = 'createpost';
         createpost.title = 'Create Post';
         createpost.action = () => {
-            CreateActivityPost.oldActivity == null;
             this.props.navigation.navigate('CreateActivityPost');
         };
 

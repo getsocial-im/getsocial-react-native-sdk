@@ -19,6 +19,7 @@ export default class Activity {
     type: ?string;
     isAnnouncement: boolean = false;
     commentsCount: number = 0;
+    comments: Array<Activity> = [];
     reactionsCount: {[key: string] : number} = {};
     myReactions: Array<string> = [];
     reactions: Array<UserReactions> = [];
@@ -59,6 +60,13 @@ export default class Activity {
         this.type = activityMap['type'];
         this.isAnnouncement = activityMap['announcement'];
         this.commentsCount = activityMap['commentsCount'];
+        const rawComments = activityMap['comments'];
+        if (rawComments !== undefined && rawComments != null) {
+            rawComments.forEach((commentMap) => {
+                const comment = new Activity(commentMap);
+                this.comments.push(comment);
+            });
+        }
         this.reactionsCount = activityMap['reactionsCount'];
         this.myReactions = activityMap['myReactions'];
         const rawReactions = activityMap['reactions'];

@@ -220,10 +220,21 @@ export default class ActivitiesQuery {
   }
 
   /**
+   * Include a number of comments from each activity in the response.
+   *
+   * @param {number} upTo Number of comments to include (max: 3)
+   * @return {ActivitiesQuery} same query.
+   */
+  includeComments(upTo: number): ActivitiesQuery {
+      this.includedComments = upTo;
+      return this;
+  }
+
+  /**
   * Generates JSON string.
   * @return {string} object as json.
   */
   toJSON() {
-      return {author: this.author ?? null, ids: this.ids, labels: this.labels ?? null, mentions: this.mentions ?? null, pollStatus: this.pollStatus, properties: this.properties ?? null, reactions: this.reactions ?? null, reactionGroup: this.reactionGroup ?? null, searchTerm: this.searchTerm ?? null, tag: this.tag ?? null, trending: this.trending};
+      return {author: this.author ?? null, ids: this.ids, includeComments: this.includedComments ?? null, labels: this.labels ?? null, mentions: this.mentions ?? null, pollStatus: this.pollStatus, properties: this.properties ?? null, reactions: this.reactions ?? null, reactionGroup: this.reactionGroup ?? null, searchTerm: this.searchTerm ?? null, tag: this.tag ?? null, trending: this.trending};
   }
 }

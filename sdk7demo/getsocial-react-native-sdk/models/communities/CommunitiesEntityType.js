@@ -10,6 +10,7 @@ export default class CommunitiesEntityType {
   static Group = 3;
   static User = 4;
   static Activity = 6;
+  static Comment = 7;
   static Tag = 8;
   static Label = 9;
 }

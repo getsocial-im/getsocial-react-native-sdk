@@ -7,13 +7,14 @@ import React, {Component} from 'react';
 // eslint-disable-next-line no-unused-vars
 import {Alert, Image, View, Text, TextInput, Button, ScrollView, Picker, FlatList, KeyboardAvoidingView} from 'react-native';
 import {CreateActivityPostStyle} from './CreateActivityPostStyle';
-import {Communities, ActivityContent, MediaAttachment, ActivitiesView} from 'getsocial-react-native-sdk';
+import {Communities, ActivityContent, MediaAttachment, ActivitiesView, CommunitiesEntityType} from 'getsocial-react-native-sdk';
 import ImagePicker from 'react-native-image-picker';
 import PostActivityTarget from '../getsocial-react-native-sdk/models/communities/PostActivityTarget';
 import ActivitiesQuery from '../getsocial-react-native-sdk/models/communities/ActivitiesQuery';
 import ActivityButton from '../getsocial-react-native-sdk/models/communities/ActivityButton';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 import Action from '../getsocial-react-native-sdk/models/actions/Action';
+import ActivitiesListView from './ActivitiesList';
 
 type Props = {}
 
@@ -32,27 +33,29 @@ type State = {
 }
 
 export default class CreateActivityPost extends Component<Props, State> {
-  static navigationOptions = {title: 'Create Activity Post'};
+    static navigationOptions = {title: 'Create Activity Post'};
 
     static activityTarget: PostActivityTarget;
     static query: ActivitiesQuery;
+    static activitiesListState: Object = {};
+    static defaultState: Object = {
+        text: null,
+        imageUrl: null,
+        base64Image: null,
+        localImageUri: null,
+        videoUrl: null,
+        base64Video: null,
+        localVideoUri: null,
+        action: null,
+        actionButtonName: null,
+        actionData: new Map(),
+        properties: new Map(),
+        labels: new Array(),
+    };
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            text: null,
-            imageUrl: null,
-            base64Image: null,
-            localImageUri: null,
-            videoUrl: null,
-            base64Video: null,
-            localVideoUri: null,
-            action: null,
-            actionButtonName: null,
-            actionData: new Map(),
-            properties: new Map(),
-            labels: new Array(),
-        };
+        this.state = CreateActivityPost.defaultState;
     }
 
     updateButtonsState = async () => {
@@ -274,9 +277,18 @@ export default class CreateActivityPost extends Component<Props, State> {
             return;
         }
         showLoading();
-        Communities.postActivity(content, target).then((post) => {
+        Communities.postActivity(content, target).then(() => {
             hideLoading();
-            ActivitiesView.create(query).show();
+
+            if (target.getType() === CommunitiesEntityType.Activity) {
+                // Reset state
+                this.setState(CreateActivityPost.defaultState);
+                ActivitiesListView.activitiesListState = CreateActivityPost
+                    .activitiesListState;
+                this.props.navigation.push('ActivitiesList');
+            } else {
+                ActivitiesView.create(query).show();
+            }
         }, (error) => {
             console.log(error);
             hideLoading();

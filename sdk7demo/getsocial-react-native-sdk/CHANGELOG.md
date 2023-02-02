@@ -1,3 +1,8 @@
+## v7.12.5 - Nov 28, 2022
+
++ New: Support comments as part of Activity
++ New: Add includeComments method in ActivitiesQuery
+
 ## v7.12.4 - Oct 7, 2022
 
 + New: Search for Topic/Group/Label/Hashtag/User followers and group members by name
