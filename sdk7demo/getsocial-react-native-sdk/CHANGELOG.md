@@ -1,7 +1,13 @@
-## v7.12.5 - Nov 28, 2022
+## v7.12.6 - May 23, 2023
 
-+ New: Support comments as part of Activity
-+ New: Add includeComments method in ActivitiesQuery
++ Fixed: chat message properties were not being stored correctly
++ Fixed: error when trying to fetch followers count
+
+## v7.12.5 - Feb 3, 2023
+
++ New: Support includeComments method in ActivitiesQuery
++ New: Support (up to 3) comments as part of the Activity
++ New: Support posting nested comments (Add Comment type to CommunitiesEntityType)
 
 ## v7.12.4 - Oct 7, 2022
 

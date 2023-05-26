@@ -138,16 +138,18 @@ export default class ActivitiesListView extends Component<Props, State> {
     }
 
     showComments = async (comments) => {
+        const parentActivities = this.state.parentActivities
+            && this.state.parentActivities.length
+                ? [
+                    ...this.state.parentActivities,
+                    this.state.activities
+                ]
+                : [ this.state.activities ];
+
         return this.setState({
             ui: 'text',
             showForm: false,
-            parentActivities: this.state.parentActivities
-                && this.state.parentActivities.length
-                    ? [
-                        ...this.state.parentActivities,
-                        this.state.activities
-                    ]
-                    : [ this.state.activities ]
+            parentActivities
         }, () => {
             if (comments && comments.length) {
                 this.setState({ activities: comments})
@@ -170,7 +172,13 @@ export default class ActivitiesListView extends Component<Props, State> {
         CreateActivityPost.activitiesListState = {
             originalQuery: this.state.originalQuery ||
                 ActivitiesListView.activitiesQuery,
-            parentActivities: this.state.parentActivities,
+            parentActivities: this.state.parentActivities
+                && this.state.parentActivities.length
+                    ? [
+                        ...this.state.parentActivities,
+                        this.state.activities
+                    ]
+                    : [ this.state.activities ],
             selectedActivity: this.state.selectedActivity
         };
         this.props.navigation.navigate('CreateActivityPost');
@@ -311,6 +319,8 @@ export default class ActivitiesListView extends Component<Props, State> {
                     .commentsToActivity(this.state.selectedActivity.id);
                 this.loadActivities();
             });
+
+            ActivitiesListView.activitiesListState = null;
         } else {
             this.loadActivities();
         }
@@ -339,14 +349,21 @@ export default class ActivitiesListView extends Component<Props, State> {
     }
 
     backToParentThread = async () => {
-        if (this.state.parentActivities && this.state.parentActivities.length) {
+        const showForm = !this.state.parentActivities ||
+            this.state.parentActivities.length < 2;
+
+        if (this.state.parentActivities &&
+            this.state.parentActivities.length) {
             this.setState({
-                activities: this.state.parentActivities.pop(),
-                parentActivities: this.state.parentActivities.slice(0, -1)
-            })
+                activities: this.state.parentActivities[this.state.parentActivities.length - 1],
+                parentActivities: this.state.parentActivities.slice(0, -1),
+                showForm
+            });
         } else {
-            ActivitiesListView.activitiesQuery = this.state.originalQuery;
-            this.setState({ showForm: true, originalQuery: null });
+            if (showForm && this.state.originalQuery) {
+                ActivitiesListView.activitiesQuery = this.state.originalQuery;
+                this.setState({ showForm, originalQuery: null });
+            }
             this.loadActivities();
         }
     }

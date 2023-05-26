@@ -42,7 +42,7 @@ extension XCTestCase {
         return onDecode(nil)
       }
       guard let result: Type = JSONBridge.decode(testContent, failure: nil) else {
-        XCTFail("🧨 Failed to decode \(Type.self)")
+        XCTFail("🧨 Failed to decode \(Type.self) from \(folder)/\($0)")
         return onDecode(nil)
       }
       onDecode(result)

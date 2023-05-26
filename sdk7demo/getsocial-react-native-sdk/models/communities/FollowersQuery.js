@@ -7,7 +7,7 @@ import CommunitiesIds from './CommunitiesIds.js';
  */
 export default class FollowersQuery {
   ids: CommunitiesIds;
-  searchTerm: ?string;
+  searchTerm: string = '';
 
   // eslint-disable-next-line require-jsdoc
   constructor(ids: CommunitiesIds) {
@@ -80,6 +80,6 @@ export default class FollowersQuery {
   * @return {string} object as json.
   */
   toJSON() {
-      return {ids: this.ids, searchTerm: this.searchTerm ?? null};
+      return {ids: this.ids, searchTerm: this.searchTerm};
   }
 }

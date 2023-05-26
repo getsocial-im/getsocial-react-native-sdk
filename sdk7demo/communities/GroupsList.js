@@ -8,7 +8,7 @@ import {MenuStyle} from './../common/MenuStyle';
 import {showLoading, hideLoading} from './../common/LoadingIndicator';
 // eslint-disable-next-line no-unused-vars
 import {Alert, FlatList, Text, TextInput, Button, View, TouchableWithoutFeedback, ReactDOM} from 'react-native';
-import {GetSocial, ActivitiesQuery, Action, FollowQuery, User, PollStatus, AnnouncementsQuery, ActivitiesView, Communities, RemoveGroupMembersQuery, UserIdList, JoinGroupQuery, GroupsQuery, Group, PagingQuery, MemberStatus, Role, CommunitiesAction} from './../getsocial-react-native-sdk';
+import {GetSocial, ActivitiesQuery, Action, FollowQuery, User, PollStatus, AnnouncementsQuery, ActivitiesView, Communities, RemoveGroupMembersQuery, UserIdList, JoinGroupQuery, GroupsQuery, Group, PagingQuery, MemberStatus, Role, CommunitiesAction, FollowersQuery} from './../getsocial-react-native-sdk';
 // eslint-disable-next-line no-unused-vars
 import ActionSheet from 'react-native-actionsheet';
 import moment from 'moment';
@@ -16,6 +16,7 @@ import moment from 'moment';
 import SearchBar from 'react-native-search-bar';
 import GroupMembersListView from './GroupMembersList.js';
 import ActivitiesListView from './ActivitiesList';
+import FollowersListView from './FollowersList';
 import CreateActivityPost from './CreateActivityPost';
 import CreatePollView from './CreatePoll';
 import AddGroupMemberView from './AddGroupMember.js';
@@ -83,11 +84,14 @@ export default class GroupsListView extends Component<Props, State> {
 
         const options = [];
         options.push('Details');
+
         if ((settings != null && !settings.isPrivate) || status == MemberStatus.Member) {
             options.push('Show Feed');
             options.push('Activities');
             options.push('Activities with Polls');
             options.push('Announcements with Polls');
+            options.push('Show Followers');
+            options.push('Show Followers Count');
         }
         if (status == MemberStatus.Member) {
             if (role != null) {
@@ -225,6 +229,23 @@ export default class GroupsListView extends Component<Props, State> {
         }
     }
 
+    showFollowers = async () => {
+        const query = FollowersQuery.ofGroup(this.state.selectedGroup.id);
+        FollowersListView.query = query;
+        this.props.navigation.navigate('FollowersList');
+    }
+
+    showFollowersCount = async () => {
+        Communities.getFollowersCount(
+            FollowersQuery.ofGroup(this.state.selectedGroup.id)
+        )
+            .then((count) => {
+                Alert.alert('Success', `This groups has ${count} follower(s).`);
+            }, (error) => {
+                Alert.alert('Error', error.message);
+            });
+    }
+
     showCreatePost = async () => {
         CreateActivityPost.activityTarget = PostActivityTarget.group(this.state.selectedGroup.id);
         CreateActivityPost.query = ActivitiesQuery.inGroup(this.state.selectedGroup.id);
@@ -324,6 +345,12 @@ export default class GroupsListView extends Component<Props, State> {
             break;
         case 'Leave':
             this.leaveGroup();
+            break;
+        case 'Show Followers':
+            this.showFollowers();
+            break;
+        case 'Show Followers Count':
+            this.showFollowersCount();
             break;
         case 'Show Members':
             this.showGroupMembers();

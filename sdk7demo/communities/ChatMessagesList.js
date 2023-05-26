@@ -114,6 +114,11 @@ export default class ChatMessagesListView extends Component<Props, State> {
             attachments.push(this.state.attachmentVideo);
         }
         chatMessageContent.attachments = attachments;
+
+        chatMessageContent.properties = {
+            test: 'This is a property in a chat message'
+        };
+
         Communities.sendChatMessage(chatMessageContent, ChatMessagesListView.chatId).then((result) => {
             // insert last message
             setTimeout(() => {
